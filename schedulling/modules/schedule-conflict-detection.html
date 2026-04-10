@@ -1,0 +1,805 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Schedule Conflict Detection</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f1f5f9;
+      --card: #ffffff;
+      --line: #e2e8f0;
+      --line-strong: #cbd5e1;
+      --text: #0f172a;
+      --muted: #64748b;
+      --primary: #3b82f6;
+      --primary-dark: #2563eb;
+      --danger: #ef4444;
+      --orange: #f97316;
+      --yellow: #f59e0b;
+      --green: #16a34a;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "DM Sans", "Segoe UI", Arial, sans-serif;
+      font-size: 14px;
+      line-height: 1.45;
+      padding: 16px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid #edf2f7;
+      border-radius: 16px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+
+    .top-card {
+      padding: 22px;
+      margin-bottom: 14px;
+    }
+
+    .title {
+      margin: 0;
+      font-size: 28px;
+      line-height: 1.2;
+      font-weight: 700;
+      letter-spacing: 0;
+      color: #1e293b;
+    }
+
+    .subtitle {
+      margin: 8px 0 16px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0;
+    }
+
+    .role-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .role-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #1e3a8a;
+      background: #dbeafe;
+      border: 1px solid #bfdbfe;
+      padding: 7px 10px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    .permissions {
+      margin: 0;
+      padding-left: 18px;
+      font-size: 13px;
+      color: #475569;
+      line-height: 1.45;
+      font-weight: 500;
+    }
+
+    .filters {
+      border-top: 1px solid var(--line);
+      padding-top: 14px;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr)) auto;
+      gap: 10px;
+      align-items: end;
+    }
+
+    .field label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--muted);
+      margin-bottom: 6px;
+      letter-spacing: 0;
+    }
+
+    .control {
+      width: 100%;
+      height: 42px;
+      border: 1px solid var(--line-strong);
+      border-radius: 10px;
+      background: #fff;
+      color: #1e293b;
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0;
+      padding: 0 12px;
+    }
+
+    .btn-row {
+      display: inline-flex;
+      gap: 8px;
+      align-items: end;
+      padding-bottom: 1px;
+    }
+
+    .btn {
+      border: 1px solid transparent;
+      border-radius: 10px;
+      padding: 10px 16px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      line-height: 1;
+      white-space: nowrap;
+      letter-spacing: 0;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .btn-primary:hover { background: var(--primary-dark); }
+
+    .btn-light {
+      background: #f8fafc;
+      border-color: var(--line-strong);
+      color: #64748b;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .summary-card {
+      border-radius: 12px;
+      color: #fff;
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-height: 84px;
+      justify-content: center;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.14);
+    }
+
+    .summary-card .value {
+      font-size: 30px;
+      line-height: 1;
+      font-weight: 700;
+      letter-spacing: 0;
+    }
+
+    .summary-card .label {
+      font-size: 13px;
+      font-weight: 600;
+      opacity: 0.95;
+      letter-spacing: 0;
+    }
+
+    .summary-total { background: linear-gradient(135deg, #ef4444, #f87171); }
+    .summary-lecturer { background: linear-gradient(135deg, #f97316, #fb923c); }
+    .summary-room { background: linear-gradient(135deg, #f59e0b, #fbbf24); color: #422006; }
+    .summary-group { background: linear-gradient(135deg, #22c55e, #4ade80); color: #14532d; }
+
+    .table-card { overflow: hidden; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead tr { background: #f8fafc; }
+
+    th {
+      padding: 12px 12px;
+      border-bottom: 1px solid var(--line);
+      font-size: 11px;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      text-align: left;
+      white-space: nowrap;
+      font-weight: 600;
+    }
+
+    td {
+      border-top: 1px solid var(--line);
+      padding: 10px 12px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #334155;
+      vertical-align: middle;
+      letter-spacing: 0;
+    }
+
+    .center { text-align: center; }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 12px;
+      font-weight: 700;
+      border: 1px solid transparent;
+      white-space: nowrap;
+      letter-spacing: 0;
+    }
+
+    .badge-lecturer {
+      background: #fee2e2;
+      color: #b91c1c;
+      border-color: #fecaca;
+    }
+
+    .badge-room {
+      background: #fef3c7;
+      color: #92400e;
+      border-color: #fde68a;
+    }
+
+    .badge-group {
+      background: #dcfce7;
+      color: #166534;
+      border-color: #bbf7d0;
+    }
+
+    .badge-resolved {
+      background: #e2e8f0;
+      color: #475569;
+      border-color: #cbd5e1;
+    }
+
+    .desc-wrap {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #475569;
+      max-width: 360px;
+    }
+
+    .warn-icon {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 800;
+      flex-shrink: 0;
+      color: #fff;
+      background: #f59e0b;
+    }
+
+    .warn-icon.red { background: #ef4444; }
+    .warn-icon.green { background: #16a34a; }
+    .warn-icon.gray { background: #64748b; }
+
+    .action-row {
+      display: inline-flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      justify-content: flex-start;
+    }
+
+    .action-btn {
+      border: 1px solid var(--line-strong);
+      border-radius: 8px;
+      background: #fff;
+      color: #1e293b;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 5px 9px;
+      cursor: pointer;
+      line-height: 1.1;
+      white-space: nowrap;
+      letter-spacing: 0;
+    }
+
+    .action-btn.view { background: #eff6ff; border-color: #bfdbfe; color: #1d4ed8; }
+    .action-btn.edit { background: #fffbeb; border-color: #fde68a; color: #a16207; }
+    .action-btn.delete { background: #fef2f2; border-color: #fecaca; color: #b91c1c; }
+    .action-btn.resolve { background: #ecfdf5; border-color: #bbf7d0; color: #166534; }
+
+    .muted-row td {
+      background: #f8fafc;
+      color: #64748b;
+    }
+
+    .table-footer {
+      border-top: 1px solid var(--line);
+      background: #f8fafc;
+      color: #64748b;
+      font-size: 12px;
+      font-weight: 500;
+      padding: 10px 12px;
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .pager {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .pager button {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      border: 1px solid var(--line-strong);
+      background: #fff;
+      color: #475569;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 13px;
+    }
+
+    .pager button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .empty {
+      text-align: center;
+      color: #94a3b8;
+      font-size: 14px;
+      padding: 26px 12px;
+    }
+
+    .toast {
+      position: fixed;
+      right: 16px;
+      bottom: 16px;
+      z-index: 999;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      border-radius: 10px;
+      padding: 10px 14px;
+      box-shadow: 0 12px 20px rgba(0,0,0,0.18);
+      animation: fadeUp .18s ease-out;
+    }
+
+    .toast.success { background: #10b981; }
+    .toast.error { background: #ef4444; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 1280px) {
+      .filters {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .btn-row { grid-column: 1 / -1; }
+      .summary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 740px) {
+      .title { font-size: 24px; }
+      .summary-grid { grid-template-columns: 1fr; }
+      .filters { grid-template-columns: 1fr; }
+      .desc-wrap { max-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <section class="card top-card">
+    <div class="filters">
+      <div class="field">
+        <label for="filter-semester">Semester / Session</label>
+        <select id="filter-semester" class="control">
+          <option value="">All Sessions</option>
+          <option value="2024/2025-1">2024/2025-1</option>
+          <option value="2024/2025-2">2024/2025-2</option>
+          <option value="2025/2026-1">2025/2026-1</option>
+          <option value="2025/2026-2">2025/2026-2</option>
+          <option value="2026/2027-1">2026/2027-1</option>
+          <option value="2026/2027-2">2026/2027-2</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="filter-programme">Programme</label>
+        <select id="filter-programme" class="control">
+          <option value="">All Programmes</option>
+          <option value="FSKTM">FSKTM</option>
+          <option value="MBBS">MBBS</option>
+          <option value="Nursing">Nursing</option>
+          <option value="Pharmacy">Pharmacy</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="filter-type">Conflict Type</label>
+        <select id="filter-type" class="control">
+          <option value="">All Conflicts</option>
+          <option value="Lecturer">Lecturer</option>
+          <option value="Room">Room</option>
+          <option value="Group">Group</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="filter-week">Week</label>
+        <select id="filter-week" class="control">
+          <option value="">All Weeks</option>
+          <option value="Week 1">Week 1</option>
+          <option value="Week 2">Week 2</option>
+          <option value="Week 3">Week 3</option>
+          <option value="Week 4">Week 4</option>
+          <option value="Week 5">Week 5</option>
+          <option value="Week 6">Week 6</option>
+        </select>
+      </div>
+      <div class="btn-row">
+        <button id="search-btn" class="btn btn-primary" type="button">Search</button>
+        <button id="reset-btn" class="btn btn-light" type="button">Reset</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="summary-grid">
+    <article class="summary-card summary-total">
+      <div class="value" id="sum-total">0</div>
+      <div class="label">Total Conflicts</div>
+    </article>
+    <article class="summary-card summary-lecturer">
+      <div class="value" id="sum-lecturer">0</div>
+      <div class="label">Lecturer Conflicts</div>
+    </article>
+    <article class="summary-card summary-room">
+      <div class="value" id="sum-room">0</div>
+      <div class="label">Room Conflicts</div>
+    </article>
+    <article class="summary-card summary-group">
+      <div class="value" id="sum-group">0</div>
+      <div class="label">Group Conflicts</div>
+    </article>
+  </section>
+
+  <section class="card table-card">
+    <table>
+      <thead>
+        <tr>
+          <th class="center">No</th>
+          <th>Conflict Type</th>
+          <th>Course</th>
+          <th>Lecturer</th>
+          <th>Group</th>
+          <th>Room</th>
+          <th>Day</th>
+          <th>Time</th>
+          <th>Conflict Description</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="conflict-tbody"></tbody>
+    </table>
+    <div class="table-footer">
+      <span id="table-info">Showing 0 to 0 of 0 entries</span>
+      <div class="pager">
+        <button id="prev-btn" type="button">&#8249;</button>
+        <span id="page-label">Page 1 / 1</span>
+        <button id="next-btn" type="button">&#8250;</button>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    const allConflicts = [
+      {
+        id: 1, semester: "2025/2026-2", programme: "FSKTM", week: "Week 2",
+        conflictType: "Lecturer", course: "CSE3201", lecturer: "Dr. Ali Ismail", group: "CS1", room: "DK1",
+        day: "Monday", time: "2.00pm - 5.00pm", description: "Lecturer assigned to 2 classes at same time", resolved: false
+      },
+      {
+        id: 2, semester: "2025/2026-2", programme: "FSKTM", week: "Week 2",
+        conflictType: "Room", course: "BIO1101", lecturer: "Dr. Siti Ahmad", group: "B2", room: "DK2",
+        day: "Tuesday", time: "9.00am - 12.00pm", description: "Room already occupied by another class", resolved: false
+      },
+      {
+        id: 3, semester: "2025/2026-2", programme: "FSKTM", week: "Week 3",
+        conflictType: "Group", course: "CSE3201", lecturer: "Dr. Ali Ismail", group: "CS1", room: "BKB1",
+        day: "Tuesday", time: "2.00pm - 3.00pm", description: "Group has overlapping classes", resolved: false
+      },
+      {
+        id: 4, semester: "2025/2026-2", programme: "MBBS", week: "Week 3",
+        conflictType: "Lecturer", course: "MED2102", lecturer: "Dr. Hani Omar", group: "M2", room: "LH-4",
+        day: "Wednesday", time: "10.00am - 12.00pm", description: "Lecturer already supervising lab session", resolved: false
+      },
+      {
+        id: 5, semester: "2024/2025-2", programme: "Nursing", week: "Week 1",
+        conflictType: "Room", course: "NUR1104", lecturer: "Dr. Lina Musa", group: "N1", room: "DK1",
+        day: "Monday", time: "8.00am - 10.00am", description: "Room double-booked for faculty event", resolved: false
+      },
+      {
+        id: 6, semester: "2024/2025-2", programme: "Pharmacy", week: "Week 4",
+        conflictType: "Group", course: "PHA2103", lecturer: "Dr. Amir Malik", group: "P2", room: "Lab-3",
+        day: "Thursday", time: "1.00pm - 3.00pm", description: "Group overlaps with compulsory module", resolved: false
+      },
+      {
+        id: 7, semester: "2026/2027-1", programme: "MBBS", week: "Week 5",
+        conflictType: "Lecturer", course: "MED3001", lecturer: "Prof. Azlan", group: "M5", room: "LT-1",
+        day: "Friday", time: "2.00pm - 4.00pm", description: "Lecturer assigned to external clinic duty", resolved: false
+      },
+      {
+        id: 8, semester: "2026/2027-1", programme: "FSKTM", week: "Week 6",
+        conflictType: "Room", course: "CSE1102", lecturer: "Dr. Nisa", group: "CS2", room: "DK2",
+        day: "Tuesday", time: "10.00am - 12.00pm", description: "Room maintenance planned during slot", resolved: false
+      }
+    ];
+
+    let filtered = [...allConflicts];
+    let currentPage = 1;
+    const pageSize = 6;
+
+    const els = {
+      semester: document.getElementById("filter-semester"),
+      programme: document.getElementById("filter-programme"),
+      type: document.getElementById("filter-type"),
+      week: document.getElementById("filter-week"),
+      search: document.getElementById("search-btn"),
+      reset: document.getElementById("reset-btn"),
+      tbody: document.getElementById("conflict-tbody"),
+      info: document.getElementById("table-info"),
+      pageLabel: document.getElementById("page-label"),
+      prev: document.getElementById("prev-btn"),
+      next: document.getElementById("next-btn"),
+      sumTotal: document.getElementById("sum-total"),
+      sumLecturer: document.getElementById("sum-lecturer"),
+      sumRoom: document.getElementById("sum-room"),
+      sumGroup: document.getElementById("sum-group")
+    };
+
+    function showToast(message, type = "success") {
+      const el = document.createElement("div");
+      el.className = "toast " + (type === "error" ? "error" : "success");
+      el.textContent = message;
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 2200);
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function getBadgeClass(type, resolved) {
+      if (resolved) return "badge badge-resolved";
+      if (type === "Lecturer") return "badge badge-lecturer";
+      if (type === "Room") return "badge badge-room";
+      return "badge badge-group";
+    }
+
+    function getWarnClass(type, resolved) {
+      if (resolved) return "warn-icon gray";
+      if (type === "Lecturer") return "warn-icon red";
+      if (type === "Room") return "warn-icon";
+      return "warn-icon green";
+    }
+
+    function getActiveConflicts(list) {
+      return list.filter(item => !item.resolved);
+    }
+
+    function renderSummary() {
+      const active = getActiveConflicts(filtered);
+      els.sumTotal.textContent = active.length;
+      els.sumLecturer.textContent = active.filter(x => x.conflictType === "Lecturer").length;
+      els.sumRoom.textContent = active.filter(x => x.conflictType === "Room").length;
+      els.sumGroup.textContent = active.filter(x => x.conflictType === "Group").length;
+    }
+
+    function renderTable() {
+      els.tbody.innerHTML = "";
+
+      const totalRows = filtered.length;
+      const totalPages = Math.max(1, Math.ceil(totalRows / pageSize));
+      if (currentPage > totalPages) currentPage = totalPages;
+      const start = (currentPage - 1) * pageSize;
+      const end = start + pageSize;
+      const rows = filtered.slice(start, end);
+
+      if (!rows.length) {
+        els.tbody.innerHTML = '<tr><td class="empty" colspan="10">No conflict records found for selected filters.</td></tr>';
+      } else {
+        rows.forEach((item, index) => {
+          const tr = document.createElement("tr");
+          tr.className = item.resolved ? "muted-row" : "";
+          tr.innerHTML = `
+            <td class="center">${start + index + 1}</td>
+            <td>
+              <span class="${getBadgeClass(item.conflictType, item.resolved)}">
+                ${item.resolved ? "Resolved" : item.conflictType}
+              </span>
+            </td>
+            <td>${escapeHtml(item.course)}</td>
+            <td>${escapeHtml(item.lecturer)}</td>
+            <td>${escapeHtml(item.group)}</td>
+            <td>${escapeHtml(item.room)}</td>
+            <td>${escapeHtml(item.day)}</td>
+            <td>${escapeHtml(item.time)}</td>
+            <td>
+              <div class="desc-wrap">
+                <span class="${getWarnClass(item.conflictType, item.resolved)}">${item.resolved ? "i" : "!"}</span>
+                <span>${escapeHtml(item.description)}</span>
+              </div>
+            </td>
+            <td>
+              <div class="action-row">
+                <button class="action-btn view" data-action="view" data-id="${item.id}">View Details</button>
+                <button class="action-btn edit" data-action="edit" data-id="${item.id}">Edit</button>
+                <button class="action-btn delete" data-action="delete" data-id="${item.id}">Delete</button>
+                ${item.resolved
+                  ? `<button class="action-btn resolve" data-action="reopen" data-id="${item.id}">Reopen</button>`
+                  : `<button class="action-btn resolve" data-action="resolve" data-id="${item.id}">Resolve</button>`}
+              </div>
+            </td>
+          `;
+          els.tbody.appendChild(tr);
+        });
+      }
+
+      const from = totalRows ? start + 1 : 0;
+      const to = Math.min(end, totalRows);
+      els.info.textContent = `Showing ${from} to ${to} of ${totalRows} entries`;
+      els.pageLabel.textContent = `Page ${currentPage} / ${totalPages}`;
+      els.prev.disabled = currentPage === 1;
+      els.next.disabled = currentPage === totalPages;
+    }
+
+    function applyFilter() {
+      const semester = els.semester.value;
+      const programme = els.programme.value;
+      const type = els.type.value;
+      const week = els.week.value;
+
+      filtered = allConflicts.filter(item => {
+        if (semester && item.semester !== semester) return false;
+        if (programme && item.programme !== programme) return false;
+        if (type && item.conflictType !== type) return false;
+        if (week && item.week !== week) return false;
+        return true;
+      });
+      currentPage = 1;
+      renderSummary();
+      renderTable();
+    }
+
+    function resetFilter() {
+      els.semester.value = "";
+      els.programme.value = "";
+      els.type.value = "";
+      els.week.value = "";
+      filtered = [...allConflicts];
+      currentPage = 1;
+      renderSummary();
+      renderTable();
+    }
+
+    function getById(id) {
+      return allConflicts.find(item => item.id === id);
+    }
+
+    function viewDetails(id) {
+      const item = getById(id);
+      if (!item) return;
+      alert(
+        "Conflict Details\n\n" +
+        `Type: ${item.conflictType}\n` +
+        `Course: ${item.course}\n` +
+        `Lecturer: ${item.lecturer}\n` +
+        `Group: ${item.group}\n` +
+        `Room: ${item.room}\n` +
+        `Day: ${item.day}\n` +
+        `Time: ${item.time}\n` +
+        `Description: ${item.description}\n` +
+        `Status: ${item.resolved ? "Resolved" : "Active"}`
+      );
+    }
+
+    function editConflict(id) {
+      const item = getById(id);
+      if (!item) return;
+
+      const newDay = prompt("Update Day:", item.day);
+      if (newDay === null) return;
+      const newTime = prompt("Update Time:", item.time);
+      if (newTime === null) return;
+      const newDescription = prompt("Update Conflict Description:", item.description);
+      if (newDescription === null) return;
+
+      item.day = newDay.trim() || item.day;
+      item.time = newTime.trim() || item.time;
+      item.description = newDescription.trim() || item.description;
+
+      showToast("Conflict record updated.");
+      applyFilter();
+    }
+
+    function deleteConflict(id) {
+      const index = allConflicts.findIndex(item => item.id === id);
+      if (index < 0) return;
+      if (!confirm("Delete this conflict record?")) return;
+      allConflicts.splice(index, 1);
+      showToast("Conflict record deleted.");
+      applyFilter();
+    }
+
+    function resolveConflict(id) {
+      const item = getById(id);
+      if (!item) return;
+      if (!confirm("Mark this conflict as resolved?")) return;
+      item.resolved = true;
+      item.description = "Resolved: " + item.description;
+      showToast("Conflict resolved successfully.");
+      applyFilter();
+    }
+
+    function reopenConflict(id) {
+      const item = getById(id);
+      if (!item) return;
+      if (!confirm("Reopen this resolved conflict?")) return;
+      item.resolved = false;
+      item.description = item.description.replace(/^Resolved:\s*/i, "");
+      showToast("Conflict reopened.");
+      applyFilter();
+    }
+
+    els.search.addEventListener("click", applyFilter);
+    els.reset.addEventListener("click", resetFilter);
+    els.prev.addEventListener("click", () => {
+      if (currentPage > 1) {
+        currentPage--;
+        renderTable();
+      }
+    });
+    els.next.addEventListener("click", () => {
+      const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+      if (currentPage < totalPages) {
+        currentPage++;
+        renderTable();
+      }
+    });
+
+    els.tbody.addEventListener("click", (event) => {
+      const btn = event.target.closest("button[data-action]");
+      if (!btn) return;
+      const action = btn.dataset.action;
+      const id = parseInt(btn.dataset.id, 10);
+      if (!id) return;
+
+      if (action === "view") viewDetails(id);
+      if (action === "edit") editConflict(id);
+      if (action === "delete") deleteConflict(id);
+      if (action === "resolve") resolveConflict(id);
+      if (action === "reopen") reopenConflict(id);
+    });
+
+    renderSummary();
+    renderTable();
+  </script>
+</body>
+</html>

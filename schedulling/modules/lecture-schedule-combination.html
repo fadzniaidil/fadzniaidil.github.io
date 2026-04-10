@@ -1,0 +1,609 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lecture Schedule Combination</title>
+  <style>
+    :root {
+      --bg: #f1f5f9;
+      --card: #ffffff;
+      --line: #dbe2ea;
+      --line-strong: #cbd5e1;
+      --text: #0f172a;
+      --muted: #64748b;
+      --primary: #3b82f6;
+      --primary-dark: #2563eb;
+      --danger-bg: #fee2e2;
+      --danger-line: #fecaca;
+      --danger-text: #ef4444;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "DM Sans", "Segoe UI", Arial, sans-serif;
+      padding: 16px;
+    }
+    .card {
+      background: var(--card);
+      border-radius: 14px;
+      border: 1px solid #edf2f7;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+    .form-card {
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    .form-title {
+      margin: 0 0 16px 0;
+      font-size: 28px;
+      line-height: 1.15;
+      font-weight: 700;
+      color: #1e293b;
+    }
+    .grid-two {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+    .label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: #475569;
+      margin-bottom: 8px;
+    }
+    .required { color: #ef4444; }
+    .control {
+      width: 100%;
+      height: 42px;
+      border: 1px solid var(--line-strong);
+      border-radius: 10px;
+      padding: 0 12px;
+      font-size: 15px;
+      color: #1e293b;
+      background: #fff;
+    }
+    .rows-wrap { display: grid; gap: 12px; margin-bottom: 16px; }
+    .schedule-row {
+      border: 1px solid var(--line-strong);
+      border-radius: 10px;
+      background: #f8fafc;
+      padding: 14px;
+    }
+    .days-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px 12px;
+      margin-bottom: 12px;
+    }
+    .day-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      color: #475569;
+    }
+    .day-item input {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
+    .time-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .row-actions {
+      margin-top: 12px;
+      display: flex;
+      justify-content: flex-end;
+    }
+    .btn {
+      border-radius: 10px;
+      border: 1px solid transparent;
+      padding: 9px 14px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      line-height: 1;
+      white-space: nowrap;
+    }
+    .btn-outline {
+      background: #f8fafc;
+      border-color: var(--line-strong);
+      color: #64748b;
+    }
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+    }
+    .btn-primary:hover { background: var(--primary-dark); }
+    .btn-danger-soft {
+      background: var(--danger-bg);
+      border-color: var(--danger-line);
+      color: var(--danger-text);
+    }
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .bottom-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .table-card { overflow: hidden; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    thead tr { background: #f8fafc; }
+    th {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--line);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #64748b;
+      text-align: left;
+    }
+    th.center, td.center { text-align: center; }
+    td {
+      padding: 11px 16px;
+      border-top: 1px solid var(--line);
+      color: #334155;
+      font-size: 14px;
+      vertical-align: top;
+    }
+    .summary-row td { background: #ffffff; }
+    .summary-row:nth-of-type(4n+1) td { background: #fcfdff; }
+    .code-cell {
+      font-weight: 700;
+      color: #1e293b;
+      white-space: nowrap;
+    }
+    .desc-cell {
+      color: #1e293b;
+    }
+    .detail-host {
+      padding: 0;
+      background: #f8fafc;
+    }
+    .detail-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .detail-table th, .detail-table td {
+      border: 1px solid var(--line);
+      padding: 8px 10px;
+      font-size: 13px;
+    }
+    .detail-table th {
+      background: #f1f5f9;
+      color: #475569;
+      text-transform: none;
+      letter-spacing: normal;
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .link-btn {
+      border: none;
+      background: transparent;
+      color: #1e40af;
+      font-size: 14px;
+      cursor: pointer;
+      padding: 0;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .link-btn.danger { color: #dc2626; }
+    .empty-cell {
+      text-align: center;
+      color: #94a3b8;
+      font-size: 14px;
+      padding: 24px 16px;
+    }
+    .toast {
+      position: fixed;
+      right: 16px;
+      bottom: 16px;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 10px 14px;
+      border-radius: 10px;
+      z-index: 9999;
+      box-shadow: 0 8px 18px rgba(0,0,0,0.2);
+      animation: fadeIn 0.15s ease-out;
+    }
+    .toast.success { background: #10b981; }
+    .toast.error { background: #ef4444; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @media (max-width: 900px) {
+      .grid-two, .time-grid { grid-template-columns: 1fr; }
+      .days-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .form-title { font-size: 24px; }
+    }
+  </style>
+</head>
+<body>
+  <section class="card form-card">
+    <h2 class="form-title">Add Schedule Combination</h2>
+    <form id="combo-form">
+      <div class="grid-two">
+        <div>
+          <label class="label" for="course-credit">Course Credit <span class="required">*</span></label>
+          <select id="course-credit" class="control" required>
+            <option value="">Select...</option>
+            <option value="3+0">(3+0)</option>
+            <option value="2+1">(2+1)</option>
+            <option value="2+0">(2+0)</option>
+            <option value="4+0">(4+0)</option>
+            <option value="3+1">(3+1)</option>
+          </select>
+        </div>
+        <div>
+          <label class="label" for="teaching-technique">Teaching Technique <span class="required">*</span></label>
+          <select id="teaching-technique" class="control" required>
+            <option value="">Select...</option>
+            <option value="Lecture">Lecture</option>
+            <option value="Amali">Amali</option>
+            <option value="Tutorial">Tutorial</option>
+            <option value="Clinical">Clinical</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="rows-container" class="rows-wrap"></div>
+
+      <div class="bottom-actions">
+        <button type="button" id="add-row-btn" class="btn btn-outline">+ Add Schedule Row</button>
+        <button type="submit" id="save-btn" class="btn btn-primary">Save Schedule</button>
+        <button type="button" id="clear-btn" class="btn btn-outline">Clear</button>
+      </div>
+    </form>
+  </section>
+
+  <section class="card table-card">
+    <table>
+      <thead>
+        <tr>
+          <th>Code</th>
+          <th>Description</th>
+          <th class="center">Credit</th>
+          <th>Teach_tech</th>
+          <th class="center">Course_cat</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="records-body">
+        <tr><td class="empty-cell" colspan="6">No schedule combinations saved yet.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <script>
+    const dayDefs = [
+      { ms: "Isnin", en: "Monday", code: "I" },
+      { ms: "Selasa", en: "Tuesday", code: "S" },
+      { ms: "Rabu", en: "Wednesday", code: "R" },
+      { ms: "Khamis", en: "Thursday", code: "K" },
+      { ms: "Jumaat", en: "Friday", code: "J" },
+      { ms: "Sabtu", en: "Saturday", code: "B" },
+      { ms: "Ahad", en: "Sunday", code: "A" }
+    ];
+    const dayMap = Object.fromEntries(dayDefs.map(d => [d.ms, d]));
+
+    const formEl = document.getElementById("combo-form");
+    const rowsContainer = document.getElementById("rows-container");
+    const addRowBtn = document.getElementById("add-row-btn");
+    const clearBtn = document.getElementById("clear-btn");
+    const saveBtn = document.getElementById("save-btn");
+    const creditEl = document.getElementById("course-credit");
+    const techniqueEl = document.getElementById("teaching-technique");
+    const recordsBody = document.getElementById("records-body");
+
+    let records = [];
+    let editingId = null;
+
+    function buildTimeOptions() {
+      const out = ['<option value="">Select...</option>'];
+      for (let hour = 8; hour <= 21; hour++) {
+        for (let minute = 0; minute <= 30; minute += 30) {
+          if (hour === 21 && minute > 0) continue;
+          const hh = String(hour).padStart(2, "0");
+          const mm = String(minute).padStart(2, "0");
+          const value = hh + ":" + mm;
+          out.push('<option value="' + value + '">' + formatClockLabel(value) + '</option>');
+        }
+      }
+      return out.join("");
+    }
+    const timeOptionsHtml = buildTimeOptions();
+
+    function formatClockLabel(time) {
+      const [h, m] = time.split(":").map(Number);
+      const suffix = h >= 12 ? "PM" : "AM";
+      const h12 = h % 12 === 0 ? 12 : h % 12;
+      return h12 + ":" + String(m).padStart(2, "0") + " " + suffix;
+    }
+
+    function formatCompactHour(time) {
+      const [h, m] = time.split(":").map(Number);
+      const h12 = h % 12 === 0 ? 12 : h % 12;
+      return m === 0 ? String(h12) : h12 + ":" + String(m).padStart(2, "0");
+    }
+
+    function formatGridTime(time) {
+      const [h, m] = time.split(":").map(Number);
+      const suffix = h >= 12 ? "pm" : "am";
+      const h12 = h % 12 === 0 ? 12 : h % 12;
+      return m === 0 ? (h12 + suffix) : (h12 + ":" + String(m).padStart(2, "0") + suffix);
+    }
+
+    function toMinutes(time) {
+      const [h, m] = time.split(":").map(Number);
+      return (h * 60) + m;
+    }
+
+    function hourPartForCode(time) {
+      return String(parseInt(time.split(":")[0], 10));
+    }
+
+    function addScheduleRow(prefill = {}) {
+      const row = document.createElement("div");
+      row.className = "schedule-row";
+      row.innerHTML =
+        '<label class="label">Days <span class="required">*</span></label>' +
+        '<div class="days-grid">' +
+          dayDefs.map(day =>
+            '<label class="day-item">' +
+            '<input type="checkbox" class="day-check" value="' + day.ms + '"' + ((prefill.days || []).includes(day.ms) ? " checked" : "") + ">" +
+            "<span>" + day.ms + "</span>" +
+            "</label>"
+          ).join("") +
+        '</div>' +
+        '<div class="time-grid">' +
+          '<div>' +
+            '<label class="label">Start Time <span class="required">*</span></label>' +
+            '<select class="control start-time">' + timeOptionsHtml + '</select>' +
+          '</div>' +
+          '<div>' +
+            '<label class="label">End Time <span class="required">*</span></label>' +
+            '<select class="control end-time">' + timeOptionsHtml + '</select>' +
+          '</div>' +
+        '</div>' +
+        '<div class="row-actions"><button type="button" class="btn btn-danger-soft remove-row-btn">Remove</button></div>';
+
+      rowsContainer.appendChild(row);
+      row.querySelector(".start-time").value = prefill.startTime || "";
+      row.querySelector(".end-time").value = prefill.endTime || "";
+      refreshRemoveButtons();
+    }
+
+    function refreshRemoveButtons() {
+      const rows = rowsContainer.querySelectorAll(".schedule-row");
+      rows.forEach((row) => {
+        const removeBtn = row.querySelector(".remove-row-btn");
+        removeBtn.disabled = rows.length <= 1;
+      });
+    }
+
+    function resetForm() {
+      formEl.reset();
+      rowsContainer.innerHTML = "";
+      editingId = null;
+      saveBtn.textContent = "Save Schedule";
+      addScheduleRow();
+    }
+
+    function showToast(message, type = "success") {
+      const toast = document.createElement("div");
+      toast.className = "toast " + (type === "error" ? "error" : "success");
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 2200);
+    }
+
+    function collectScheduleRows() {
+      const rows = Array.from(rowsContainer.querySelectorAll(".schedule-row"));
+      const scheduleRows = [];
+
+      for (const row of rows) {
+        const days = Array.from(row.querySelectorAll(".day-check:checked")).map(cb => cb.value);
+        const startTime = row.querySelector(".start-time").value;
+        const endTime = row.querySelector(".end-time").value;
+
+        if (!days.length || !startTime || !endTime) {
+          showToast("Please complete days, start time and end time for each row.", "error");
+          return null;
+        }
+        if (toMinutes(endTime) <= toMinutes(startTime)) {
+          showToast("End Time must be later than Start Time.", "error");
+          return null;
+        }
+
+        scheduleRows.push({ days, startTime, endTime });
+      }
+
+      return scheduleRows;
+    }
+
+    function buildCode(scheduleRows) {
+      return scheduleRows.map((row) => {
+        const dayCode = row.days.map(day => dayMap[day].code).join("");
+        return dayCode + hourPartForCode(row.startTime) + "-" + hourPartForCode(row.endTime);
+      }).join(",");
+    }
+
+    function buildDescription(scheduleRows) {
+      return scheduleRows.flatMap((row) => {
+        return row.days.map((day) => {
+          return day + "(" + formatCompactHour(row.startTime) + "-" + formatCompactHour(row.endTime) + ")";
+        });
+      }).join(", ");
+    }
+
+    function buildDetailRows(scheduleRows) {
+      const details = [];
+      scheduleRows.forEach((row) => {
+        const credit = (toMinutes(row.endTime) - toMinutes(row.startTime)) / 60;
+        row.days.forEach((day) => {
+          details.push({
+            dayMs: day,
+            dayEn: dayMap[day].en,
+            startTime: row.startTime,
+            endTime: row.endTime,
+            credit: credit
+          });
+        });
+      });
+      return details;
+    }
+
+    function formatCredit(value) {
+      return Number.isInteger(value) ? String(value) : value.toFixed(1).replace(/\.0$/, "");
+    }
+
+    function renderGrid() {
+      recordsBody.innerHTML = "";
+      if (!records.length) {
+        recordsBody.innerHTML = '<tr><td class="empty-cell" colspan="6">No schedule combinations saved yet.</td></tr>';
+        return;
+      }
+
+      records.forEach((record) => {
+        const summaryRow = document.createElement("tr");
+        summaryRow.className = "summary-row";
+        summaryRow.innerHTML =
+          '<td class="code-cell">' + record.code + '</td>' +
+          '<td class="desc-cell">' + record.description + '</td>' +
+          '<td class="center"><strong>' + formatCredit(record.totalCredit) + '</strong></td>' +
+          '<td>' + record.teachTechnique + '</td>' +
+          '<td class="center"><strong>' + record.courseCat + '</strong></td>' +
+          '<td><button class="link-btn edit-btn" data-id="' + record.id + '">Edit</button> || <button class="link-btn danger delete-btn" data-id="' + record.id + '">Delete</button></td>';
+        recordsBody.appendChild(summaryRow);
+
+        const details = record.details.map((row) => {
+          return "<tr>" +
+            "<td>" + row.dayMs + "</td>" +
+            "<td>" + row.dayEn + "</td>" +
+            "<td>" + formatGridTime(row.startTime) + "</td>" +
+            "<td>" + formatGridTime(row.endTime) + "</td>" +
+            "<td>" + formatCredit(row.credit) + "</td>" +
+          "</tr>";
+        }).join("");
+
+        const detailRow = document.createElement("tr");
+        detailRow.innerHTML =
+          '<td class="detail-host" colspan="6">' +
+            '<table class="detail-table">' +
+              '<thead><tr><th>Day (Malay)</th><th>Day (Eng)</th><th>Time Start</th><th>Time End</th><th>Cedit</th></tr></thead>' +
+              '<tbody>' + details + '</tbody>' +
+            '</table>' +
+          '</td>';
+        recordsBody.appendChild(detailRow);
+      });
+    }
+
+    function handleSave(event) {
+      event.preventDefault();
+
+      const courseCredit = creditEl.value;
+      const teachTechnique = techniqueEl.value;
+      if (!courseCredit || !teachTechnique) {
+        showToast("Course Credit and Teaching Technique are required.", "error");
+        return;
+      }
+
+      const scheduleRows = collectScheduleRows();
+      if (!scheduleRows) return;
+
+      const details = buildDetailRows(scheduleRows);
+      const totalCredit = details.reduce((sum, item) => sum + item.credit, 0);
+      const nextId = Math.max(0, ...records.map(r => r.id)) + 1;
+      const recordId = editingId || nextId;
+
+      const payload = {
+        id: recordId,
+        courseCredit,
+        teachTechnique,
+        courseCat: parseInt(courseCredit.split("+")[0], 10) || 0,
+        scheduleRows,
+        details,
+        code: buildCode(scheduleRows),
+        description: buildDescription(scheduleRows),
+        totalCredit
+      };
+
+      if (editingId) {
+        const idx = records.findIndex(r => r.id === editingId);
+        if (idx >= 0) records[idx] = payload;
+        showToast("Schedule updated successfully.");
+      } else {
+        records.unshift(payload);
+        showToast("Schedule saved successfully.");
+      }
+
+      renderGrid();
+      resetForm();
+    }
+
+    function startEdit(id) {
+      const target = records.find(r => r.id === id);
+      if (!target) return;
+
+      editingId = id;
+      creditEl.value = target.courseCredit;
+      techniqueEl.value = target.teachTechnique;
+      rowsContainer.innerHTML = "";
+      target.scheduleRows.forEach((row) => addScheduleRow(row));
+      saveBtn.textContent = "Update Schedule";
+      formEl.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function deleteRecord(id) {
+      if (!confirm("Delete this schedule combination?")) return;
+      records = records.filter(r => r.id !== id);
+      renderGrid();
+      showToast("Schedule deleted successfully.");
+    }
+
+    addRowBtn.addEventListener("click", () => addScheduleRow());
+    clearBtn.addEventListener("click", resetForm);
+    rowsContainer.addEventListener("click", (event) => {
+      const removeBtn = event.target.closest(".remove-row-btn");
+      if (!removeBtn) return;
+      const row = event.target.closest(".schedule-row");
+      if (!row) return;
+      if (rowsContainer.querySelectorAll(".schedule-row").length <= 1) {
+        showToast("At least one schedule row is required.", "error");
+        return;
+      }
+      row.remove();
+      refreshRemoveButtons();
+    });
+    recordsBody.addEventListener("click", (event) => {
+      const editBtn = event.target.closest(".edit-btn");
+      const delBtn = event.target.closest(".delete-btn");
+      if (editBtn) {
+        startEdit(parseInt(editBtn.dataset.id, 10));
+      } else if (delBtn) {
+        deleteRecord(parseInt(delBtn.dataset.id, 10));
+      }
+    });
+    formEl.addEventListener("submit", handleSave);
+
+    resetForm();
+    renderGrid();
+  </script>
+</body>
+</html>

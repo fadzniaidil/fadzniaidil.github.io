@@ -1,0 +1,700 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Distance Detection Setup</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f1f5f9;
+      --card: #ffffff;
+      --line: #e2e8f0;
+      --line-strong: #cbd5e1;
+      --text: #0f172a;
+      --muted: #64748b;
+      --primary: #3b82f6;
+      --primary-dark: #2563eb;
+      --lecture: #60a5fa;
+      --lab: #86efac;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 16px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "DM Sans", "Segoe UI", Arial, sans-serif;
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .page-card {
+      background: var(--card);
+      border: 1px solid #edf2f7;
+      border-radius: 16px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+      overflow: hidden;
+    }
+
+    .top-strip {
+      padding: 12px 24px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      background: #ffffff;
+    }
+
+    .crumbs {
+      font-size: 13px;
+      color: #94a3b8;
+      font-weight: 500;
+    }
+
+    .top-actions {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .icon-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: #f8fafc;
+      color: #64748b;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+
+    .avatar {
+      width: 30px;
+      height: 30px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+      color: #1e3a8a;
+      font-size: 12px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #bfdbfe;
+    }
+
+    .heading {
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+
+    .heading h1 {
+      margin: 0;
+      font-size: 30px;
+      line-height: 1.15;
+      font-weight: 700;
+      color: #1e293b;
+      letter-spacing: 0;
+    }
+
+    .heading p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0;
+    }
+
+    .btn-primary {
+      height: 42px;
+      border: 1px solid transparent;
+      border-radius: 10px;
+      padding: 0 18px;
+      background: var(--primary);
+      color: #fff;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .btn-primary:hover { background: var(--primary-dark); }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      min-height: 520px;
+    }
+
+    .side-nav {
+      border-right: 1px solid var(--line);
+      background: #fbfdff;
+      padding: 18px 0;
+    }
+
+    .side-title {
+      margin: 0;
+      padding: 0 20px 12px;
+      border-bottom: 1px solid var(--line);
+      font-size: 30px;
+      font-weight: 700;
+      color: #1e293b;
+      line-height: 1.15;
+    }
+
+    .side-list {
+      list-style: none;
+      margin: 10px 0 0;
+      padding: 0;
+    }
+
+    .side-item {
+      font-size: 22px;
+      font-weight: 500;
+      color: #64748b;
+      padding: 10px 20px;
+      border-left: 3px solid transparent;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .side-item .dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 999px;
+      background: #94a3b8;
+      flex-shrink: 0;
+    }
+
+    .side-item.active {
+      background: #eff6ff;
+      color: #2563eb;
+      border-left-color: #3b82f6;
+      font-weight: 600;
+    }
+
+    .content {
+      padding: 16px 20px 18px;
+      background: #fff;
+    }
+
+    .section {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+
+    .section-head {
+      margin: 0;
+      padding: 11px 14px;
+      border-bottom: 1px solid var(--line);
+      background: #f8fafc;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .section-head-title {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      font-weight: 700;
+      color: #334155;
+    }
+
+    .chev {
+      color: #94a3b8;
+      font-size: 13px;
+    }
+
+    .section-body {
+      padding: 12px;
+      background: #fff;
+    }
+
+    .note {
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 10px 12px;
+      background: #f8fafc;
+      color: #64748b;
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 10px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    thead tr { background: #f8fafc; }
+
+    th,
+    td {
+      border-bottom: 1px solid var(--line);
+      border-right: 1px solid var(--line);
+      text-align: left;
+      padding: 10px 12px;
+      font-size: 13px;
+      color: #334155;
+    }
+
+    th:last-child,
+    td:last-child { border-right: 0; }
+
+    tbody tr:last-child td { border-bottom: 0; }
+
+    th {
+      font-weight: 700;
+      color: #475569;
+    }
+
+    .grid-two {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px 18px;
+    }
+
+    .field {
+      display: grid;
+      grid-template-columns: 1fr 160px;
+      align-items: center;
+      gap: 12px;
+      min-height: 34px;
+    }
+
+    .field label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #334155;
+      letter-spacing: 0;
+    }
+
+    .unit-input {
+      display: inline-flex;
+      align-items: center;
+      width: 100%;
+      height: 30px;
+      border: 1px solid var(--line-strong);
+      border-radius: 8px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .unit-input input {
+      width: 100%;
+      border: 0;
+      outline: 0;
+      height: 100%;
+      padding: 0 10px;
+      font-size: 13px;
+      font-family: inherit;
+      color: #1e293b;
+      font-weight: 600;
+    }
+
+    .unit-input span {
+      min-width: 42px;
+      height: 100%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 8px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #64748b;
+      background: #f8fafc;
+      border-left: 1px solid var(--line);
+    }
+
+    .alert-row {
+      border-top: 1px solid var(--line);
+      margin-top: 10px;
+      padding-top: 10px;
+      display: grid;
+      grid-template-columns: 100px 1fr auto;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .alert-row label {
+      font-size: 13px;
+      font-weight: 700;
+      color: #334155;
+    }
+
+    .alert-row input {
+      width: 100%;
+      height: 34px;
+      border: 1px solid var(--line-strong);
+      border-radius: 8px;
+      padding: 0 10px;
+      font-size: 13px;
+      color: #1e293b;
+      font-family: inherit;
+    }
+
+    .alert-note {
+      font-size: 12px;
+      color: #64748b;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .legend {
+      border-top: 1px solid var(--line);
+      margin-top: 10px;
+      padding-top: 11px;
+      display: inline-flex;
+      gap: 20px;
+      align-items: center;
+      flex-wrap: wrap;
+      color: #334155;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .legend-dot {
+      width: 18px;
+      height: 12px;
+      border-radius: 4px;
+      border: 1px solid transparent;
+    }
+
+    .legend-dot.lecture {
+      background: #dbeafe;
+      border-color: #bfdbfe;
+    }
+
+    .legend-dot.lab {
+      background: #dcfce7;
+      border-color: #bbf7d0;
+    }
+
+    .toast {
+      position: fixed;
+      right: 24px;
+      bottom: 20px;
+      z-index: 10;
+      background: #0f172a;
+      color: #fff;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.22s ease, transform 0.22s ease;
+      pointer-events: none;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 1220px) {
+      .layout {
+        grid-template-columns: 200px 1fr;
+      }
+
+      .side-title {
+        font-size: 26px;
+      }
+
+      .side-item {
+        font-size: 19px;
+      }
+    }
+
+    @media (max-width: 980px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .side-nav {
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .side-title {
+        font-size: 20px;
+      }
+
+      .side-list {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .side-item {
+        font-size: 14px;
+      }
+
+      .heading h1 {
+        font-size: 28px;
+      }
+
+      .field {
+        grid-template-columns: 1fr;
+        gap: 6px;
+      }
+
+      .grid-two {
+        grid-template-columns: 1fr;
+      }
+
+      .alert-row {
+        grid-template-columns: 1fr;
+      }
+
+      .alert-note {
+        white-space: normal;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-card">
+    <div class="top-strip">
+      <div class="crumbs">Timetable Configuration / Distance Detection</div>
+      <div class="top-actions">
+        <button class="icon-btn" type="button" aria-label="Options">&#9776;</button>
+        <div class="avatar" aria-label="Super Admin">SA</div>
+      </div>
+    </div>
+
+    <div class="heading">
+      <div>
+        <h1>Initial Configuration for Distance Detection in Timetable Movement</h1>
+        <p>Configure the required settings for detecting student movement between classes in the timetable.</p>
+      </div>
+      <button id="save-settings-btn" class="btn-primary" type="button">Save Settings</button>
+    </div>
+
+    <div class="layout">
+      <aside class="side-nav" aria-label="Timetable configuration menu">
+        <h2 class="side-title">Timetable Configuration</h2>
+        <ul class="side-list">
+          <li class="side-item"><span class="dot"></span>Overview</li>
+          <li class="side-item"><span class="dot"></span>Classroom Locations</li>
+          <li class="side-item active"><span class="dot"></span>Distance Detection Setup</li>
+          <li class="side-item"><span class="dot"></span>Class Schedule</li>
+        </ul>
+      </aside>
+
+      <main class="content" aria-label="Distance detection settings">
+        <form id="distance-setup-form">
+          <section class="section">
+            <h3 class="section-head">
+              <span class="section-head-title"><span class="chev">&#9662;</span>Building Coordinates</span>
+            </h3>
+            <div class="section-body">
+              <div class="note">Building coordinates are automatically loaded from the existing classroom/location configuration.</div>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Building Name</th>
+                    <th>Latitude</th>
+                    <th>Longitude</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Main Hall</td>
+                    <td>3.144057</td>
+                    <td>101.692064</td>
+                  </tr>
+                  <tr>
+                    <td>Science Block</td>
+                    <td>3.143825</td>
+                    <td>101.691473</td>
+                  </tr>
+                  <tr>
+                    <td>Commerce Faculty</td>
+                    <td>3.142738</td>
+                    <td>101.691992</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="section">
+            <h3 class="section-head">
+              <span class="section-head-title"><span class="chev">&#9662;</span>Time Slot Settings</span>
+            </h3>
+            <div class="section-body">
+              <div class="grid-two">
+                <div class="field">
+                  <label for="minimum-gap">Minimum Gap Between Classes</label>
+                  <div class="unit-input">
+                    <input id="minimum-gap" name="minimumGap" type="number" min="0" step="1" value="10" required>
+                    <span>min</span>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label for="walking-speed-slot">Walking Speed Estimation</label>
+                  <div class="unit-input">
+                    <input id="walking-speed-slot" name="walkingSpeedSlot" type="number" min="0" step="0.1" value="1.2" required>
+                    <span>m/s</span>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label for="late-warning">Late Movement Warning</label>
+                  <div class="unit-input">
+                    <input id="late-warning" name="lateWarning" type="number" min="0" step="1" value="3" required>
+                    <span>min</span>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label for="max-permissible-distance">Maximum Permissible Distance</label>
+                  <div class="unit-input">
+                    <input id="max-permissible-distance" name="maxPermissibleDistance" type="number" min="0" step="1" value="250" required>
+                    <span>m</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="section">
+            <h3 class="section-head">
+              <span class="section-head-title"><span class="chev">&#9662;</span>Distance Calculation Rules</span>
+            </h3>
+            <div class="section-body">
+              <div class="grid-two">
+                <div class="field">
+                  <label for="walking-speed">Walking Speed Estimation</label>
+                  <div class="unit-input">
+                    <input id="walking-speed" name="walkingSpeed" type="number" min="0" step="0.1" value="1.2" required>
+                    <span>m/s</span>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label for="minimum-buffer">Minimum Buffer Time</label>
+                  <div class="unit-input">
+                    <input id="minimum-buffer" name="minimumBuffer" type="number" min="0" step="1" value="3" required>
+                    <span>min</span>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label for="maximum-reasonable">Maximum Reasonable Distance</label>
+                  <div class="unit-input">
+                    <input id="maximum-reasonable" name="maximumReasonable" type="number" min="0" step="1" value="250" required>
+                    <span>m</span>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label for="maximum-reachable">Maximum Reachable Distance</label>
+                  <div class="unit-input">
+                    <input id="maximum-reachable" name="maximumReachable" type="number" min="0" step="1" value="250" required>
+                    <span>m</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="alert-row">
+                <label for="alert-text">Alert Text:</label>
+                <input id="alert-text" name="alertText" type="text" value="Insufficient time to move between classes" required>
+                <span class="alert-note">Show warning/path in red if transition is not feasible.</span>
+              </div>
+
+              <div class="legend" aria-label="Class type legend">
+                <span class="legend-item"><span class="legend-dot lecture"></span>Kuliah / Lecture</span>
+                <span class="legend-item"><span class="legend-dot lab"></span>Amali / Lab</span>
+              </div>
+            </div>
+          </section>
+        </form>
+      </main>
+    </div>
+  </div>
+
+  <div id="save-toast" class="toast" role="status" aria-live="polite">Distance detection settings saved.</div>
+
+  <script>
+    (function () {
+      const form = document.getElementById('distance-setup-form');
+      const saveBtn = document.getElementById('save-settings-btn');
+      const toast = document.getElementById('save-toast');
+      let toastTimer = null;
+
+      function showToast(message) {
+        toast.textContent = message;
+        toast.classList.add('show');
+        window.clearTimeout(toastTimer);
+        toastTimer = window.setTimeout(() => {
+          toast.classList.remove('show');
+        }, 1800);
+      }
+
+      function saveSettings() {
+        if (!form.checkValidity()) {
+          form.reportValidity();
+          return;
+        }
+
+        const payload = Object.fromEntries(new FormData(form).entries());
+        window.localStorage.setItem('distanceDetectionSetup', JSON.stringify(payload));
+        showToast('Distance detection settings saved.');
+      }
+
+      function hydrateSettings() {
+        const raw = window.localStorage.getItem('distanceDetectionSetup');
+        if (!raw) return;
+
+        try {
+          const parsed = JSON.parse(raw);
+          Object.entries(parsed).forEach(([key, value]) => {
+            const el = form.elements.namedItem(key);
+            if (el) {
+              el.value = value;
+            }
+          });
+        } catch (_err) {
+          // Ignore malformed local storage values.
+        }
+      }
+
+      saveBtn.addEventListener('click', saveSettings);
+      form.addEventListener('submit', function (event) {
+        event.preventDefault();
+        saveSettings();
+      });
+
+      hydrateSettings();
+    })();
+  </script>
+</body>
+</html>

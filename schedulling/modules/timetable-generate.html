@@ -1,0 +1,977 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Timetable</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f1f5f9;
+      --card: #ffffff;
+      --line: #e2e8f0;
+      --line-strong: #cbd5e1;
+      --text: #0f172a;
+      --muted: #64748b;
+      --primary: #3b82f6;
+      --primary-dark: #2563eb;
+      --lecture-bg: #dbeafe;
+      --lecture-border: #bfdbfe;
+      --lab-bg: #dcfce7;
+      --lab-border: #bbf7d0;
+      --warn-bg: #fef2f2;
+      --warn-border: #fecaca;
+      --warn-text: #b91c1c;
+      --move-bg: #ede9fe;
+      --move-border: #d8b4fe;
+      --move-text: #5b21b6;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 16px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "DM Sans", "Segoe UI", Arial, sans-serif;
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid #edf2f7;
+      border-radius: 14px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+
+    .header-card {
+      margin-bottom: 12px;
+      padding: 18px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .title {
+      margin: 0;
+      font-size: 32px;
+      line-height: 1.1;
+      font-weight: 700;
+      color: #1e293b;
+    }
+
+    .subtitle {
+      margin: 8px 0 0;
+      font-size: 14px;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    .role-note {
+      margin-top: 8px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      padding: 4px 10px;
+      border: 1px solid #bfdbfe;
+      background: #eff6ff;
+      color: #1e3a8a;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .export-wrap {
+      position: relative;
+      display: inline-flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 6px;
+    }
+
+    .btn {
+      border: 1px solid transparent;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .btn-primary:hover { background: var(--primary-dark); }
+
+    .btn-outline {
+      background: #f8fafc;
+      border-color: var(--line-strong);
+      color: #64748b;
+    }
+
+    .export-menu {
+      position: absolute;
+      right: 0;
+      top: calc(100% + 6px);
+      min-width: 136px;
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 10px 20px rgba(15, 23, 42, 0.12);
+      overflow: hidden;
+      display: none;
+      z-index: 5;
+    }
+
+    .export-menu.show { display: block; }
+
+    .export-item {
+      width: 100%;
+      border: 0;
+      background: #fff;
+      text-align: left;
+      padding: 9px 12px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #334155;
+      cursor: pointer;
+    }
+
+    .export-item:hover { background: #f8fafc; }
+
+    .tt-card {
+      margin-bottom: 12px;
+      overflow: hidden;
+    }
+
+    .tt-head {
+      display: grid;
+      grid-template-columns: 130px repeat(5, minmax(0, 1fr));
+      border-bottom: 1px solid var(--line);
+      background: #f8fafc;
+    }
+
+    .tt-head-cell {
+      padding: 12px 10px;
+      border-right: 1px solid var(--line);
+      font-size: 13px;
+      font-weight: 700;
+      color: #475569;
+      text-align: center;
+    }
+
+    .tt-head-cell:first-child {
+      text-align: left;
+      color: #64748b;
+      font-weight: 600;
+    }
+
+    .tt-head-cell:last-child { border-right: 0; }
+
+    .tt-body {
+      display: grid;
+      grid-template-columns: 130px repeat(5, minmax(0, 1fr));
+      align-items: stretch;
+    }
+
+    .time-axis {
+      position: relative;
+      border-right: 1px solid var(--line);
+      background: #fcfdff;
+    }
+
+    .time-label {
+      position: absolute;
+      left: 0;
+      right: 0;
+      padding: 0 10px;
+      transform: translateY(-50%);
+      color: #475569;
+      font-size: 13px;
+      font-weight: 600;
+      line-height: 1.2;
+      text-align: left;
+    }
+
+    .day-board {
+      position: relative;
+      border-right: 1px solid var(--line);
+      background-image: repeating-linear-gradient(
+        to bottom,
+        transparent,
+        transparent calc(var(--hour-height) - 1px),
+        var(--line) calc(var(--hour-height) - 1px),
+        var(--line) var(--hour-height)
+      );
+      overflow: hidden;
+    }
+
+    .day-board:last-child { border-right: 0; }
+
+    .class-block {
+      position: absolute;
+      left: 8px;
+      right: 8px;
+      border-radius: 10px;
+      border: 1px solid transparent;
+      padding: 7px 8px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+      overflow: hidden;
+      z-index: 2;
+    }
+
+    .class-block.lecture {
+      background: var(--lecture-bg);
+      border-color: var(--lecture-border);
+    }
+
+    .class-block.lab {
+      background: var(--lab-bg);
+      border-color: var(--lab-border);
+    }
+
+    .class-code {
+      font-size: 13px;
+      font-weight: 700;
+      color: #1e293b;
+      line-height: 1.2;
+    }
+
+    .class-lecturer {
+      margin-top: 4px;
+      font-size: 12px;
+      color: #475569;
+      font-weight: 500;
+      line-height: 1.25;
+    }
+
+    .class-meta {
+      margin-top: 2px;
+      font-size: 12px;
+      color: #334155;
+      font-weight: 600;
+      line-height: 1.2;
+    }
+
+    .movement-path {
+      position: absolute;
+      width: 2px;
+      background: #a78bfa;
+      border-radius: 999px;
+      opacity: 0.9;
+      z-index: 1;
+    }
+
+    .movement-path.warn {
+      background: #ef4444;
+      width: 3px;
+    }
+
+    .movement-chip {
+      position: absolute;
+      padding: 3px 7px;
+      font-size: 11px;
+      font-weight: 700;
+      border-radius: 999px;
+      border: 1px solid var(--move-border);
+      background: var(--move-bg);
+      color: var(--move-text);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+      z-index: 3;
+      white-space: nowrap;
+    }
+
+    .movement-chip.warn {
+      border-color: var(--warn-border);
+      background: var(--warn-bg);
+      color: var(--warn-text);
+    }
+
+    .movement-alert {
+      display: block;
+      margin-top: 2px;
+      font-size: 10px;
+      font-weight: 700;
+      color: #991b1b;
+    }
+
+    .legend-wrap {
+      border-top: 1px solid var(--line);
+      background: #f8fafc;
+      padding: 10px 12px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      align-items: center;
+      justify-content: flex-end;
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #475569;
+    }
+
+    .legend-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 4px;
+      border: 1px solid transparent;
+      display: inline-block;
+    }
+
+    .legend-dot.lecture { background: var(--lecture-bg); border-color: var(--lecture-border); }
+    .legend-dot.lab { background: var(--lab-bg); border-color: var(--lab-border); }
+    .legend-dot.warn { background: var(--warn-bg); border-color: var(--warn-border); }
+
+    .meta-card {
+      padding: 14px 16px;
+      margin-bottom: 12px;
+    }
+
+    .meta-title {
+      margin: 0 0 8px;
+      font-size: 15px;
+      font-weight: 700;
+      color: #1e293b;
+    }
+
+    .meta-list {
+      margin: 0;
+      padding-left: 18px;
+      color: #475569;
+      font-size: 13px;
+      line-height: 1.45;
+      font-weight: 500;
+    }
+
+    .records-card {
+      overflow: hidden;
+    }
+
+    .records-head {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      background: #f8fafc;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .records-title {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 700;
+      color: #1e293b;
+    }
+
+    .records-role {
+      font-size: 12px;
+      font-weight: 700;
+      color: #1e3a8a;
+      background: #dbeafe;
+      border: 1px solid #bfdbfe;
+      border-radius: 999px;
+      padding: 3px 9px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th {
+      background: #f8fafc;
+      border-bottom: 1px solid var(--line);
+      font-size: 11px;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      font-weight: 600;
+      text-align: left;
+      padding: 11px 10px;
+      white-space: nowrap;
+    }
+
+    td {
+      border-top: 1px solid var(--line);
+      padding: 10px 10px;
+      font-size: 13px;
+      color: #334155;
+      font-weight: 500;
+      vertical-align: middle;
+    }
+
+    .cell-center { text-align: center; }
+
+    .type-pill {
+      display: inline-block;
+      border-radius: 999px;
+      padding: 3px 9px;
+      font-size: 11px;
+      font-weight: 700;
+      border: 1px solid transparent;
+      white-space: nowrap;
+    }
+
+    .type-pill.lecture {
+      background: var(--lecture-bg);
+      border-color: var(--lecture-border);
+      color: #1e3a8a;
+    }
+
+    .type-pill.lab {
+      background: var(--lab-bg);
+      border-color: var(--lab-border);
+      color: #166534;
+    }
+
+    .row-actions {
+      display: inline-flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .action-btn {
+      border: 1px solid var(--line-strong);
+      border-radius: 8px;
+      background: #fff;
+      color: #1e293b;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 5px 9px;
+      cursor: pointer;
+      line-height: 1;
+      white-space: nowrap;
+    }
+
+    .action-btn.view { background: #eff6ff; border-color: #bfdbfe; color: #1d4ed8; }
+    .action-btn.edit { background: #fffbeb; border-color: #fde68a; color: #a16207; }
+    .action-btn.delete { background: #fef2f2; border-color: #fecaca; color: #b91c1c; }
+
+    .empty-row {
+      text-align: center;
+      color: #94a3b8;
+      padding: 24px 10px;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .toast {
+      position: fixed;
+      right: 16px;
+      bottom: 16px;
+      z-index: 999;
+      color: #fff;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 13px;
+      font-weight: 700;
+      box-shadow: 0 12px 20px rgba(0,0,0,0.2);
+      animation: fadeUp .18s ease-out;
+    }
+
+    .toast.success { background: #10b981; }
+    .toast.error { background: #ef4444; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 1180px) {
+      .tt-head {
+        grid-template-columns: 112px repeat(5, minmax(160px, 1fr));
+      }
+      .tt-body {
+        grid-template-columns: 112px repeat(5, minmax(160px, 1fr));
+        overflow-x: auto;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .title { font-size: 26px; }
+      .subtitle { font-size: 13px; }
+      .header-card { padding: 14px; }
+      .legend-wrap { justify-content: flex-start; }
+    }
+
+    @media print {
+      .header-card .export-wrap,
+      .meta-card,
+      .records-card {
+        display: none !important;
+      }
+      body {
+        background: #fff;
+        padding: 0;
+      }
+      .card {
+        box-shadow: none;
+        border: 1px solid #dbe2ea;
+      }
+    }
+  </style>
+</head>
+<body>
+  <section class="card header-card">
+    <div>
+      <h1 class="title">Timetable</h1>
+      <p class="subtitle">Automatically generated based on configured data in Academic Planning (Management)</p>
+      <div class="role-note">Super Admin Access: View / Edit / Delete</div>
+    </div>
+    <div class="export-wrap">
+      <button id="export-toggle" class="btn btn-primary" type="button">Export</button>
+      <div id="export-menu" class="export-menu">
+        <button class="export-item" data-export="pdf" type="button">Export PDF</button>
+        <button class="export-item" data-export="excel" type="button">Export Excel</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="card tt-card">
+    <div class="tt-head">
+      <div class="tt-head-cell">Time</div>
+      <div class="tt-head-cell">Monday</div>
+      <div class="tt-head-cell">Tuesday</div>
+      <div class="tt-head-cell">Wednesday</div>
+      <div class="tt-head-cell">Thursday</div>
+      <div class="tt-head-cell">Friday</div>
+    </div>
+    <div class="tt-body" id="tt-body">
+      <div class="time-axis" id="time-axis"></div>
+      <div class="day-board" data-day="Monday"></div>
+      <div class="day-board" data-day="Tuesday"></div>
+      <div class="day-board" data-day="Wednesday"></div>
+      <div class="day-board" data-day="Thursday"></div>
+      <div class="day-board" data-day="Friday"></div>
+    </div>
+    <div class="legend-wrap">
+      <span class="legend-item"><span class="legend-dot lecture"></span> Kuliah / Lecture</span>
+      <span class="legend-item"><span class="legend-dot lab"></span> Amali / Lab</span>
+      <span class="legend-item"><span class="legend-dot warn"></span> Insufficient movement time alert</span>
+    </div>
+  </section>
+
+  <section class="card meta-card">
+    <h3 class="meta-title">Distance & Movement Logic</h3>
+    <ul class="meta-list">
+      <li>Distance is calculated from room/building coordinates (latitude, longitude).</li>
+      <li>Walking time is estimated using 1.2 m/s walking speed.</li>
+      <li>Movement feasibility compares estimated walking time against real gap between consecutive classes.</li>
+      <li>Data required: room location coordinates, configured time slots, and schedule sequence per student/group.</li>
+    </ul>
+  </section>
+
+  <section class="card records-card">
+    <div class="records-head">
+      <h3 class="records-title">Generated Schedule Records</h3>
+      <span class="records-role" id="records-role-chip">Super Admin</span>
+    </div>
+    <div style="overflow:auto;">
+      <table>
+        <thead>
+          <tr>
+            <th>No</th>
+            <th>Course</th>
+            <th>Type</th>
+            <th>Lecturer</th>
+            <th>Group</th>
+            <th>Room</th>
+            <th>Day</th>
+            <th>Time</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="records-body"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <script>
+    const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+    const dayStartHour = 8;
+    const dayEndHour = 18;
+    const hourHeight = 76;
+    const dayStartMin = dayStartHour * 60;
+    const dayEndMin = dayEndHour * 60;
+    const minutesSpan = dayEndMin - dayStartMin;
+    const pxPerMinute = hourHeight / 60;
+    const boardHeight = (dayEndHour - dayStartHour) * hourHeight;
+
+    document.documentElement.style.setProperty("--hour-height", `${hourHeight}px`);
+
+    const roomCoordinates = {
+      DK1: { building: "Dewan Kuliah 1", lat: 3.00195, lng: 101.70750 },
+      DK2: { building: "Dewan Kuliah 2", lat: 3.00250, lng: 101.70920 },
+      DK4: { building: "Dewan Kuliah 4", lat: 3.00370, lng: 101.70680 },
+      BKB1: { building: "Blok B KB1", lat: 3.00435, lng: 101.71140 },
+      BKB2: { building: "Blok B KB2", lat: 3.00480, lng: 101.71010 }
+    };
+
+    let timetableRecords = [
+      { id: 1, day: "Monday", start: "08:00", end: "09:00", type: "Lecture", courseCode: "TMI2101", courseName: "Islamic Studies", lecturer: "Dr. Farid Hassan", group: "A1", room: "DK2" },
+      { id: 2, day: "Monday", start: "11:00", end: "12:00", type: "Lecture", courseCode: "SKP2101", courseName: "Malaysian Nationhood", lecturer: "Dr. Ali Ismail", group: "A1", room: "DK1" },
+      { id: 3, day: "Tuesday", start: "08:00", end: "10:00", type: "Lab", courseCode: "BIO1101", courseName: "Cell Biology", lecturer: "Dr. Siti Ahmad", group: "B2", room: "DK2" },
+      { id: 4, day: "Tuesday", start: "14:00", end: "16:00", type: "Lecture", courseCode: "CSE3201", courseName: "Database Systems", lecturer: "Dr. Ali Ismail", group: "CS1", room: "DK1" },
+      { id: 5, day: "Wednesday", start: "10:00", end: "12:00", type: "Lecture", courseCode: "CSE3501", courseName: "Software Engineering", lecturer: "Dr. Noraini Jamal", group: "CS2", room: "DK4" },
+      { id: 6, day: "Wednesday", start: "15:00", end: "17:00", type: "Lab", courseCode: "TMI2101", courseName: "Islamic Studies (Lab)", lecturer: "Dr. Adam Zain", group: "B1", room: "BKB2" },
+      { id: 7, day: "Thursday", start: "08:00", end: "10:00", type: "Lecture", courseCode: "CSE3201", courseName: "Database Systems", lecturer: "Dr. Ali Ismail", group: "CS1", room: "DK1" },
+      { id: 8, day: "Thursday", start: "14:00", end: "16:00", type: "Lab", courseCode: "CSE3201", courseName: "Database Systems Lab", lecturer: "Dr. Ali Ismail", group: "CS1", room: "BKB1" },
+      { id: 9, day: "Friday", start: "12:00", end: "13:00", type: "Lab", courseCode: "CSF2201", courseName: "Programming Lab", lecturer: "Dr. Nurul Aina", group: "CS1", room: "DK2" },
+      { id: 10, day: "Friday", start: "13:00", end: "14:00", type: "Lecture", courseCode: "CSF1101", courseName: "Programming Fundamentals", lecturer: "Dr. Nurul Aina", group: "CS1", room: "DK1" },
+      { id: 11, day: "Friday", start: "14:00", end: "16:00", type: "Lecture", courseCode: "CSF1101", courseName: "Programming Fundamentals", lecturer: "Dr. Nurul Aina", group: "CS1", room: "DK1" }
+    ];
+
+    let isSuperAdmin = true;
+    try {
+      const roleText = window.parent?.document?.getElementById("user-role-badge")?.textContent || "";
+      isSuperAdmin = roleText.toLowerCase().includes("super");
+    } catch (_) {}
+
+    const timeAxisEl = document.getElementById("time-axis");
+    const dayBoards = Array.from(document.querySelectorAll(".day-board"));
+    const recordsBodyEl = document.getElementById("records-body");
+    const recordsRoleChip = document.getElementById("records-role-chip");
+    const exportToggle = document.getElementById("export-toggle");
+    const exportMenu = document.getElementById("export-menu");
+
+    recordsRoleChip.textContent = isSuperAdmin ? "Super Admin" : "Read Only";
+
+    function showToast(message, type = "success") {
+      const toast = document.createElement("div");
+      toast.className = "toast " + (type === "error" ? "error" : "success");
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 2200);
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function parseTime(value) {
+      const [h, m] = String(value).split(":").map(Number);
+      return (h * 60) + m;
+    }
+
+    function timeRangeLabel(startHour) {
+      const endHour = startHour + 1;
+      return `${formatLabelHour(startHour)} - ${formatLabelHour(endHour)}`;
+    }
+
+    function formatLabelHour(hour24) {
+      const suffix = hour24 >= 12 ? "pm" : "am";
+      const h12 = hour24 % 12 === 0 ? 12 : hour24 % 12;
+      return `${h12}:00${suffix}`;
+    }
+
+    function formatClock(time) {
+      const mins = parseTime(time);
+      const h = Math.floor(mins / 60);
+      const m = mins % 60;
+      const suffix = h >= 12 ? "pm" : "am";
+      const h12 = h % 12 === 0 ? 12 : h % 12;
+      if (m === 0) return `${h12}:00${suffix}`;
+      return `${h12}:${String(m).padStart(2, "0")}${suffix}`;
+    }
+
+    function haversineMeters(from, to) {
+      if (!from || !to) return 0;
+      const R = 6371000;
+      const toRad = (deg) => deg * Math.PI / 180;
+      const dLat = toRad(to.lat - from.lat);
+      const dLon = toRad(to.lng - from.lng);
+      const lat1 = toRad(from.lat);
+      const lat2 = toRad(to.lat);
+
+      const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(lat1) * Math.cos(lat2) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      return R * c;
+    }
+
+    function toY(minutes) {
+      return (minutes - dayStartMin) * pxPerMinute;
+    }
+
+    function renderTimeAxis() {
+      timeAxisEl.style.height = `${boardHeight}px`;
+      timeAxisEl.innerHTML = "";
+      for (let hour = dayStartHour; hour < dayEndHour; hour++) {
+        const label = document.createElement("div");
+        label.className = "time-label";
+        label.style.top = `${(hour - dayStartHour) * hourHeight + 2}px`;
+        label.textContent = timeRangeLabel(hour);
+        timeAxisEl.appendChild(label);
+      }
+    }
+
+    function buildMovementPairs(dayRecords) {
+      const byGroup = {};
+      dayRecords.forEach((item) => {
+        if (!byGroup[item.group]) byGroup[item.group] = [];
+        byGroup[item.group].push(item);
+      });
+
+      const pairs = [];
+      Object.keys(byGroup).forEach((group) => {
+        const seq = byGroup[group].sort((a, b) => parseTime(a.start) - parseTime(b.start));
+        for (let i = 0; i < seq.length - 1; i++) {
+          pairs.push({ group, from: seq[i], to: seq[i + 1] });
+        }
+      });
+      return pairs;
+    }
+
+    function renderTimetableBoard() {
+      dayBoards.forEach((board) => {
+        const day = board.dataset.day;
+        board.style.height = `${boardHeight}px`;
+        board.innerHTML = "";
+
+        const dayRecords = timetableRecords
+          .filter((item) => item.day === day)
+          .sort((a, b) => parseTime(a.start) - parseTime(b.start));
+
+        dayRecords.forEach((item) => {
+          const startMin = parseTime(item.start);
+          const endMin = parseTime(item.end);
+          const top = Math.max(0, toY(startMin) + 4);
+          const height = Math.max(44, (endMin - startMin) * pxPerMinute - 8);
+
+          const block = document.createElement("div");
+          block.className = `class-block ${item.type === "Lab" ? "lab" : "lecture"}`;
+          block.style.top = `${top}px`;
+          block.style.height = `${height}px`;
+          block.innerHTML = `
+            <div class="class-code">${escapeHtml(item.courseCode)}: ${escapeHtml(item.courseName)}</div>
+            <div class="class-lecturer">${escapeHtml(item.lecturer)}</div>
+            <div class="class-meta">${escapeHtml(item.group)} | ${escapeHtml(item.room)}</div>
+          `;
+          board.appendChild(block);
+        });
+
+        const pairs = buildMovementPairs(dayRecords);
+        const groupOffsets = {};
+        pairs.forEach((pair) => {
+          if (groupOffsets[pair.group] === undefined) {
+            groupOffsets[pair.group] = Object.keys(groupOffsets).length;
+          }
+
+          const fromEnd = parseTime(pair.from.end);
+          const toStart = parseTime(pair.to.start);
+          const gapMin = toStart - fromEnd;
+          const fromRoom = roomCoordinates[pair.from.room];
+          const toRoom = roomCoordinates[pair.to.room];
+          const distance = Math.round(haversineMeters(fromRoom, toRoom));
+          const walkMinutes = Math.max(1, Math.ceil(distance / 1.2 / 60));
+          const feasible = gapMin >= walkMinutes;
+          const overlap = gapMin < 0;
+
+          const offset = 8 + (groupOffsets[pair.group] * 12);
+          const yStart = toY(fromEnd);
+          const yEnd = toY(toStart);
+          const pathHeight = Math.max(8, yEnd - yStart);
+
+          const line = document.createElement("div");
+          line.className = "movement-path" + (feasible && !overlap ? "" : " warn");
+          line.style.left = `${offset}px`;
+          line.style.top = `${yStart}px`;
+          line.style.height = `${pathHeight}px`;
+          board.appendChild(line);
+
+          const arrow = (toRoom && fromRoom && toRoom.lng >= fromRoom.lng) ? "→" : "←";
+          const chip = document.createElement("div");
+          chip.className = "movement-chip" + (feasible && !overlap ? "" : " warn");
+          chip.style.left = `${offset + 10}px`;
+          chip.style.top = `${Math.max(4, (yStart + yEnd) / 2 - 12)}px`;
+          chip.innerHTML = `${arrow} ${distance}m (~${walkMinutes} min)`;
+
+          if (!feasible || overlap) {
+            chip.innerHTML += `<span class="movement-alert">Insufficient time to move between classes</span>`;
+          }
+          board.appendChild(chip);
+        });
+      });
+    }
+
+    function renderRecordsTable() {
+      recordsBodyEl.innerHTML = "";
+      if (!timetableRecords.length) {
+        recordsBodyEl.innerHTML = `<tr><td colspan="9" class="empty-row">No timetable records generated.</td></tr>`;
+        return;
+      }
+
+      timetableRecords
+        .sort((a, b) => days.indexOf(a.day) - days.indexOf(b.day) || parseTime(a.start) - parseTime(b.start))
+        .forEach((item, index) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${index + 1}</td>
+            <td>${escapeHtml(item.courseCode)} - ${escapeHtml(item.courseName)}</td>
+            <td><span class="type-pill ${item.type === "Lab" ? "lab" : "lecture"}">${item.type === "Lab" ? "Amali / Lab" : "Kuliah / Lecture"}</span></td>
+            <td>${escapeHtml(item.lecturer)}</td>
+            <td>${escapeHtml(item.group)}</td>
+            <td>${escapeHtml(item.room)}</td>
+            <td>${escapeHtml(item.day)}</td>
+            <td>${formatClock(item.start)} - ${formatClock(item.end)}</td>
+            <td>
+              <div class="row-actions">
+                <button class="action-btn view" data-action="view" data-id="${item.id}">View</button>
+                ${isSuperAdmin ? `<button class="action-btn edit" data-action="edit" data-id="${item.id}">Edit</button>` : ""}
+                ${isSuperAdmin ? `<button class="action-btn delete" data-action="delete" data-id="${item.id}">Delete</button>` : ""}
+              </div>
+            </td>
+          `;
+          recordsBodyEl.appendChild(tr);
+        });
+    }
+
+    function rerender() {
+      renderTimetableBoard();
+      renderRecordsTable();
+    }
+
+    function viewRecord(id) {
+      const item = timetableRecords.find((row) => row.id === id);
+      if (!item) return;
+      alert(
+        `Course: ${item.courseCode} - ${item.courseName}\n` +
+        `Type: ${item.type}\n` +
+        `Lecturer: ${item.lecturer}\n` +
+        `Group: ${item.group}\n` +
+        `Room: ${item.room}\n` +
+        `Day: ${item.day}\n` +
+        `Time: ${formatClock(item.start)} - ${formatClock(item.end)}`
+      );
+    }
+
+    function editRecord(id) {
+      if (!isSuperAdmin) return;
+      const item = timetableRecords.find((row) => row.id === id);
+      if (!item) return;
+
+      const newDay = prompt("Update Day (Monday-Friday):", item.day);
+      if (newDay === null) return;
+      const newStart = prompt("Update Start Time (HH:MM):", item.start);
+      if (newStart === null) return;
+      const newEnd = prompt("Update End Time (HH:MM):", item.end);
+      if (newEnd === null) return;
+      const newRoom = prompt("Update Room (DK1, DK2, DK4, BKB1, BKB2):", item.room);
+      if (newRoom === null) return;
+
+      const normalizedDay = newDay.trim();
+      const normalizedStart = newStart.trim();
+      const normalizedEnd = newEnd.trim();
+      const normalizedRoom = newRoom.trim().toUpperCase();
+
+      if (!days.includes(normalizedDay)) {
+        showToast("Invalid day value.", "error");
+        return;
+      }
+      if (!/^\d{2}:\d{2}$/.test(normalizedStart) || !/^\d{2}:\d{2}$/.test(normalizedEnd)) {
+        showToast("Time must use HH:MM format.", "error");
+        return;
+      }
+      if (!roomCoordinates[normalizedRoom]) {
+        showToast("Unknown room code.", "error");
+        return;
+      }
+      if (parseTime(normalizedEnd) <= parseTime(normalizedStart)) {
+        showToast("End time must be later than start time.", "error");
+        return;
+      }
+
+      item.day = normalizedDay;
+      item.start = normalizedStart;
+      item.end = normalizedEnd;
+      item.room = normalizedRoom;
+      showToast("Timetable record updated.");
+      rerender();
+    }
+
+    function deleteRecord(id) {
+      if (!isSuperAdmin) return;
+      const index = timetableRecords.findIndex((row) => row.id === id);
+      if (index < 0) return;
+      if (!confirm("Delete this timetable record?")) return;
+      timetableRecords.splice(index, 1);
+      showToast("Timetable record deleted.");
+      rerender();
+    }
+
+    function exportExcel() {
+      const header = [
+        "Course Code", "Course Name", "Type", "Lecturer", "Group", "Room", "Day", "Start", "End"
+      ];
+      const rows = timetableRecords.map((item) => [
+        item.courseCode, item.courseName, item.type, item.lecturer, item.group, item.room, item.day, item.start, item.end
+      ]);
+      const csv = [header, ...rows].map((row) => row.map((col) => `"${String(col).replace(/"/g, '""')}"`).join(",")).join("\n");
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "timetable-generate.csv";
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast("Excel export generated.");
+    }
+
+    function exportPdf() {
+      showToast("Preparing PDF view...");
+      setTimeout(() => window.print(), 180);
+    }
+
+    exportToggle.addEventListener("click", (e) => {
+      e.stopPropagation();
+      exportMenu.classList.toggle("show");
+    });
+
+    document.addEventListener("click", () => exportMenu.classList.remove("show"));
+
+    exportMenu.addEventListener("click", (e) => {
+      const btn = e.target.closest(".export-item");
+      if (!btn) return;
+      const type = btn.dataset.export;
+      exportMenu.classList.remove("show");
+      if (type === "excel") exportExcel();
+      if (type === "pdf") exportPdf();
+    });
+
+    recordsBodyEl.addEventListener("click", (e) => {
+      const btn = e.target.closest("button[data-action]");
+      if (!btn) return;
+      const action = btn.dataset.action;
+      const id = parseInt(btn.dataset.id, 10);
+      if (!id) return;
+      if (action === "view") viewRecord(id);
+      if (action === "edit") editRecord(id);
+      if (action === "delete") deleteRecord(id);
+    });
+
+    renderTimeAxis();
+    rerender();
+  </script>
+</body>
+</html>

@@ -1,0 +1,569 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Time Configuration</title>
+  <style>
+    :root {
+      --bg: #f1f5f9;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --line: #e2e8f0;
+      --primary: #3b82f6;
+      --primary-dark: #2563eb;
+      --success: #10b981;
+      --danger: #ef4444;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "DM Sans", "Segoe UI", Arial, sans-serif;
+      padding: 16px;
+    }
+    .card {
+      background: var(--card);
+      border-radius: 14px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+      border: 1px solid #edf2f7;
+    }
+    .header-card { padding: 20px; margin-bottom: 16px; }
+    .toolbar {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+    .title { font-size: 20px; font-weight: 700; margin: 0 0 4px 0; }
+    .subtitle { margin: 0; font-size: 13px; color: var(--muted); }
+    .btn {
+      border: none;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-primary:hover { background: var(--primary-dark); }
+    .btn-outline {
+      background: #f8fafc;
+      color: var(--muted);
+      border: 1px solid var(--line);
+    }
+    .btn-danger { background: var(--danger); color: #fff; }
+    .filters {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 12px;
+    }
+    .field label {
+      display: block;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+    .control {
+      width: 100%;
+      height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 0 12px;
+      background: #f8fafc;
+      font-size: 14px;
+      color: var(--text);
+    }
+    .table-card { overflow: hidden; }
+    table { width: 100%; border-collapse: collapse; }
+    thead tr { background: #f8fafc; }
+    th {
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+      text-align: left;
+      padding: 12px 16px;
+    }
+    th.center, td.center { text-align: center; }
+    td {
+      padding: 12px 16px;
+      border-top: 1px solid var(--line);
+      font-size: 14px;
+      color: #334155;
+    }
+    .hour-cell { font-weight: 700; color: #1e293b; }
+    .actions {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+    }
+    .icon-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      cursor: pointer;
+      background: transparent;
+      font-size: 14px;
+    }
+    .icon-btn.edit:hover { background: #fef3c7; border-color: #fde68a; }
+    .icon-btn.delete:hover { background: #fee2e2; border-color: #fecaca; }
+    .switch-wrap { display: inline-flex; align-items: center; gap: 8px; }
+    .switch {
+      position: relative;
+      width: 38px;
+      height: 20px;
+      display: inline-block;
+    }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider {
+      position: absolute;
+      inset: 0;
+      background: #cbd5e1;
+      border-radius: 999px;
+      transition: .2s;
+    }
+    .slider:before {
+      content: "";
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      left: 2px;
+      top: 2px;
+      background: #fff;
+      border-radius: 50%;
+      transition: .2s;
+    }
+    .switch input:checked + .slider { background: var(--success); }
+    .switch input:checked + .slider:before { transform: translateX(18px); }
+    .status-label { font-size: 11px; font-weight: 700; }
+    .status-label.on { color: var(--success); }
+    .status-label.off { color: var(--muted); }
+    .table-footer {
+      border-top: 1px solid var(--line);
+      background: #f8fafc;
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .pager { display: inline-flex; align-items: center; gap: 8px; }
+    .pager button {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: #fff;
+      cursor: pointer;
+      color: #475569;
+    }
+    .pager button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15,23,42,0.55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 99;
+    }
+    .modal-backdrop.show { display: flex; }
+    .modal {
+      width: 100%;
+      max-width: 760px;
+      background: #fff;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 24px 28px rgba(0,0,0,0.18);
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--line);
+    }
+    .modal-title { margin: 0; font-size: 18px; }
+    .modal-body { padding: 18px; }
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 16px;
+    }
+    .notification {
+      position: fixed;
+      right: 16px;
+      bottom: 16px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      color: #fff;
+      font-size: 13px;
+      z-index: 110;
+    }
+    .n-success { background: var(--success); }
+    .n-error { background: var(--danger); }
+    @media (max-width: 860px) {
+      .filters, .form-grid { grid-template-columns: 1fr; }
+      th, td { padding-left: 10px; padding-right: 10px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="card header-card">
+    <div class="toolbar">
+      <div>
+        <h2 class="title">Time Configuration</h2>
+        <p class="subtitle">Manage lecture, medic, and exam slot configurations by semester.</p>
+      </div>
+      <button id="addBtn" class="btn btn-primary">+ Add Time Slot</button>
+    </div>
+    <div class="filters">
+      <div class="field">
+        <label>Search</label>
+        <input id="searchInput" class="control" placeholder="Enter Code or Description">
+      </div>
+      <div class="field">
+        <label>Rows</label>
+        <select id="pageSize" class="control">
+          <option value="10" selected>Show 10 entries</option>
+          <option value="25">Show 25 entries</option>
+          <option value="50">Show 50 entries</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="card table-card">
+    <table>
+      <thead>
+        <tr>
+          <th class="center">No.</th>
+          <th>Hour Type</th>
+          <th class="center">Hour</th>
+          <th>Sem Start</th>
+          <th class="center">Status</th>
+          <th class="center">Actions</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+    <div class="table-footer">
+      <div>Total: <strong id="totalRecords">0</strong> records</div>
+      <div class="pager">
+        <button id="prevBtn">&#8249;</button>
+        <span>Page <strong id="currentPage">1</strong> of <strong id="totalPages">1</strong></span>
+        <button id="nextBtn">&#8250;</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="modalBackdrop" class="modal-backdrop">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="modalTitle" class="modal-title">Add Time Slot</h3>
+        <button id="closeModalBtn" class="btn btn-outline" type="button">Close</button>
+      </div>
+      <form id="slotForm" class="modal-body">
+        <div class="form-grid">
+          <div class="field">
+            <label>Hour Type *</label>
+            <select id="hourType" class="control" required>
+              <option value="">Select Hour Type</option>
+              <option value="Lecture">Lecture</option>
+              <option value="Medic">Medic</option>
+              <option value="Exam">Exam</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Interval (Minutes) *</label>
+            <select id="interval" class="control" required></select>
+          </div>
+          <div class="field">
+            <label>Start Time *</label>
+            <input id="startTime" class="control" type="time" required>
+          </div>
+          <div class="field">
+            <label>End Time *</label>
+            <input id="endTime" class="control" type="time" required>
+          </div>
+          <div class="field">
+            <label>Indexing *</label>
+            <input id="indexing" class="control" type="number" min="1" step="1" required>
+          </div>
+          <div class="field">
+            <label>Semester Start *</label>
+            <select id="semStart" class="control" required></select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button id="cancelBtn" class="btn btn-outline" type="button">Cancel</button>
+          <button class="btn btn-primary" type="submit">Save Time Slot</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const intervals = Array.from({ length: 8 }, (_, i) => (i + 1) * 15);
+    const semesters = (() => {
+      const list = [];
+      for (let y = 2024; y <= 2031; y++) {
+        list.push(`${y}/${y + 1}-1`);
+        list.push(`${y}/${y + 1}-2`);
+      }
+      return list;
+    })();
+
+    let data = [
+      { id: 1, hourType: 'Lecture', startTime: '08:00', endTime: '09:00', interval: 60, indexing: 1, semStart: '2024/2025-1', status: 'active' },
+      { id: 2, hourType: 'Medic', startTime: '09:00', endTime: '10:30', interval: 90, indexing: 2, semStart: '2024/2025-1', status: 'active' },
+      { id: 3, hourType: 'Exam', startTime: '11:00', endTime: '13:00', interval: 120, indexing: 3, semStart: '2024/2025-2', status: 'inactive' }
+    ];
+
+    let filtered = [...data];
+    let page = 1;
+    let pageSize = 10;
+    let editId = null;
+
+    const els = {
+      addBtn: document.getElementById('addBtn'),
+      modal: document.getElementById('modalBackdrop'),
+      closeModalBtn: document.getElementById('closeModalBtn'),
+      cancelBtn: document.getElementById('cancelBtn'),
+      form: document.getElementById('slotForm'),
+      modalTitle: document.getElementById('modalTitle'),
+      search: document.getElementById('searchInput'),
+      pageSize: document.getElementById('pageSize'),
+      tableBody: document.getElementById('tableBody'),
+      totalRecords: document.getElementById('totalRecords'),
+      currentPage: document.getElementById('currentPage'),
+      totalPages: document.getElementById('totalPages'),
+      prevBtn: document.getElementById('prevBtn'),
+      nextBtn: document.getElementById('nextBtn'),
+      hourType: document.getElementById('hourType'),
+      interval: document.getElementById('interval'),
+      startTime: document.getElementById('startTime'),
+      endTime: document.getElementById('endTime'),
+      indexing: document.getElementById('indexing'),
+      semStart: document.getElementById('semStart')
+    };
+
+    function notify(msg, type = 'success') {
+      const n = document.createElement('div');
+      n.className = `notification ${type === 'error' ? 'n-error' : 'n-success'}`;
+      n.textContent = msg;
+      document.body.appendChild(n);
+      setTimeout(() => n.remove(), 2200);
+    }
+
+    function hourValue(t) {
+      const [h, m] = t.split(':');
+      return `${parseInt(h, 10)}${m}`;
+    }
+
+    function toMinutes(t) {
+      const [h, m] = t.split(':').map(Number);
+      return h * 60 + m;
+    }
+
+    function renderOptions() {
+      els.interval.innerHTML = '<option value="">Select Interval</option>';
+      intervals.forEach(v => {
+        const o = document.createElement('option');
+        o.value = String(v);
+        o.textContent = String(v);
+        els.interval.appendChild(o);
+      });
+      els.semStart.innerHTML = '<option value="">Select Semester</option>';
+      semesters.forEach(v => {
+        const o = document.createElement('option');
+        o.value = v;
+        o.textContent = v;
+        els.semStart.appendChild(o);
+      });
+    }
+
+    function applyFilter() {
+      const q = els.search.value.trim().toLowerCase();
+      filtered = data.filter(row => {
+        if (!q) return true;
+        const code = `TC-${String(row.id).padStart(3, '0')}`.toLowerCase();
+        return [code, row.hourType, hourValue(row.startTime), row.semStart, row.startTime, row.endTime, String(row.indexing)]
+          .join(' ')
+          .toLowerCase()
+          .includes(q);
+      });
+      const maxPage = Math.max(1, Math.ceil(filtered.length / pageSize));
+      if (page > maxPage) page = maxPage;
+      renderTable();
+    }
+
+    function renderTable() {
+      const start = (page - 1) * pageSize;
+      const rows = filtered.slice(start, start + pageSize);
+      els.tableBody.innerHTML = '';
+
+      if (rows.length === 0) {
+        const tr = document.createElement('tr');
+        tr.innerHTML = '<td colspan="6" class="center" style="padding:28px;color:#94a3b8;">No time slot records found.</td>';
+        els.tableBody.appendChild(tr);
+      } else {
+        rows.forEach((row, i) => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td class="center">${start + i + 1}</td>
+            <td>${row.hourType}</td>
+            <td class="center hour-cell">${hourValue(row.startTime)}</td>
+            <td>${row.semStart}</td>
+            <td class="center">
+              <span class="switch-wrap">
+                <label class="switch">
+                  <input type="checkbox" data-id="${row.id}" class="statusToggle" ${row.status === 'active' ? 'checked' : ''}>
+                  <span class="slider"></span>
+                </label>
+                <span class="status-label ${row.status === 'active' ? 'on' : 'off'}">${row.status === 'active' ? 'ON' : 'OFF'}</span>
+              </span>
+            </td>
+            <td class="center">
+              <div class="actions">
+                <button class="icon-btn edit editBtn" data-id="${row.id}" type="button">✏️</button>
+                <button class="icon-btn delete delBtn" data-id="${row.id}" type="button">🗑️</button>
+              </div>
+            </td>
+          `;
+          els.tableBody.appendChild(tr);
+        });
+      }
+
+      els.totalRecords.textContent = String(filtered.length);
+      const totalPageCount = Math.max(1, Math.ceil(filtered.length / pageSize));
+      els.currentPage.textContent = String(page);
+      els.totalPages.textContent = String(totalPageCount);
+      els.prevBtn.disabled = page === 1;
+      els.nextBtn.disabled = page === totalPageCount;
+
+      document.querySelectorAll('.statusToggle').forEach(input => {
+        input.addEventListener('change', () => {
+          const id = Number(input.dataset.id);
+          const target = data.find(x => x.id === id);
+          if (!target) return;
+          target.status = input.checked ? 'active' : 'inactive';
+          renderTable();
+        });
+      });
+
+      document.querySelectorAll('.editBtn').forEach(btn => {
+        btn.addEventListener('click', () => openModal(Number(btn.dataset.id)));
+      });
+
+      document.querySelectorAll('.delBtn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = Number(btn.dataset.id);
+          const item = data.find(x => x.id === id);
+          if (!item) return;
+          if (confirm(`Delete ${item.hourType} slot at ${hourValue(item.startTime)} for ${item.semStart}?`)) {
+            data = data.filter(x => x.id !== id);
+            applyFilter();
+            notify('Time slot deleted successfully.');
+          }
+        });
+      });
+    }
+
+    function openModal(id = null) {
+      editId = id;
+      els.form.reset();
+      renderOptions();
+      if (id === null) {
+        els.modalTitle.textContent = 'Add Time Slot';
+        els.indexing.value = String(Math.max(0, ...data.map(x => x.indexing)) + 1);
+        els.interval.value = '60';
+        els.semStart.value = semesters[0];
+      } else {
+        const item = data.find(x => x.id === id);
+        if (!item) return;
+        els.modalTitle.textContent = 'Edit Time Slot';
+        els.hourType.value = item.hourType;
+        els.startTime.value = item.startTime;
+        els.endTime.value = item.endTime;
+        els.interval.value = String(item.interval);
+        els.indexing.value = String(item.indexing);
+        els.semStart.value = item.semStart;
+      }
+      els.modal.classList.add('show');
+    }
+
+    function closeModal() {
+      els.modal.classList.remove('show');
+      editId = null;
+    }
+
+    function saveForm(e) {
+      e.preventDefault();
+      const payload = {
+        hourType: els.hourType.value,
+        startTime: els.startTime.value,
+        endTime: els.endTime.value,
+        interval: Number(els.interval.value),
+        indexing: Number(els.indexing.value),
+        semStart: els.semStart.value
+      };
+
+      if (!['Lecture', 'Medic', 'Exam'].includes(payload.hourType)) return notify('Hour Type must be Lecture, Medic, or Exam.', 'error');
+      if (!payload.startTime || !payload.endTime) return notify('Please select Start Time and End Time.', 'error');
+      if (toMinutes(payload.endTime) <= toMinutes(payload.startTime)) return notify('End Time must be later than Start Time.', 'error');
+      if (!intervals.includes(payload.interval)) return notify('Interval must be in 15-minute increments.', 'error');
+      if (!Number.isInteger(payload.indexing) || payload.indexing < 1) return notify('Indexing must be a positive number.', 'error');
+      if (!/^\d{4}\/\d{4}-[12]$/.test(payload.semStart)) return notify('Semester Start format is invalid.', 'error');
+
+      const duplicate = data.some(x => x.id !== editId && x.semStart === payload.semStart && x.indexing === payload.indexing);
+      if (duplicate) return notify(`Indexing ${payload.indexing} already exists for ${payload.semStart}.`, 'error');
+
+      if (editId === null) {
+        data.push({ id: Math.max(0, ...data.map(x => x.id)) + 1, ...payload, status: 'active' });
+      } else {
+        const target = data.find(x => x.id === editId);
+        if (!target) return;
+        Object.assign(target, payload);
+      }
+
+      closeModal();
+      page = 1;
+      applyFilter();
+      notify('Time slot saved successfully.');
+    }
+
+    els.addBtn.addEventListener('click', () => openModal());
+    els.closeModalBtn.addEventListener('click', closeModal);
+    els.cancelBtn.addEventListener('click', closeModal);
+    els.modal.addEventListener('click', (e) => { if (e.target === els.modal) closeModal(); });
+    els.form.addEventListener('submit', saveForm);
+    els.search.addEventListener('input', () => { page = 1; applyFilter(); });
+    els.pageSize.addEventListener('change', () => { pageSize = Number(els.pageSize.value); page = 1; renderTable(); });
+    els.prevBtn.addEventListener('click', () => { if (page > 1) { page--; renderTable(); } });
+    els.nextBtn.addEventListener('click', () => {
+      const total = Math.max(1, Math.ceil(filtered.length / pageSize));
+      if (page < total) { page++; renderTable(); }
+    });
+
+    renderOptions();
+    applyFilter();
+  </script>
+</body>
+</html>
