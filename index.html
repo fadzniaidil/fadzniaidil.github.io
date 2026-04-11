@@ -2126,6 +2126,23 @@
     item.practical_group_entries = item.practical_group_entries.map((_, idx) => idx + 1);
   }
 
+  function normalizeOCGroupDropdownValues(item) {
+    if (!item) return;
+    normalizeOCGroupEntries(item);
+
+    const defaultLectureGroup = item.group_number || groupNumberOptions[0] || '1';
+    const defaultPracticalGroup = item.amali_group_number || groupNumberOptions[0] || '1';
+
+    if (!Array.isArray(item.lecture_group_values)) item.lecture_group_values = [];
+    if (!Array.isArray(item.practical_group_values)) item.practical_group_values = [];
+
+    item.lecture_group_values = item.lecture_group_entries.map((_, idx) => item.lecture_group_values[idx] || defaultLectureGroup);
+    item.practical_group_values = item.practical_group_entries.map((_, idx) => item.practical_group_values[idx] || defaultPracticalGroup);
+
+    if (item.lecture_group_values.length) item.group_number = item.lecture_group_values[0];
+    if (item.practical_group_values.length) item.amali_group_number = item.practical_group_values[0];
+  }
+
   function renderOCTableStrict() {
     const totalPages = Math.max(1, Math.ceil(ocFilteredData.length / ocPageSize));
     if (ocCurrentPage > totalPages) ocCurrentPage = totalPages;
@@ -2161,7 +2178,7 @@
 
       pageData.forEach(item => {
         normalizeOCGroupRows(item);
-        normalizeOCGroupEntries(item);
+        normalizeOCGroupDropdownValues(item);
         const kuliahRows = (item.kuliah_lecturers && item.kuliah_lecturers.length) ? item.kuliah_lecturers : [{ id: item.lecturer_id || '', name: item.lecturer || '' }];
         const amaliRows = (item.amali_lecturers && item.amali_lecturers.length) ? item.amali_lecturers : [{ id: '', name: '' }];
         const key = `${item.course_no}-${item.code}-${item.name_en}`;
@@ -2186,11 +2203,15 @@
           </div>
         `).join('');
 
-        const lectureGroupHtml = `
-          <select onchange="setOCLectureGroup(${item.id}, this.value)" class="w-full px-2 py-1 text-[10px] border rounded" style="border-color:#bfdbfe;background-color:#ffffff;color:#1e293b;">
-            ${groupNumberOptions.map(grp => `<option value="${esc(grp)}" ${String(item.group_number) === String(grp) ? 'selected' : ''}>${esc(grp)}</option>`).join('')}
-          </select>
-        `;
+        const lectureGroupHtml = item.lecture_group_entries.length
+          ? item.lecture_group_entries.map((_, idx) => `
+            <div class="${idx > 0 ? 'mt-1' : ''}">
+              <select onchange="setOCTypeGroupDropdown(${item.id}, 'lecture', ${idx}, this.value)" class="w-full px-2 py-1 text-[10px] border rounded" style="border-color:#bfdbfe;background-color:#ffffff;color:#1e293b;">
+                ${groupNumberOptions.map(grp => `<option value="${esc(grp)}" ${String(item.lecture_group_values[idx] || '') === String(grp) ? 'selected' : ''}>${esc(grp)}</option>`).join('')}
+              </select>
+            </div>
+          `).join('')
+          : `<div class="text-[10px]" style="color:#94a3b8;">-</div>`;
 
         const lectureQuotaHtml = `
           <input type="text" value="${esc(item.quota)}" class="w-full px-2 py-1 text-[10px] border rounded text-center" style="border-color:#bfdbfe;background-color:#ffffff;color:#1e293b;" onchange="setOCQuota(${item.id}, 'lecture', this.value)">
@@ -2201,8 +2222,21 @@
           <button type="button" onclick="addOCLecturerRow(${item.id}, 'kuliah')" class="px-2 py-1 text-[10px] font-semibold border rounded" style="border-color:#bfdbfe;color:#0284c7;background-color:#dbeafe;">Add Lecturer</button>
         `;
 
+        const practicalGroupDropdownHtml = item.practical_group_entries.length
+          ? item.practical_group_entries.map((_, idx) => `
+            <div class="${idx > 0 ? 'mt-1' : ''}">
+              <select onchange="setOCTypeGroupDropdown(${item.id}, 'practical', ${idx}, this.value)" class="w-full px-2 py-1 text-[10px] border rounded" style="border-color:#fcd34d;background-color:#ffffff;color:#1e293b;">
+                ${groupNumberOptions.map(grp => `<option value="${esc(grp)}" ${String(item.practical_group_values[idx] || '') === String(grp) ? 'selected' : ''}>${esc(grp)}</option>`).join('')}
+              </select>
+            </div>
+          `).join('')
+          : '';
+
         const practicalQuotaHtml = `
-          <input type="text" value="${esc(item.practical_quota || 0)}" class="w-full px-2 py-1 text-[10px] border rounded text-center" style="border-color:#fcd34d;background-color:#ffffff;color:#1e293b;" onchange="setOCQuota(${item.id}, 'practical', this.value)">
+          ${practicalGroupDropdownHtml}
+          <div class="${item.practical_group_entries.length ? 'mt-1 pt-1 border-t' : ''}" style="border-color:#fde68a;">
+            <input type="text" value="${esc(item.practical_quota || 0)}" class="w-full px-2 py-1 text-[10px] border rounded text-center" style="border-color:#fcd34d;background-color:#ffffff;color:#1e293b;" onchange="setOCQuota(${item.id}, 'practical', this.value)">
+          </div>
         `;
 
         const practicalLecturerHtml = `
@@ -2309,15 +2343,37 @@
     if (evt) evt.stopPropagation();
     const item = courseData.find(x => x.id === id);
     if (!item) return;
-    normalizeOCGroupEntries(item);
+    normalizeOCGroupDropdownValues(item);
 
     const listName = type === 'practical' ? 'practical_group_entries' : 'lecture_group_entries';
+    const valueListName = type === 'practical' ? 'practical_group_values' : 'lecture_group_values';
     if (!Array.isArray(item[listName])) item[listName] = [];
+    if (!Array.isArray(item[valueListName])) item[valueListName] = [];
     const nextNumber = item[listName].length + 1;
+    const defaultValue = type === 'practical'
+      ? (item.amali_group_number || groupNumberOptions[0] || '1')
+      : (item.group_number || groupNumberOptions[0] || '1');
     item[listName].push(nextNumber);
+    item[valueListName].push(defaultValue);
 
     ocGroupTypeMenuOpenId = null;
-    normalizeOCGroupEntries(item);
+    normalizeOCGroupDropdownValues(item);
+    renderOCTable();
+  }
+
+  function setOCTypeGroupDropdown(id, type, index, value) {
+    const item = courseData.find(x => x.id === id);
+    if (!item || !value) return;
+    normalizeOCGroupDropdownValues(item);
+
+    const valueListName = type === 'practical' ? 'practical_group_values' : 'lecture_group_values';
+    if (!Array.isArray(item[valueListName])) return;
+    if (index < 0 || index >= item[valueListName].length) return;
+
+    item[valueListName][index] = value;
+    if (type === 'lecture' && index === 0) item.group_number = value;
+    if (type === 'practical' && index === 0) item.amali_group_number = value;
+
     renderOCTable();
   }
 
@@ -2325,13 +2381,18 @@
     if (evt) evt.stopPropagation();
     const item = courseData.find(x => x.id === id);
     if (!item) return;
-    normalizeOCGroupEntries(item);
+    normalizeOCGroupDropdownValues(item);
 
     const listName = type === 'practical' ? 'practical_group_entries' : 'lecture_group_entries';
+    const valueListName = type === 'practical' ? 'practical_group_values' : 'lecture_group_values';
     if (!Array.isArray(item[listName])) return;
     if (index < 0 || index >= item[listName].length) return;
     item[listName].splice(index, 1);
+    if (Array.isArray(item[valueListName]) && index < item[valueListName].length) {
+      item[valueListName].splice(index, 1);
+    }
     item[listName] = item[listName].map((_, idx) => idx + 1);
+    normalizeOCGroupDropdownValues(item);
 
     renderOCTable();
   }
