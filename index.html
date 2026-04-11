@@ -1498,19 +1498,20 @@
 
   const cohortOptions = ['2026/2027-1', '2026/2027-2', '2025/2026-1', '2025/2026-2', '2024/2025-1'];
 
-  const groupNumberOptions = ['1', '2', '3', 'A', 'B', 'C'];
+  const groupNumberOptions = ['1', '2', '3'];
 
   let courseData = [
-    { id: 1, code: 'MED101', name_en: 'Human Anatomy I', name_ms: 'Anatomi Manusia I', classification: 'core', credits: 4, quota: 60, students: 52, group_number: '1', weeks: '1-15', day: 'Monday', time: '09:00-11:00', venue: 'LH-1', lecturer: 'Prof. Dr. Ahmad Hassan', lecturer_id: 'STAFF001', contact_hours: 4, status: 'active', faculty: 'FAKULTI PERUBATAN DAN SAINS KESIHATAN', cohort: '2026/2027-1', amali_lecturers: [{ id: 'STAFF011', name: 'Dr. Nurul Aini Abdullah' }], amali_contact_hours: 2 },
-    { id: 2, code: 'MED102', name_en: 'Physiology I', name_ms: 'Fisiologi I', classification: 'core', credits: 3, quota: 60, students: 55, group_number: '2', weeks: '1-15', day: 'Tuesday', time: '10:00-12:00', venue: 'LH-2', lecturer: 'Dr. Siti Noraini', lecturer_id: 'STAFF002', contact_hours: 3, status: 'active', faculty: 'FAKULTI PERUBATAN DAN SAINS KESIHATAN', cohort: '2026/2027-1', amali_lecturers: [{ id: 'STAFF012', name: 'Dr. Rashid Ahmad' }], amali_contact_hours: 2 },
-    { id: 3, code: 'MED103', name_en: 'Biochemistry I', name_ms: 'Biokimia I', classification: 'core', credits: 3, quota: 50, students: 48, group_number: 'A', weeks: '1-15', day: 'Wednesday', time: '14:00-16:00', venue: 'Lab-A', lecturer: 'Dr. Muhammad Ridho', lecturer_id: 'STAFF003', contact_hours: 3, status: 'active', faculty: 'FAKULTI PERUBATAN DAN SAINS KESIHATAN', cohort: '2026/2027-2', amali_lecturers: [], amali_contact_hours: 0 },
-    { id: 4, code: 'MED104', name_en: 'Pathology I', name_ms: 'Patologi I', classification: 'core', credits: 3, quota: 45, students: 42, group_number: '3', weeks: '1-14', day: 'Thursday', time: '08:00-10:00', venue: 'LH-3', lecturer: 'Prof. Dr. Zaini Mohsin', lecturer_id: 'STAFF004', contact_hours: 3, status: 'active', faculty: 'FAKULTI PERUBATAN DAN SAINS KESIHATAN', cohort: '2025/2026-1', amali_lecturers: [{ id: 'STAFF011', name: 'Dr. Nurul Aini Abdullah' }, { id: 'STAFF012', name: 'Dr. Rashid Ahmad' }], amali_contact_hours: 3 },
-    { id: 5, code: 'MED105', name_en: 'Pharmacology I', name_ms: 'Farmakologi I', classification: 'core', credits: 3, quota: 55, students: 53, group_number: 'B', weeks: '1-15', day: 'Friday', time: '10:00-12:00', venue: 'LH-4', lecturer: 'Dr. Nur Hafizah', lecturer_id: 'STAFF005', contact_hours: 3, status: 'active', faculty: 'FAKULTI PERUBATAN DAN SAINS KESIHATAN', cohort: '2025/2026-1', amali_lecturers: [], amali_contact_hours: 0 },
-    { id: 6, code: 'MED201', name_en: 'Clinical Surgery', name_ms: 'Bedah Klinik', classification: 'elective', credits: 2, quota: 30, students: 28, group_number: '1', weeks: '8-15', day: 'Monday', time: '13:00-15:00', venue: 'CL-1', lecturer: 'Prof. Dr. Mohd Azlan', lecturer_id: 'STAFF006', contact_hours: 2, status: 'active', faculty: 'FAKULTI PERUBATAN DAN SAINS KESIHATAN', cohort: '2025/2026-2', amali_lecturers: [{ id: 'STAFF002', name: 'Dr. Siti Noraini' }], amali_contact_hours: 2 },
-    { id: 7, code: 'MED202', name_en: 'Clinical Medicine', name_ms: 'Perubatan Klinik', classification: 'elective', credits: 2, quota: 25, students: 20, group_number: 'C', weeks: '8-15', day: 'Tuesday', time: '14:00-16:00', venue: 'CL-2', lecturer: 'Dr. Fatimah Saad', lecturer_id: 'STAFF007', contact_hours: 2, status: 'inactive', faculty: 'FAKULTI EKOLOGI MANUSIA', cohort: '2026/2027-1', amali_lecturers: [], amali_contact_hours: 0 },
-    { id: 8, code: 'MPU401', name_en: 'Islamic Studies', name_ms: 'Pengajian Islam', classification: 'mpu', credits: 2, quota: 80, students: 75, group_number: '2', weeks: '1-14', day: 'Wednesday', time: '11:00-12:00', venue: 'LH-5', lecturer: 'Dr. Azmi Rahman', lecturer_id: 'STAFF008', contact_hours: 2, status: 'active', faculty: 'FAKULTI PERHUTANAN DAN ALAM SEKITAR', cohort: '2024/2025-1', amali_lecturers: [], amali_contact_hours: 0 },
-    { id: 9, code: 'MED203', name_en: 'Emergency Medicine', name_ms: 'Perubatan Kecemasan', classification: 'elective', credits: 2, quota: 20, students: 18, group_number: 'A', weeks: '9-15', day: 'Thursday', time: '09:00-11:00', venue: 'Lab-B', lecturer: 'Dr. Ismail Yahya', lecturer_id: 'STAFF009', contact_hours: 2, status: 'active', faculty: 'FAKULTI PERUBATAN DAN SAINS KESIHATAN', cohort: '2026/2027-2', amali_lecturers: [{ id: 'STAFF010', name: 'Prof. Dr. Radhiah Hassan' }], amali_contact_hours: 1 },
-    { id: 10, code: 'MED106', name_en: 'Medical Ethics', name_ms: 'Etika Perubatan', classification: 'core', credits: 2, quota: 100, students: 92, group_number: '3', weeks: '1-8', day: 'Friday', time: '14:00-15:00', venue: 'LH-6', lecturer: 'Prof. Dr. Radhiah Hassan', lecturer_id: 'STAFF010', contact_hours: 2, status: 'active', faculty: 'FAKULTI EKOLOGI MANUSIA', cohort: '2025/2026-1', amali_lecturers: [], amali_contact_hours: 0 }
+    { id: 1, course_no: 1, code: 'SKP2101', course_credit: '3+0', name_en: 'KENEGARAAN MALAYSIA', name_ms: 'KENEGARAAN MALAYSIA', programme: 'BACHELOR OF SCIENCE IN INDUSTRIAL CHEMISTRY WITH HONOURS', programme_code: '11649', cohort: '2026/2027-1', students: 49, contact_hours: 42, amali_contact_hours: 0, group_number: '1', action_group: '1', quota: 80, practical_quota: 0, lecturer: '', lecturer_id: '', kuliah_lecturers: [{ id: '', name: '' }], amali_lecturers: [{ id: '', name: '' }], eligibility_state: 'edit', status: 'active', faculty: 'FAKULTI PERUBATAN DAN SAINS KESIHATAN', classification: 'core', credits: 3, weeks: '', day: '', time: '', venue: '' },
+    { id: 2, course_no: 1, code: 'SKP2101', course_credit: '3+0', name_en: 'KENEGARAAN MALAYSIA', name_ms: 'KENEGARAAN MALAYSIA', programme: 'BACHELOR OF FORESTRY SCIENCE WITH HONOURS', programme_code: '11649', cohort: '2026/2027-1', students: 60, contact_hours: 42, amali_contact_hours: 0, group_number: '1', action_group: '1', quota: 80, practical_quota: 0, lecturer: '', lecturer_id: '', kuliah_lecturers: [{ id: '', name: '' }], amali_lecturers: [{ id: '', name: '' }], eligibility_state: 'edit', status: 'active', faculty: 'FAKULTI PERHUTANAN DAN ALAM SEKITAR', classification: 'core', credits: 3, weeks: '', day: '', time: '', venue: '' },
+    { id: 3, course_no: 1, code: 'SKP2101', course_credit: '3+0', name_en: 'KENEGARAAN MALAYSIA', name_ms: 'KENEGARAAN MALAYSIA', programme: 'BACHELOR OF ANIMAL SCIENCE WITH HONOURS', programme_code: 'FKTAN1', cohort: '2026/2027-1', students: 77, contact_hours: 42, amali_contact_hours: 0, group_number: '1', action_group: '1', quota: 80, practical_quota: 0, lecturer: '', lecturer_id: '', kuliah_lecturers: [{ id: '', name: '' }], amali_lecturers: [{ id: '', name: '' }], eligibility_state: 'edit', status: 'active', faculty: 'FAKULTI PERHUTANAN DAN ALAM SEKITAR', classification: 'core', credits: 3, weeks: '', day: '', time: '', venue: '' },
+    { id: 4, course_no: 1, code: 'SKP2101', course_credit: '3+0', name_en: 'KENEGARAAN MALAYSIA', name_ms: 'KENEGARAAN MALAYSIA', programme: 'BACHELOR OF SCIENCE IN AQUACULTURE WITH HONOURS', programme_code: '11649', cohort: '2026/2027-1', students: 67, contact_hours: 42, amali_contact_hours: 0, group_number: '1', action_group: '1', quota: 80, practical_quota: 0, lecturer: '', lecturer_id: '', kuliah_lecturers: [{ id: '', name: '' }], amali_lecturers: [{ id: '', name: '' }], eligibility_state: 'edit', status: 'active', faculty: 'FAKULTI PERHUTANAN DAN ALAM SEKITAR', classification: 'core', credits: 3, weeks: '', day: '', time: '', venue: '' },
+    { id: 5, course_no: 2, code: 'SKP3112', course_credit: '2+0', name_en: 'FALSAFAH DAN ISU SEMASA', name_ms: 'FALSAFAH DAN ISU SEMASA', programme: 'BACHELOR OF SCIENCE IN INDUSTRIAL CHEMISTRY WITH HONOURS', programme_code: '11649', cohort: '2026/2027-1', students: 67, contact_hours: 28, amali_contact_hours: 0, group_number: '1', action_group: '1', quota: 80, practical_quota: 0, lecturer: '', lecturer_id: '', kuliah_lecturers: [{ id: '', name: '' }], amali_lecturers: [{ id: '', name: '' }], eligibility_state: 'edit', status: 'active', faculty: 'FAKULTI PERUBATAN DAN SAINS KESIHATAN', classification: 'core', credits: 2, weeks: '', day: '', time: '', venue: '' },
+    { id: 6, course_no: 2, code: 'SKP3112', course_credit: '2+0', name_en: 'FALSAFAH DAN ISU SEMASA', name_ms: 'FALSAFAH DAN ISU SEMASA', programme: 'BACHELOR OF FORESTRY SCIENCE WITH HONOURS', programme_code: '11644', cohort: '2026/2027-1', students: 67, contact_hours: 42, amali_contact_hours: 0, group_number: '1', action_group: '1', quota: 80, practical_quota: 0, lecturer: '', lecturer_id: '', kuliah_lecturers: [{ id: '', name: '' }], amali_lecturers: [{ id: '', name: '' }], eligibility_state: 'edit', status: 'active', faculty: 'FAKULTI PERHUTANAN DAN ALAM SEKITAR', classification: 'core', credits: 2, weeks: '', day: '', time: '', venue: '' },
+    { id: 7, course_no: 2, code: 'SKP3112', course_credit: '2+0', name_en: 'FALSAFAH DAN ISU SEMASA', name_ms: 'FALSAFAH DAN ISU SEMASA', programme: 'BACHELOR OF BIOINDUSTRIAL SCIENCE WITH HONOURS', programme_code: '11644', cohort: '2026/2027-1', students: 67, contact_hours: 42, amali_contact_hours: 0, group_number: '1', action_group: '1', quota: 80, practical_quota: 0, lecturer: '', lecturer_id: '', kuliah_lecturers: [{ id: '', name: '' }], amali_lecturers: [{ id: '', name: '' }], eligibility_state: 'edit', status: 'active', faculty: 'FAKULTI PERHUTANAN DAN ALAM SEKITAR', classification: 'core', credits: 2, weeks: '', day: '', time: '', venue: '' },
+    { id: 8, course_no: 2, code: 'SKP3112', course_credit: '2+0', name_en: 'FALSAFAH DAN ISU SEMASA', name_ms: 'FALSAFAH DAN ISU SEMASA', programme: 'BACHELOR OF HUMAN DEVELOPMENT SCIENCE WITH MANAGEMENT (HONOURS)', programme_code: '11649', cohort: '2026/2027-1', students: 67, contact_hours: 42, amali_contact_hours: 0, group_number: '1', action_group: '1', quota: 80, practical_quota: 0, lecturer: '', lecturer_id: '', kuliah_lecturers: [{ id: '', name: '' }], amali_lecturers: [{ id: '', name: '' }], eligibility_state: 'edit', status: 'active', faculty: 'FAKULTI EKOLOGI MANUSIA', classification: 'core', credits: 2, weeks: '', day: '', time: '', venue: '' },
+    { id: 9, course_no: 2, code: 'SKP3112', course_credit: '2+0', name_en: 'FALSAFAH DAN ISU SEMASA', name_ms: 'FALSAFAH DAN ISU SEMASA', programme: 'BACHELOR OF SCIENCE IN AQUACULTURE WITH HONOURS', programme_code: '11644', cohort: '2026/2027-1', students: 67, contact_hours: 42, amali_contact_hours: 0, group_number: '1', action_group: '1', quota: 80, practical_quota: 0, lecturer: '', lecturer_id: '', kuliah_lecturers: [{ id: '', name: '' }], amali_lecturers: [{ id: '', name: '' }], eligibility_state: 'edit', status: 'active', faculty: 'FAKULTI PERHUTANAN DAN ALAM SEKITAR', classification: 'core', credits: 2, weeks: '', day: '', time: '', venue: '' },
+    { id: 10, course_no: 3, code: 'SKP3122', course_credit: '2+0', name_en: 'PENGHAYATAN ETIKA DAN PERADABAN', name_ms: 'PENGHAYATAN ETIKA DAN PERADABAN', programme: 'BACHELOR OF BIOINDUSTRIAL SCIENCE WITH HONOURS', programme_code: '11644', cohort: '2026/2027-1', students: 67, contact_hours: 28, amali_contact_hours: 0, group_number: '1', action_group: '1', quota: 80, practical_quota: 0, lecturer: '', lecturer_id: '', kuliah_lecturers: [{ id: '', name: '' }], amali_lecturers: [{ id: '', name: '' }], eligibility_state: 'edit', status: 'active', faculty: 'FAKULTI PERHUTANAN DAN ALAM SEKITAR', classification: 'core', credits: 2, weeks: '', day: '', time: '', venue: '' },
+    { id: 11, course_no: 3, code: 'SKP3122', course_credit: '2+0', name_en: 'PENGHAYATAN ETIKA DAN PERADABAN', name_ms: 'PENGHAYATAN ETIKA DAN PERADABAN', programme: 'BACHELOR OF SCIENCE IN AQUACULTURE WITH HONOURS', programme_code: '11644', cohort: '2026/2027-1', students: 67, contact_hours: 28, amali_contact_hours: 0, group_number: '1', action_group: '1', quota: 80, practical_quota: 0, lecturer: '', lecturer_id: '', kuliah_lecturers: [{ id: '', name: '' }], amali_lecturers: [{ id: '', name: '' }], eligibility_state: 'edit', status: 'active', faculty: 'FAKULTI PERHUTANAN DAN ALAM SEKITAR', classification: 'core', credits: 2, weeks: '', day: '', time: '', venue: '' }
   ];
 
   let ocFilteredData = [...courseData];
@@ -1538,25 +1539,7 @@
     document.getElementById('oc-next-btn').onclick = () => { const max = Math.ceil(ocFilteredData.length / ocPageSize); if (ocCurrentPage < max) { ocCurrentPage++; renderOCTable(); } };
     document.getElementById('oc-export-btn').onclick = exportOCData;
 
-    // Lecturer dropdown handlers
-    const lecturerSearch = document.getElementById('oc-form-lecturer-search');
-    const lecturerDropdown = document.getElementById('oc-lecturer-dropdown');
-
-    lecturerSearch.addEventListener('focus', () => {
-      populateLecturerDropdown('');
-      lecturerDropdown.classList.remove('hidden');
-    });
-
-    lecturerSearch.addEventListener('input', (e) => {
-      populateLecturerDropdown(e.target.value.toLowerCase());
-      lecturerDropdown.classList.remove('hidden');
-    });
-
-    document.addEventListener('click', (e) => {
-      if (!lecturerSearch.contains(e.target) && !lecturerDropdown.contains(e.target)) {
-        lecturerDropdown.classList.add('hidden');
-      }
-    });
+    // Reserved for additional table handlers
   }
 
   function populateLecturerDropdown(searchTerm) {
@@ -1736,9 +1719,16 @@
 
   function applyOCFilters() {
     const searchText = document.getElementById('oc-search-input').value.toLowerCase();
+    const facultyFilter = document.getElementById('oc-filter-faculty').value;
+    const programmeFilter = document.getElementById('oc-filter-programme').value.toLowerCase();
+    const semesterFilter = document.getElementById('oc-filter-semester').value;
     ocFilteredData = courseData.filter(item => {
-      const matchSearch = !searchText || item.code.toLowerCase().includes(searchText) || item.name_en.toLowerCase().includes(searchText) || item.name_ms.toLowerCase().includes(searchText);
-      return matchSearch;
+      const courseText = `${item.code} ${item.name_en} ${item.programme} ${item.programme_code}`.toLowerCase();
+      const matchSearch = !searchText || courseText.includes(searchText);
+      const matchFaculty = !facultyFilter || item.faculty === facultyFilter;
+      const matchProgramme = !programmeFilter || item.programme.toLowerCase().includes(programmeFilter) || String(item.programme_code).toLowerCase().includes(programmeFilter);
+      const matchSemester = !semesterFilter || item.cohort === semesterFilter;
+      return matchSearch && matchFaculty && matchProgramme && matchSemester;
     });
     ocCurrentPage = 1;
     renderOCTable();
@@ -1755,6 +1745,8 @@
   }
 
   function renderOCTable() {
+    return renderOCTableStrict();
+
     const start = (ocCurrentPage - 1) * ocPageSize;
     const end = start + ocPageSize;
     const pageData = ocFilteredData.slice(start, end);
@@ -2041,6 +2033,188 @@
     lucide.createIcons();
   }
 
+  function renderOCTableStrict() {
+    const totalPages = Math.max(1, Math.ceil(ocFilteredData.length / ocPageSize));
+    if (ocCurrentPage > totalPages) ocCurrentPage = totalPages;
+
+    const start = (ocCurrentPage - 1) * ocPageSize;
+    const end = start + ocPageSize;
+    const pageData = ocFilteredData.slice(start, end);
+    const tbody = document.getElementById('oc-table-body');
+    tbody.innerHTML = '';
+
+    const esc = (value) => String(value ?? '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+
+    const lecturerOptions = (selectedId) => {
+      const base = '<option value=\"\">Lecturer Name</option>';
+      const list = lecturerData.map(lec => `<option value=\"${esc(lec.id)}\" ${lec.id === selectedId ? 'selected' : ''}>${esc(lec.name)}</option>`).join('');
+      return `${base}${list}`;
+    };
+
+    if (!pageData.length) {
+      tbody.innerHTML = '<tr><td colspan=\"16\" class=\"text-center px-3 py-6 text-xs\" style=\"color:#94a3b8;\">No data found.</td></tr>';
+    } else {
+      const countByGroup = {};
+      const seenGroup = {};
+      pageData.forEach(item => {
+        const key = `${item.course_no}-${item.code}-${item.name_en}`;
+        countByGroup[key] = (countByGroup[key] || 0) + 1;
+      });
+
+      pageData.forEach(item => {
+        const key = `${item.course_no}-${item.code}-${item.name_en}`;
+        const firstInGroup = !seenGroup[key];
+        seenGroup[key] = true;
+        const kuliahRows = (item.kuliah_lecturers && item.kuliah_lecturers.length) ? item.kuliah_lecturers : [{ id: item.lecturer_id || '', name: item.lecturer || '' }];
+        const amaliRows = (item.amali_lecturers && item.amali_lecturers.length) ? item.amali_lecturers : [{ id: '', name: '' }];
+        item.kuliah_lecturers = kuliahRows;
+        item.amali_lecturers = amaliRows;
+
+        const row = document.createElement('tr');
+        row.className = 'border-t';
+        row.style.borderColor = '#e2e8f0';
+        row.innerHTML = `
+          ${firstInGroup ? `
+            <td rowspan="${countByGroup[key]}" class="text-center px-3 py-3 text-xs font-semibold align-top" style="background-color:#f8fafc;color:#334155;">${esc(item.course_no)}</td>
+            <td rowspan="${countByGroup[key]}" class="text-left px-3 py-3 text-xs align-top" style="background-color:#f8fafc;">
+              <div class="font-bold" style="color:#0f172a;">${esc(item.code)}</div>
+              <div style="color:#475569;">(${esc(item.course_credit || `${item.credits}+0`)})</div>
+              <div class="font-semibold mt-1" style="color:#0f172a;">${esc(item.name_en)}</div>
+            </td>
+          ` : ''}
+          <td class="text-left px-3 py-3 text-xs">
+            <div class="font-semibold" style="color:#0f172a;">${esc(item.programme)}</div>
+            <div style="color:#64748b;">(${esc(item.programme_code)})</div>
+          </td>
+          <td class="text-center px-3 py-3 text-xs" style="color:#0f172a;">${esc(item.cohort)}</td>
+          <td class="text-center px-3 py-3 text-xs font-semibold" style="color:#0f172a;">${esc(item.students)}</td>
+          <td class="text-center px-3 py-3 text-xs font-semibold" style="color:#0f172a;">${esc(item.contact_hours)}</td>
+          <td class="text-center px-3 py-3 text-xs font-semibold" style="color:#0f172a;">${esc(item.amali_contact_hours || 0)}</td>
+
+          <td class="text-center px-2 py-2">
+            <div class="inline-flex border rounded overflow-hidden" style="border-color:#cbd5e1;">
+              <button type="button" onclick="setOCEligibilityState(${item.id}, 'edit')" class="px-2 py-1 text-[10px] font-semibold" style="background-color:${item.eligibility_state === 'edit' ? '#dbeafe' : '#ffffff'};color:#1d4ed8;">Edit</button>
+              <button type="button" onclick="setOCEligibilityState(${item.id}, 'done')" class="px-2 py-1 text-[10px] font-semibold" style="background-color:${item.eligibility_state === 'done' ? '#dcfce7' : '#ffffff'};color:#15803d;">Done</button>
+              <button type="button" onclick="setOCEligibilityState(${item.id}, 'right')" class="px-2 py-1 text-[10px] font-semibold" style="background-color:${item.eligibility_state === 'right' ? '#fef3c7' : '#ffffff'};color:#b45309;">Right</button>
+            </div>
+          </td>
+          <td class="text-center px-2 py-2">
+            <select onchange="setOCActionGroup(${item.id}, this.value)" class="w-full px-2 py-1 text-[10px] border rounded" style="border-color:#cbd5e1;background-color:#ffffff;color:#1e293b;">
+              <option value="">Lecture Group</option>
+              ${groupNumberOptions.map(grp => `<option value="${grp}" ${item.action_group === grp ? 'selected' : ''}>${grp}</option>`).join('')}
+            </select>
+          </td>
+          <td class="text-center px-2 py-2" style="background-color:#eff6ff;">
+            <select onchange="setOCLectureGroup(${item.id}, this.value)" class="w-full px-2 py-1 text-[10px] border rounded" style="border-color:#bfdbfe;background-color:#ffffff;color:#1e293b;">
+              ${groupNumberOptions.map(grp => `<option value="${grp}" ${item.group_number === grp ? 'selected' : ''}>${grp}</option>`).join('')}
+            </select>
+          </td>
+          <td class="text-center px-2 py-2" style="background-color:#eff6ff;">
+            <input type="text" value="${esc(item.quota)}" class="w-full px-2 py-1 text-[10px] border rounded text-center" style="border-color:#bfdbfe;background-color:#ffffff;color:#1e293b;" onchange="setOCQuota(${item.id}, 'lecture', this.value)">
+          </td>
+          <td class="text-left px-2 py-2" style="background-color:#eff6ff;min-width:165px;">
+            ${kuliahRows.map((lec, idx) => `<div class="mb-1"><select onchange="setOCLecturer(${item.id}, 'kuliah', ${idx}, this.value)" class="w-full px-2 py-1 text-[10px] border rounded" style="border-color:#bfdbfe;background-color:#ffffff;color:#1e293b;">${lecturerOptions(lec.id)}</select></div>`).join('')}
+            <button type="button" onclick="addOCLecturerRow(${item.id}, 'kuliah')" class="px-2 py-1 text-[10px] font-semibold border rounded" style="border-color:#bfdbfe;color:#0284c7;background-color:#dbeafe;">Add Lecturer</button>
+          </td>
+          <td class="text-center px-2 py-2" style="background-color:#fffbeb;">
+            <input type="text" value="${esc(item.practical_quota || 0)}" class="w-full px-2 py-1 text-[10px] border rounded text-center" style="border-color:#fcd34d;background-color:#ffffff;color:#1e293b;" onchange="setOCQuota(${item.id}, 'practical', this.value)">
+          </td>
+          <td class="text-left px-2 py-2" style="background-color:#fffbeb;min-width:165px;">
+            ${amaliRows.map((lec, idx) => `<div class="mb-1"><select onchange="setOCLecturer(${item.id}, 'amali', ${idx}, this.value)" class="w-full px-2 py-1 text-[10px] border rounded" style="border-color:#fcd34d;background-color:#ffffff;color:#1e293b;">${lecturerOptions(lec.id)}</select></div>`).join('')}
+            <button type="button" onclick="addOCLecturerRow(${item.id}, 'amali')" class="px-2 py-1 text-[10px] font-semibold border rounded" style="border-color:#fcd34d;color:#b45309;background-color:#fef3c7;">Add</button>
+          </td>
+          <td class="text-center px-2 py-2" style="background-color:#fffbeb;">
+            <button type="button" onclick="editOCCourse(${item.id})" class="w-6 h-6 rounded flex items-center justify-center mx-auto hover:bg-amber-100 transition-colors"><i data-lucide="pencil" style="width:12px;height:12px;color:#f59e0b;"></i></button>
+          </td>
+          <td class="text-center px-2 py-2">
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" ${item.status === 'active' ? 'checked' : ''} onchange="toggleOCStatus(${item.id}, this.checked)" class="sr-only">
+              <span class="w-8 h-4 rounded-full" style="display:inline-block;background-color:${item.status === 'active' ? '#10b981' : '#cbd5e1'};"></span>
+            </label>
+          </td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    const totalRecordsEl = document.getElementById('oc-total-records');
+    if (totalRecordsEl) totalRecordsEl.textContent = ocFilteredData.length;
+    document.getElementById('oc-current-page').textContent = ocCurrentPage;
+    document.getElementById('oc-total-pages').textContent = totalPages;
+    document.getElementById('oc-prev-btn').style.opacity = ocCurrentPage === 1 ? '0.5' : '1';
+    document.getElementById('oc-prev-btn').style.cursor = ocCurrentPage === 1 ? 'not-allowed' : 'pointer';
+    document.getElementById('oc-next-btn').style.opacity = ocCurrentPage === totalPages ? '0.5' : '1';
+    document.getElementById('oc-next-btn').style.cursor = ocCurrentPage === totalPages ? 'not-allowed' : 'pointer';
+
+    lucide.createIcons();
+  }
+
+  function setOCEligibilityState(id, state) {
+    const item = courseData.find(x => x.id === id);
+    if (!item) return;
+    item.eligibility_state = state;
+    renderOCTable();
+  }
+
+  function setOCActionGroup(id, value) {
+    const item = courseData.find(x => x.id === id);
+    if (!item) return;
+    item.action_group = value;
+    if (value) item.group_number = value;
+    renderOCTable();
+  }
+
+  function setOCLectureGroup(id, value) {
+    const item = courseData.find(x => x.id === id);
+    if (!item || !value) return;
+    item.group_number = value;
+    item.action_group = value;
+    renderOCTable();
+  }
+
+  function setOCQuota(id, type, value) {
+    const item = courseData.find(x => x.id === id);
+    if (!item) return;
+    const parsed = parseInt(value, 10) || 0;
+    if (type === 'lecture') item.quota = parsed;
+    if (type === 'practical') item.practical_quota = parsed;
+    renderOCTable();
+  }
+
+  function setOCLecturer(id, type, index, lecturerId) {
+    const item = courseData.find(x => x.id === id);
+    if (!item) return;
+    const selected = lecturerData.find(l => l.id === lecturerId) || { id: '', name: '' };
+    const listName = type === 'amali' ? 'amali_lecturers' : 'kuliah_lecturers';
+    if (!Array.isArray(item[listName])) item[listName] = [{ id: '', name: '' }];
+    item[listName][index] = { id: selected.id, name: selected.name };
+
+    if (type === 'kuliah') {
+      const primary = item.kuliah_lecturers.find(l => l.id) || { id: '', name: '' };
+      item.lecturer_id = primary.id;
+      item.lecturer = primary.name;
+    } else {
+      const primary = item.amali_lecturers.find(l => l.id) || { id: '', name: '' };
+      item.amali_lecturer_id = primary.id;
+      item.amali_lecturer = primary.name;
+    }
+    renderOCTable();
+  }
+
+  function addOCLecturerRow(id, type) {
+    const item = courseData.find(x => x.id === id);
+    if (!item) return;
+    const listName = type === 'amali' ? 'amali_lecturers' : 'kuliah_lecturers';
+    if (!Array.isArray(item[listName])) item[listName] = [];
+    item[listName].push({ id: '', name: '' });
+    renderOCTable();
+  }
+
   function openOCForm() {
     ocEditingId = null;
     document.getElementById('add-course-form').reset();
@@ -2048,13 +2222,13 @@
     document.getElementById('oc-form-kuliah-lecturer').value = '';
     document.getElementById('oc-form-amali-lecturer-search').value = '';
     document.getElementById('oc-form-amali-lecturer').value = '';
-    document.getElementById('add-course-form-container').classList.remove('hidden');
+    document.getElementById('oc-add-course-form-container').classList.remove('hidden');
     setupFormLecturerDropdowns();
     document.getElementById('oc-form-code').focus();
   }
 
   function closeOCForm() {
-    document.getElementById('add-course-form-container').classList.add('hidden');
+    document.getElementById('oc-add-course-form-container').classList.add('hidden');
     ocEditingId = null;
   }
 
@@ -2088,7 +2262,7 @@
     document.getElementById('oc-form-amali-lecturer').value = lecturerAmali.id;
     document.getElementById('oc-form-amali-hrs').value = item.amali_contact_hours || '';
     
-    document.getElementById('add-course-form-container').classList.remove('hidden');
+    document.getElementById('oc-add-course-form-container').classList.remove('hidden');
     setupFormLecturerDropdowns();
   }
 
