@@ -2175,6 +2175,60 @@
     if (item.practical_group_values.length) item.amali_group_number = item.practical_group_values[0];
   }
 
+  function syncOCLecturerCountsWithGroups(item) {
+    if (!item) return;
+    normalizeOCGroupDropdownValues(item);
+
+    const lectureCount = item.lecture_group_entries.length;
+    const practicalCount = item.practical_group_entries.length;
+
+    const lectureSource = Array.isArray(item.kuliah_lecturers) ? item.kuliah_lecturers : [];
+    const practicalSource = Array.isArray(item.amali_lecturers) ? item.amali_lecturers : [];
+    const lectureFallback = { id: item.lecturer_id || '', name: item.lecturer || '' };
+    const practicalFallback = { id: item.amali_lecturer_id || '', name: item.amali_lecturer || '' };
+
+    item.kuliah_lecturers = Array.from({ length: lectureCount }, (_, index) => {
+      const existing = lectureSource[index];
+      if (existing && typeof existing === 'object') {
+        return { id: existing.id || '', name: existing.name || '' };
+      }
+      if (index === 0) return { id: lectureFallback.id, name: lectureFallback.name };
+      return { id: '', name: '' };
+    });
+
+    item.amali_lecturers = Array.from({ length: practicalCount }, (_, index) => {
+      const existing = practicalSource[index];
+      if (existing && typeof existing === 'object') {
+        return { id: existing.id || '', name: existing.name || '' };
+      }
+      if (index === 0) return { id: practicalFallback.id, name: practicalFallback.name };
+      return { id: '', name: '' };
+    });
+
+    const firstLecture = item.kuliah_lecturers[0] || { id: '', name: '' };
+    const firstPractical = item.amali_lecturers[0] || { id: '', name: '' };
+    item.lecturer_id = firstLecture.id || '';
+    item.lecturer = firstLecture.name || '';
+    item.amali_lecturer_id = firstPractical.id || '';
+    item.amali_lecturer = firstPractical.name || '';
+
+    if (!Array.isArray(item.lecture_groups) || !item.lecture_groups.length) {
+      item.lecture_groups = [{
+        group_number: item.group_number || groupNumberOptions[0] || '1',
+        quota: parseInt(item.quota, 10) || 0,
+        lecturers: []
+      }];
+    }
+    if (!Array.isArray(item.practical_groups) || !item.practical_groups.length) {
+      item.practical_groups = [{
+        quota: parseInt(item.practical_quota, 10) || 0,
+        lecturers: []
+      }];
+    }
+    item.lecture_groups[0].lecturers = item.kuliah_lecturers.map(lecturer => ({ id: lecturer.id || '', name: lecturer.name || '' }));
+    item.practical_groups[0].lecturers = item.amali_lecturers.map(lecturer => ({ id: lecturer.id || '', name: lecturer.name || '' }));
+  }
+
   function isOCSetupComplete(item) {
     if (!item) return false;
     normalizeOCGroupDropdownValues(item);
@@ -2226,9 +2280,9 @@
 
       pageData.forEach(item => {
         normalizeOCGroupRows(item);
-        normalizeOCGroupDropdownValues(item);
-        const kuliahRows = (item.kuliah_lecturers && item.kuliah_lecturers.length) ? item.kuliah_lecturers : [{ id: item.lecturer_id || '', name: item.lecturer || '' }];
-        const amaliRows = (item.amali_lecturers && item.amali_lecturers.length) ? item.amali_lecturers : [{ id: '', name: '' }];
+        syncOCLecturerCountsWithGroups(item);
+        const kuliahRows = item.kuliah_lecturers;
+        const amaliRows = item.amali_lecturers;
         const key = `${item.course_no}-${item.code}-${item.name_en}`;
         const firstInGroup = !seenGroup[key];
         seenGroup[key] = true;
@@ -2509,7 +2563,7 @@
     if (evt) evt.stopPropagation();
     const item = courseData.find(x => x.id === id);
     if (!item) return;
-    normalizeOCGroupDropdownValues(item);
+    syncOCLecturerCountsWithGroups(item);
 
     const listName = type === 'practical' ? 'practical_group_entries' : 'lecture_group_entries';
     const valueListName = type === 'practical' ? 'practical_group_values' : 'lecture_group_values';
@@ -2523,7 +2577,7 @@
     item[valueListName].push(defaultValue);
 
     ocGroupTypeMenuOpenId = null;
-    normalizeOCGroupDropdownValues(item);
+    syncOCLecturerCountsWithGroups(item);
     renderOCTable();
   }
 
@@ -2547,7 +2601,7 @@
     if (evt) evt.stopPropagation();
     const item = courseData.find(x => x.id === id);
     if (!item) return;
-    normalizeOCGroupDropdownValues(item);
+    syncOCLecturerCountsWithGroups(item);
 
     const listName = type === 'practical' ? 'practical_group_entries' : 'lecture_group_entries';
     const valueListName = type === 'practical' ? 'practical_group_values' : 'lecture_group_values';
@@ -2557,8 +2611,12 @@
     if (Array.isArray(item[valueListName]) && index < item[valueListName].length) {
       item[valueListName].splice(index, 1);
     }
+    const lecturerListName = type === 'practical' ? 'amali_lecturers' : 'kuliah_lecturers';
+    if (Array.isArray(item[lecturerListName]) && index < item[lecturerListName].length) {
+      item[lecturerListName].splice(index, 1);
+    }
     item[listName] = item[listName].map((_, idx) => idx + 1);
-    normalizeOCGroupDropdownValues(item);
+    syncOCLecturerCountsWithGroups(item);
 
     renderOCTable();
   }
@@ -2625,11 +2683,25 @@
   }
 
   function setOCLecturer(id, type, index, lecturerId) {
-    setOCGroupLecturer(id, type === 'amali' ? 'practical' : 'lecture', 0, index, lecturerId);
+    const item = courseData.find(x => x.id === id);
+    if (!item) return;
+    syncOCLecturerCountsWithGroups(item);
+
+    const listName = type === 'amali' ? 'amali_lecturers' : 'kuliah_lecturers';
+    if (!Array.isArray(item[listName]) || index < 0 || index >= item[listName].length) return;
+
+    const selected = lecturerData.find(lecturer => lecturer.id === lecturerId) || { id: '', name: '' };
+    item[listName][index] = { id: selected.id, name: selected.name };
+
+    syncOCLecturerCountsWithGroups(item);
+    renderOCTable();
   }
 
   function addOCLecturerRow(id, type) {
-    addOCGroupLecturerRow(id, type === 'amali' ? 'practical' : 'lecture', 0);
+    const item = courseData.find(x => x.id === id);
+    if (!item) return;
+    syncOCLecturerCountsWithGroups(item);
+    renderOCTable();
   }
 
   function openOCForm() {
