@@ -453,6 +453,25 @@
          <div class="flex gap-2 justify-end pt-2"><button type="submit" class="px-4 py-2 text-xs font-medium rounded-lg transition-colors" style="background-color: #f59e0b; color: #fff;" onmouseover="this.style.backgroundColor='#d97706'" onmouseout="this.style.backgroundColor='#f59e0b'">Save</button> <button type="button" id="oc-cancel-form-btn2" class="px-4 py-2 text-xs font-medium rounded-lg transition-colors" style="background-color: #e5e7eb; color: #4b5563;" onmouseover="this.style.backgroundColor='#d1d5db'" onmouseout="this.style.backgroundColor='#e5e7eb'">Cancel</button>
          </div>
         </form>
+       </div><!-- Eligibility Setup Modal -->
+       <div id="oc-eligibility-modal" class="hidden fixed inset-0 z-[70] px-4 py-8 overflow-y-auto" style="background-color: rgba(15,23,42,0.45);" onclick="if(event.target === this) closeOCEligibilityModal();">
+        <div class="max-w-md mx-auto rounded-xl p-5" style="background-color:#ffffff; box-shadow:0 10px 30px rgba(2,8,23,0.18);" onclick="event.stopPropagation();">
+         <div class="flex items-center justify-between mb-4">
+          <h3 class="text-sm font-bold" style="color:#1e293b;">Eligibility Setup</h3><button type="button" id="oc-eligibility-close-btn" class="w-6 h-6 rounded flex items-center justify-center hover:bg-slate-100 transition-colors" title="Close"><i data-lucide="x" style="width:14px;height:14px;color:#475569;"></i></button>
+         </div>
+         <form id="oc-eligibility-form" class="space-y-4">
+          <div>
+           <label class="block text-xs font-medium mb-1.5" style="color:#475569;">Gender</label> <select id="oc-eligibility-gender" class="w-full px-3 py-2 text-xs border rounded-lg" style="border-color:#cbd5e1;background-color:#ffffff;color:#1e293b;"> <option value="">Select Gender</option> <option value="Male">Male</option> <option value="Female">Female</option> <option value="Others">Others</option> </select>
+          </div>
+          <div>
+           <div class="flex items-center justify-between mb-1.5"><label class="block text-xs font-medium" style="color:#475569;">Race</label> <button type="button" id="oc-eligibility-add-race-btn" class="px-2 py-1 text-[10px] font-semibold border rounded" style="border-color:#bfdbfe;color:#0284c7;background-color:#dbeafe;">+ Add</button>
+           </div>
+           <div id="oc-eligibility-race-container" class="space-y-2"></div>
+          </div>
+          <div class="flex items-center justify-end gap-2 pt-1"><button type="button" id="oc-eligibility-cancel-btn" class="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors" style="background-color:#e5e7eb;color:#475569;">Cancel</button> <button type="submit" class="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors" style="background-color:#0284c7;color:#ffffff;">Save</button>
+          </div>
+         </form>
+        </div>
        </div><!-- Data Table -->
        <div class="rounded-xl overflow-hidden" style="background-color: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.06);">
         <div class="overflow-x-auto">
@@ -1502,6 +1521,7 @@
   const cohortOptions = ['2026/2027-1', '2026/2027-2', '2025/2026-1', '2025/2026-2', '2024/2025-1'];
 
   const groupNumberOptions = ['1', '2', '3'];
+  const ocRaceOptions = ['Malay', 'Chinese', 'Indian', 'Bumiputera Sabah', 'Bumiputera Sarawak', 'Orang Asli', 'Others'];
 
   let courseData = [
     { id: 1, course_no: 1, code: 'SKP2101', course_credit: '3+0', name_en: 'KENEGARAAN MALAYSIA', name_ms: 'KENEGARAAN MALAYSIA', programme: 'BACHELOR OF SCIENCE IN INDUSTRIAL CHEMISTRY WITH HONOURS', programme_code: '11649', cohort: '2026/2027-1', students: 49, contact_hours: 42, amali_contact_hours: 0, group_number: '1', action_group: '1', quota: 80, practical_quota: 0, lecturer: '', lecturer_id: '', kuliah_lecturers: [{ id: '', name: '' }], amali_lecturers: [{ id: '', name: '' }], eligibility_state: 'edit', status: 'active', faculty: 'FAKULTI PERUBATAN DAN SAINS KESIHATAN', classification: 'core', credits: 3, weeks: '', day: '', time: '', venue: '' },
@@ -1522,6 +1542,8 @@
   let ocPageSize = 10;
   let ocEditingId = null;
   let ocGroupTypeMenuOpenId = null;
+  let ocEligibilityEditingId = null;
+  let ocEligibilityRaceValues = [];
 
   function initOfferedCoursesTable() {
     renderOCTable();
@@ -1542,6 +1564,10 @@
     document.getElementById('oc-prev-btn').onclick = () => { if (ocCurrentPage > 1) { ocCurrentPage--; renderOCTable(); } };
     document.getElementById('oc-next-btn').onclick = () => { const max = Math.ceil(ocFilteredData.length / ocPageSize); if (ocCurrentPage < max) { ocCurrentPage++; renderOCTable(); } };
     document.getElementById('oc-export-btn').onclick = exportOCData;
+    document.getElementById('oc-eligibility-close-btn').onclick = closeOCEligibilityModal;
+    document.getElementById('oc-eligibility-cancel-btn').onclick = closeOCEligibilityModal;
+    document.getElementById('oc-eligibility-add-race-btn').onclick = (e) => { e.preventDefault(); addOCEligibilityRaceField(); };
+    document.getElementById('oc-eligibility-form').onsubmit = saveOCEligibility;
 
     // Reserved for additional table handlers
     if (!window.ocGroupMenuOutsideHandlerBound) {
@@ -2328,7 +2354,7 @@
           <td class="text-center px-3 py-3 text-xs font-semibold" style="color:#0f172a;">${esc(item.contact_hours)}</td>
           <td class="text-center px-3 py-3 text-xs font-semibold" style="color:#0f172a;">${esc(item.amali_contact_hours || 0)}</td>
           <td class="text-center px-2 py-2 align-top">
-            <button type="button" onclick="setOCEligibilityState(${item.id}, 'validated')" class="w-6 h-6 rounded border flex items-center justify-center mx-auto transition-colors" style="border-color:#bfdbfe; background-color:${item.eligibility_state === 'validated' ? '#dcfce7' : '#ffffff'}; color:${item.eligibility_state === 'validated' ? '#15803d' : '#1d4ed8'};" title="Validate Eligibility">
+            <button type="button" onclick="openOCEligibilityModal(${item.id})" class="w-6 h-6 rounded border flex items-center justify-center mx-auto transition-colors" style="border-color:#bfdbfe; background-color:${item.eligibility_state === 'validated' ? '#dcfce7' : '#ffffff'}; color:${item.eligibility_state === 'validated' ? '#15803d' : '#1d4ed8'};" title="Eligibility Setup">
               <i data-lucide="clipboard-check" style="width:12px;height:12px;"></i>
             </button>
           </td>
@@ -2368,6 +2394,94 @@
     if (!item) return;
     item.eligibility_state = state;
     renderOCTable();
+  }
+
+  function ensureOCEligibilityData(item) {
+    if (!item) return;
+    if (!item.eligibility_data || typeof item.eligibility_data !== 'object') {
+      item.eligibility_data = { gender: '', races: [] };
+    }
+    if (!Array.isArray(item.eligibility_data.races)) {
+      item.eligibility_data.races = [];
+    }
+  }
+
+  function renderOCEligibilityRaceFields() {
+    const container = document.getElementById('oc-eligibility-race-container');
+    if (!container) return;
+
+    const rows = (ocEligibilityRaceValues.length ? ocEligibilityRaceValues : ['']).map((value, index) => `
+      <div class="flex items-center gap-2">
+        <select onchange="setOCEligibilityRaceValue(${index}, this.value)" class="flex-1 px-3 py-2 text-xs border rounded-lg" style="border-color:#cbd5e1;background-color:#ffffff;color:#1e293b;">
+          <option value="">Select Race</option>
+          ${ocRaceOptions.map(option => `<option value="${option}" ${value === option ? 'selected' : ''}>${option}</option>`).join('')}
+        </select>
+        <button type="button" onclick="removeOCEligibilityRaceField(${index})" class="w-7 h-7 rounded border flex items-center justify-center hover:bg-red-50 transition-colors" style="border-color:#fecaca;color:#dc2626;" title="Remove Race">
+          <i data-lucide="trash-2" style="width:12px;height:12px;"></i>
+        </button>
+      </div>
+    `).join('');
+
+    container.innerHTML = rows;
+    lucide.createIcons();
+  }
+
+  function openOCEligibilityModal(id) {
+    const item = courseData.find(x => x.id === id);
+    if (!item) return;
+    ensureOCEligibilityData(item);
+
+    ocEligibilityEditingId = id;
+    document.getElementById('oc-eligibility-gender').value = item.eligibility_data.gender || '';
+    ocEligibilityRaceValues = item.eligibility_data.races.length ? [...item.eligibility_data.races] : [''];
+    renderOCEligibilityRaceFields();
+
+    const modal = document.getElementById('oc-eligibility-modal');
+    modal.classList.remove('hidden');
+    lucide.createIcons();
+  }
+
+  function closeOCEligibilityModal() {
+    const modal = document.getElementById('oc-eligibility-modal');
+    if (modal) modal.classList.add('hidden');
+    ocEligibilityEditingId = null;
+    ocEligibilityRaceValues = [];
+  }
+
+  function addOCEligibilityRaceField() {
+    ocEligibilityRaceValues.push('');
+    renderOCEligibilityRaceFields();
+  }
+
+  function removeOCEligibilityRaceField(index) {
+    if (index < 0 || index >= ocEligibilityRaceValues.length) return;
+    if (ocEligibilityRaceValues.length === 1) {
+      ocEligibilityRaceValues = [''];
+    } else {
+      ocEligibilityRaceValues.splice(index, 1);
+    }
+    renderOCEligibilityRaceFields();
+  }
+
+  function setOCEligibilityRaceValue(index, value) {
+    if (index < 0 || index >= ocEligibilityRaceValues.length) return;
+    ocEligibilityRaceValues[index] = value;
+  }
+
+  function saveOCEligibility(e) {
+    if (e) e.preventDefault();
+    const item = courseData.find(x => x.id === ocEligibilityEditingId);
+    if (!item) return;
+    ensureOCEligibilityData(item);
+
+    const gender = document.getElementById('oc-eligibility-gender').value || '';
+    const races = ocEligibilityRaceValues.map(value => String(value || '').trim()).filter(Boolean);
+    item.eligibility_data = { gender, races };
+    item.eligibility_state = (gender && races.length) ? 'validated' : 'edit';
+
+    closeOCEligibilityModal();
+    renderOCTable();
+    showOCNotification('Eligibility updated successfully.');
   }
 
   function toggleOCGroupTypeMenu(id, evt) {
