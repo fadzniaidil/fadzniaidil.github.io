@@ -461,7 +461,10 @@
          </div>
          <form id="oc-eligibility-form" class="space-y-4">
           <div>
-           <label class="block text-xs font-medium mb-1.5" style="color:#475569;">Gender</label> <select id="oc-eligibility-gender" class="w-full px-3 py-2 text-xs border rounded-lg" style="border-color:#cbd5e1;background-color:#ffffff;color:#1e293b;"> <option value="">Select Gender</option> <option value="Male">Male</option> <option value="Female">Female</option> <option value="Others">Others</option> </select>
+           <label class="block text-xs font-medium mb-1.5" style="color:#475569;">Gender</label>
+           <div class="space-y-1">
+            <label class="flex items-center gap-2 text-xs" style="color:#1e293b;"> <input type="checkbox" id="oc-eligibility-gender-male" class="w-3.5 h-3.5" style="accent-color:#0284c7;"> Male </label> <label class="flex items-center gap-2 text-xs" style="color:#1e293b;"> <input type="checkbox" id="oc-eligibility-gender-female" class="w-3.5 h-3.5" style="accent-color:#0284c7;"> Female </label>
+           </div>
           </div>
           <div>
            <div class="flex items-center justify-between mb-1.5"><label class="block text-xs font-medium" style="color:#475569;">Race</label> <button type="button" id="oc-eligibility-add-race-btn" class="px-2 py-1 text-[10px] font-semibold border rounded" style="border-color:#bfdbfe;color:#0284c7;background-color:#dbeafe;">+ Add</button>
@@ -2399,11 +2402,20 @@
   function ensureOCEligibilityData(item) {
     if (!item) return;
     if (!item.eligibility_data || typeof item.eligibility_data !== 'object') {
-      item.eligibility_data = { gender: '', races: [] };
+      item.eligibility_data = { genders: [], races: [] };
     }
     if (!Array.isArray(item.eligibility_data.races)) {
       item.eligibility_data.races = [];
     }
+    if (!Array.isArray(item.eligibility_data.genders)) {
+      const fallback = String(item.eligibility_data.gender || '')
+        .split(',')
+        .map(value => value.trim())
+        .filter(Boolean);
+      item.eligibility_data.genders = fallback;
+    }
+    item.eligibility_data.genders = item.eligibility_data.genders
+      .filter(value => value === 'Male' || value === 'Female');
   }
 
   function renderOCEligibilityRaceFields() {
@@ -2432,7 +2444,8 @@
     ensureOCEligibilityData(item);
 
     ocEligibilityEditingId = id;
-    document.getElementById('oc-eligibility-gender').value = item.eligibility_data.gender || '';
+    document.getElementById('oc-eligibility-gender-male').checked = item.eligibility_data.genders.includes('Male');
+    document.getElementById('oc-eligibility-gender-female').checked = item.eligibility_data.genders.includes('Female');
     ocEligibilityRaceValues = item.eligibility_data.races.length ? [...item.eligibility_data.races] : [''];
     renderOCEligibilityRaceFields();
 
@@ -2474,10 +2487,12 @@
     if (!item) return;
     ensureOCEligibilityData(item);
 
-    const gender = document.getElementById('oc-eligibility-gender').value || '';
+    const genders = [];
+    if (document.getElementById('oc-eligibility-gender-male').checked) genders.push('Male');
+    if (document.getElementById('oc-eligibility-gender-female').checked) genders.push('Female');
     const races = ocEligibilityRaceValues.map(value => String(value || '').trim()).filter(Boolean);
-    item.eligibility_data = { gender, races };
-    item.eligibility_state = (gender && races.length) ? 'validated' : 'edit';
+    item.eligibility_data = { genders, gender: genders.join(', '), races };
+    item.eligibility_state = (genders.length && races.length) ? 'validated' : 'edit';
 
     closeOCEligibilityModal();
     renderOCTable();
