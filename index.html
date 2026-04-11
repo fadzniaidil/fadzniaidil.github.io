@@ -2097,14 +2097,9 @@
           <td class="text-center px-3 py-3 text-xs font-semibold" style="color:#0f172a;">${esc(item.amali_contact_hours || 0)}</td>
 
           <td class="text-center px-2 py-2">
-            <div class="inline-flex items-center gap-1">
-              <button type="button" onclick="setOCEligibilityState(${item.id}, 'edit')" class="w-6 h-6 rounded border flex items-center justify-center transition-colors" style="border-color:#bfdbfe; background-color:${item.eligibility_state === 'edit' ? '#dbeafe' : '#ffffff'}; color:#1d4ed8;" title="Edit">
-                <i data-lucide="pencil" style="width:12px;height:12px;"></i>
-              </button>
-              <button type="button" onclick="setOCEligibilityState(${item.id}, 'done')" class="w-6 h-6 rounded border flex items-center justify-center transition-colors" style="border-color:#bbf7d0; background-color:${item.eligibility_state === 'done' ? '#dcfce7' : '#ffffff'}; color:#15803d;" title="Done">
-                <i data-lucide="save" style="width:12px;height:12px;"></i>
-              </button>
-            </div>
+            <button type="button" onclick="setOCEligibilityState(${item.id}, 'validated')" class="w-6 h-6 rounded border flex items-center justify-center mx-auto transition-colors" style="border-color:#bfdbfe; background-color:${item.eligibility_state === 'validated' ? '#dcfce7' : '#ffffff'}; color:${item.eligibility_state === 'validated' ? '#15803d' : '#1d4ed8'};" title="Validate Eligibility">
+              <i data-lucide="clipboard-check" style="width:12px;height:12px;"></i>
+            </button>
           </td>
           <td class="text-center px-2 py-2">
             <select onchange="setOCActionGroup(${item.id}, this.value)" class="w-full px-2 py-1 text-[10px] border rounded" style="border-color:#cbd5e1;background-color:#ffffff;color:#1e293b;">
