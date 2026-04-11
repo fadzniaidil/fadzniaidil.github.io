@@ -467,7 +467,7 @@
             <th rowspan="2" class="text-center px-3 py-3 text-[11px] font-bold uppercase tracking-wider" style="color: #475569;">Lect. Hours</th>
             <th rowspan="2" class="text-center px-3 py-3 text-[11px] font-bold uppercase tracking-wider" style="color: #475569;">Prac. Hours</th>
             <th rowspan="2" class="text-center px-3 py-3 text-[11px] font-bold uppercase tracking-wider" style="color: #475569;">Eligibility</th>
-            <th rowspan="2" class="text-center px-3 py-3 text-[11px] font-bold uppercase tracking-wider" style="color: #475569;">Action</th>
+            <th rowspan="2" class="text-center px-3 py-3 text-[11px] font-bold uppercase tracking-wider" style="color: #475569;">Lecture Group Type</th>
             <th colspan="3" class="text-center px-3 py-3 text-[11px] font-bold uppercase tracking-wider" style="color: #fff; background-color: #0284c7;">Lecture</th>
             <th colspan="2" class="text-center px-3 py-3 text-[11px] font-bold uppercase tracking-wider" style="color: #fff; background-color: #f59e0b;">Practical</th>
             <th rowspan="2" class="text-center px-3 py-3 text-[11px] font-bold uppercase tracking-wider" style="color: #475569;">Action</th>
@@ -2097,16 +2097,20 @@
           <td class="text-center px-3 py-3 text-xs font-semibold" style="color:#0f172a;">${esc(item.amali_contact_hours || 0)}</td>
 
           <td class="text-center px-2 py-2">
-            <div class="inline-flex border rounded overflow-hidden" style="border-color:#cbd5e1;">
-              <button type="button" onclick="setOCEligibilityState(${item.id}, 'edit')" class="px-2 py-1 text-[10px] font-semibold" style="background-color:${item.eligibility_state === 'edit' ? '#dbeafe' : '#ffffff'};color:#1d4ed8;">Edit</button>
-              <button type="button" onclick="setOCEligibilityState(${item.id}, 'done')" class="px-2 py-1 text-[10px] font-semibold" style="background-color:${item.eligibility_state === 'done' ? '#dcfce7' : '#ffffff'};color:#15803d;">Done</button>
-              <button type="button" onclick="setOCEligibilityState(${item.id}, 'right')" class="px-2 py-1 text-[10px] font-semibold" style="background-color:${item.eligibility_state === 'right' ? '#fef3c7' : '#ffffff'};color:#b45309;">Right</button>
+            <div class="inline-flex items-center gap-1">
+              <button type="button" onclick="setOCEligibilityState(${item.id}, 'edit')" class="w-6 h-6 rounded border flex items-center justify-center transition-colors" style="border-color:#bfdbfe; background-color:${item.eligibility_state === 'edit' ? '#dbeafe' : '#ffffff'}; color:#1d4ed8;" title="Edit">
+                <i data-lucide="pencil" style="width:12px;height:12px;"></i>
+              </button>
+              <button type="button" onclick="setOCEligibilityState(${item.id}, 'done')" class="w-6 h-6 rounded border flex items-center justify-center transition-colors" style="border-color:#bbf7d0; background-color:${item.eligibility_state === 'done' ? '#dcfce7' : '#ffffff'}; color:#15803d;" title="Done">
+                <i data-lucide="save" style="width:12px;height:12px;"></i>
+              </button>
             </div>
           </td>
           <td class="text-center px-2 py-2">
             <select onchange="setOCActionGroup(${item.id}, this.value)" class="w-full px-2 py-1 text-[10px] border rounded" style="border-color:#cbd5e1;background-color:#ffffff;color:#1e293b;">
-              <option value="">Lecture Group</option>
-              ${groupNumberOptions.map(grp => `<option value="${grp}" ${item.action_group === grp ? 'selected' : ''}>${grp}</option>`).join('')}
+              <option value="">Select Group Type</option>
+              <option value="LECTURE GROUP" ${item.action_group === 'LECTURE GROUP' ? 'selected' : ''}>LECTURE GROUP</option>
+              <option value="PRACTICAL GROUP" ${item.action_group === 'PRACTICAL GROUP' ? 'selected' : ''}>PRACTICAL GROUP</option>
             </select>
           </td>
           <td class="text-center px-2 py-2" style="background-color:#eff6ff;">
@@ -2166,7 +2170,6 @@
     const item = courseData.find(x => x.id === id);
     if (!item) return;
     item.action_group = value;
-    if (value) item.group_number = value;
     renderOCTable();
   }
 
@@ -2174,7 +2177,6 @@
     const item = courseData.find(x => x.id === id);
     if (!item || !value) return;
     item.group_number = value;
-    item.action_group = value;
     renderOCTable();
   }
 
