@@ -2182,28 +2182,52 @@
     const lectureCount = item.lecture_group_entries.length;
     const practicalCount = item.practical_group_entries.length;
 
-    const lectureSource = Array.isArray(item.kuliah_lecturers) ? item.kuliah_lecturers : [];
-    const practicalSource = Array.isArray(item.amali_lecturers) ? item.amali_lecturers : [];
-    const lectureFallback = { id: item.lecturer_id || '', name: item.lecturer || '' };
-    const practicalFallback = { id: item.amali_lecturer_id || '', name: item.amali_lecturer || '' };
+    if (!Array.isArray(item.lecture_group_quotas)) item.lecture_group_quotas = [];
+    if (!Array.isArray(item.practical_group_quotas)) item.practical_group_quotas = [];
+    if (!Array.isArray(item.lecture_group_lecturers)) item.lecture_group_lecturers = [];
+    if (!Array.isArray(item.practical_group_lecturers)) item.practical_group_lecturers = [];
 
-    item.kuliah_lecturers = Array.from({ length: lectureCount }, (_, index) => {
-      const existing = lectureSource[index];
-      if (existing && typeof existing === 'object') {
-        return { id: existing.id || '', name: existing.name || '' };
-      }
-      if (index === 0) return { id: lectureFallback.id, name: lectureFallback.name };
-      return { id: '', name: '' };
+    const lectureQuotaFallback = parseInt(item.quota, 10) || 0;
+    const practicalQuotaFallback = parseInt(item.practical_quota, 10) || 0;
+    const lectureFlatFallback = Array.isArray(item.kuliah_lecturers) ? item.kuliah_lecturers : [];
+    const practicalFlatFallback = Array.isArray(item.amali_lecturers) ? item.amali_lecturers : [];
+
+    const normalizeLecturer = (lecturer) => ({
+      id: lecturer && typeof lecturer === 'object' ? (lecturer.id || '') : '',
+      name: lecturer && typeof lecturer === 'object' ? (lecturer.name || '') : ''
     });
 
-    item.amali_lecturers = Array.from({ length: practicalCount }, (_, index) => {
-      const existing = practicalSource[index];
-      if (existing && typeof existing === 'object') {
-        return { id: existing.id || '', name: existing.name || '' };
-      }
-      if (index === 0) return { id: practicalFallback.id, name: practicalFallback.name };
-      return { id: '', name: '' };
+    item.lecture_group_quotas = Array.from({ length: lectureCount }, (_, index) => {
+      const parsed = parseInt(item.lecture_group_quotas[index], 10);
+      return Number.isFinite(parsed) ? parsed : lectureQuotaFallback;
     });
+    item.practical_group_quotas = Array.from({ length: practicalCount }, (_, index) => {
+      const parsed = parseInt(item.practical_group_quotas[index], 10);
+      return Number.isFinite(parsed) ? parsed : practicalQuotaFallback;
+    });
+
+    item.lecture_group_lecturers = Array.from({ length: lectureCount }, (_, groupIndex) => {
+      const existingRows = item.lecture_group_lecturers[groupIndex];
+      if (Array.isArray(existingRows) && existingRows.length) {
+        return existingRows.map(normalizeLecturer);
+      }
+      const fallback = lectureFlatFallback[groupIndex]
+        || (groupIndex === 0 ? { id: item.lecturer_id || '', name: item.lecturer || '' } : { id: '', name: '' });
+      return [normalizeLecturer(fallback)];
+    }).map(rows => rows.length ? rows : [{ id: '', name: '' }]);
+
+    item.practical_group_lecturers = Array.from({ length: practicalCount }, (_, groupIndex) => {
+      const existingRows = item.practical_group_lecturers[groupIndex];
+      if (Array.isArray(existingRows) && existingRows.length) {
+        return existingRows.map(normalizeLecturer);
+      }
+      const fallback = practicalFlatFallback[groupIndex]
+        || (groupIndex === 0 ? { id: item.amali_lecturer_id || '', name: item.amali_lecturer || '' } : { id: '', name: '' });
+      return [normalizeLecturer(fallback)];
+    }).map(rows => rows.length ? rows : [{ id: '', name: '' }]);
+
+    item.kuliah_lecturers = item.lecture_group_lecturers.map(rows => normalizeLecturer(rows[0]));
+    item.amali_lecturers = item.practical_group_lecturers.map(rows => normalizeLecturer(rows[0]));
 
     const firstLecture = item.kuliah_lecturers[0] || { id: '', name: '' };
     const firstPractical = item.amali_lecturers[0] || { id: '', name: '' };
@@ -2212,21 +2236,21 @@
     item.amali_lecturer_id = firstPractical.id || '';
     item.amali_lecturer = firstPractical.name || '';
 
-    if (!Array.isArray(item.lecture_groups) || !item.lecture_groups.length) {
-      item.lecture_groups = [{
-        group_number: item.group_number || groupNumberOptions[0] || '1',
-        quota: parseInt(item.quota, 10) || 0,
-        lecturers: []
-      }];
-    }
-    if (!Array.isArray(item.practical_groups) || !item.practical_groups.length) {
-      item.practical_groups = [{
-        quota: parseInt(item.practical_quota, 10) || 0,
-        lecturers: []
-      }];
-    }
-    item.lecture_groups[0].lecturers = item.kuliah_lecturers.map(lecturer => ({ id: lecturer.id || '', name: lecturer.name || '' }));
-    item.practical_groups[0].lecturers = item.amali_lecturers.map(lecturer => ({ id: lecturer.id || '', name: lecturer.name || '' }));
+    item.group_number = item.lecture_group_values[0] || item.group_number || groupNumberOptions[0] || '1';
+    item.amali_group_number = item.practical_group_values[0] || item.amali_group_number || groupNumberOptions[0] || '1';
+    item.quota = item.lecture_group_quotas[0] ?? lectureQuotaFallback;
+    item.practical_quota = item.practical_group_quotas[0] ?? practicalQuotaFallback;
+
+    item.lecture_groups = item.lecture_group_entries.map((_, index) => ({
+      group_number: item.lecture_group_values[index] || groupNumberOptions[0] || '1',
+      quota: item.lecture_group_quotas[index] ?? lectureQuotaFallback,
+      lecturers: (item.lecture_group_lecturers[index] || [{ id: '', name: '' }]).map(normalizeLecturer)
+    }));
+    item.practical_groups = item.practical_group_entries.map((_, index) => ({
+      group_number: item.practical_group_values[index] || groupNumberOptions[0] || '1',
+      quota: item.practical_group_quotas[index] ?? practicalQuotaFallback,
+      lecturers: (item.practical_group_lecturers[index] || [{ id: '', name: '' }]).map(normalizeLecturer)
+    }));
   }
 
   function isOCSetupComplete(item) {
@@ -2273,20 +2297,24 @@
     } else {
       const countByGroup = {};
       const seenGroup = {};
+      const sectionRowCountById = {};
       pageData.forEach(item => {
+        normalizeOCGroupRows(item);
+        syncOCLecturerCountsWithGroups(item);
         const key = `${item.course_no}-${item.code}-${item.name_en}`;
-        countByGroup[key] = (countByGroup[key] || 0) + 1;
+        const sectionRows = Math.max(item.lecture_group_entries.length, item.practical_group_entries.length, 1);
+        sectionRowCountById[item.id] = sectionRows;
+        countByGroup[key] = (countByGroup[key] || 0) + sectionRows;
       });
 
       pageData.forEach(item => {
         normalizeOCGroupRows(item);
         syncOCLecturerCountsWithGroups(item);
-        const kuliahRows = item.kuliah_lecturers;
-        const amaliRows = item.amali_lecturers;
         const key = `${item.course_no}-${item.code}-${item.name_en}`;
         const firstInGroup = !seenGroup[key];
         seenGroup[key] = true;
         const setupComplete = isOCSetupComplete(item);
+        const sectionRows = sectionRowCountById[item.id] || 1;
 
         const lectureTypeListHtml = item.lecture_group_entries.map((groupNo, idx) => `
           <div class="flex items-center justify-between gap-1 ${idx > 0 ? 'mt-1' : ''}">
@@ -2305,66 +2333,6 @@
             </button>
           </div>
         `).join('');
-
-        const lectureGroupHtml = item.lecture_group_entries.length
-          ? item.lecture_group_entries.map((_, idx) => `
-            <div class="${idx > 0 ? 'mt-1' : ''}">
-              <select onchange="setOCTypeGroupDropdown(${item.id}, 'lecture', ${idx}, this.value)" class="w-full px-2 py-1 text-[10px] border rounded" style="border-color:#bfdbfe;background-color:#ffffff;color:#1e293b;">
-                ${groupNumberOptions.map(grp => `<option value="${esc(grp)}" ${String(item.lecture_group_values[idx] || '') === String(grp) ? 'selected' : ''}>${esc(grp)}</option>`).join('')}
-              </select>
-            </div>
-          `).join('')
-          : `<div class="text-[10px]" style="color:#94a3b8;">-</div>`;
-
-        const lectureQuotaHtml = `
-          <input type="text" value="${esc(item.quota)}" class="w-full px-2 py-1 text-[10px] border rounded text-center" style="border-color:#bfdbfe;background-color:#ffffff;color:#1e293b;" onchange="setOCQuota(${item.id}, 'lecture', this.value)">
-        `;
-
-        const lectureLecturerHtml = `
-          ${kuliahRows.map((lec, idx) => `<div class="mb-1"><select onchange="setOCLecturer(${item.id}, 'kuliah', ${idx}, this.value)" class="w-full px-2 py-1 text-[10px] border rounded" style="border-color:#bfdbfe;background-color:#ffffff;color:#1e293b;">${lecturerOptions(lec.id)}</select></div>`).join('')}
-          <button type="button" onclick="addOCLecturerRow(${item.id}, 'kuliah')" class="px-2 py-1 text-[10px] font-semibold border rounded" style="border-color:#bfdbfe;color:#0284c7;background-color:#dbeafe;">Add Lecturer</button>
-        `;
-
-        const lectureActionHtml = `
-          <div class="flex items-center justify-center gap-1">
-            <button type="button" onclick="editOCCourse(${item.id})" class="w-6 h-6 rounded flex items-center justify-center hover:bg-amber-100 transition-colors" title="Edit">
-              <i data-lucide="pencil" style="width:12px;height:12px;color:#f59e0b;"></i>
-            </button>
-            <button type="button" onclick="deleteOCCourse(${item.id})" class="w-6 h-6 rounded flex items-center justify-center hover:bg-red-100 transition-colors" title="Delete">
-              <i data-lucide="trash-2" style="width:12px;height:12px;color:#ef4444;"></i>
-            </button>
-          </div>
-        `;
-
-        const practicalGroupHtml = item.practical_group_entries.length
-          ? item.practical_group_entries.map((_, idx) => `
-            <div class="${idx > 0 ? 'mt-1' : ''}">
-              <select onchange="setOCTypeGroupDropdown(${item.id}, 'practical', ${idx}, this.value)" class="w-full px-2 py-1 text-[10px] border rounded" style="border-color:#fcd34d;background-color:#ffffff;color:#1e293b;">
-                ${groupNumberOptions.map(grp => `<option value="${esc(grp)}" ${String(item.practical_group_values[idx] || '') === String(grp) ? 'selected' : ''}>${esc(grp)}</option>`).join('')}
-              </select>
-            </div>
-          `).join('')
-          : `<div class="text-[10px]" style="color:#94a3b8;">-</div>`;
-
-        const practicalQuotaHtml = `
-          <input type="text" value="${esc(item.practical_quota || 0)}" class="w-full px-2 py-1 text-[10px] border rounded text-center" style="border-color:#fcd34d;background-color:#ffffff;color:#1e293b;" onchange="setOCQuota(${item.id}, 'practical', this.value)">
-        `;
-
-        const practicalLecturerHtml = `
-          ${amaliRows.map((lec, idx) => `<div class="mb-1"><select onchange="setOCLecturer(${item.id}, 'amali', ${idx}, this.value)" class="w-full px-2 py-1 text-[10px] border rounded" style="border-color:#fcd34d;background-color:#ffffff;color:#1e293b;">${lecturerOptions(lec.id)}</select></div>`).join('')}
-          <button type="button" onclick="addOCLecturerRow(${item.id}, 'amali')" class="px-2 py-1 text-[10px] font-semibold border rounded" style="border-color:#fcd34d;color:#b45309;background-color:#fef3c7;">Add</button>
-        `;
-
-        const practicalActionHtml = `
-          <div class="flex items-center justify-center gap-1">
-            <button type="button" onclick="editOCCourse(${item.id})" class="w-6 h-6 rounded flex items-center justify-center hover:bg-amber-100 transition-colors" title="Edit">
-              <i data-lucide="pencil" style="width:12px;height:12px;color:#f59e0b;"></i>
-            </button>
-            <button type="button" onclick="deleteOCCourse(${item.id})" class="w-6 h-6 rounded flex items-center justify-center hover:bg-red-100 transition-colors" title="Delete">
-              <i data-lucide="trash-2" style="width:12px;height:12px;color:#ef4444;"></i>
-            </button>
-          </div>
-        `;
 
         const groupMenuHtml = `
           <div class="relative inline-block">
@@ -2390,47 +2358,110 @@
           </div>
         `;
 
-        const row = document.createElement('tr');
-        row.className = 'border-t';
-        row.style.borderColor = '#e2e8f0';
-        row.innerHTML = `
-          ${firstInGroup ? `
-            <td rowspan="${countByGroup[key]}" class="text-center px-3 py-3 text-xs font-semibold align-top" style="background-color:#f8fafc;color:#334155;">${esc(item.course_no)}</td>
-            <td rowspan="${countByGroup[key]}" class="text-left px-3 py-3 text-xs align-top" style="background-color:#f8fafc;">
-              <div class="font-bold" style="color:#0f172a;">${esc(item.code)}</div>
-              <div style="color:#475569;">(${esc(item.course_credit || `${item.credits}+0`)})</div>
-              <div class="font-semibold mt-1" style="color:#0f172a;">${esc(item.name_en)}</div>
-            </td>
-          ` : ''}
-          <td class="text-left px-3 py-3 text-xs">
-            <div class="font-semibold" style="color:#0f172a;">${esc(item.programme)}</div>
-            <div style="color:#64748b;">(${esc(item.programme_code)})</div>
-          </td>
-          <td class="text-center px-3 py-3 text-xs" style="color:#0f172a;">${esc(item.cohort)}</td>
-          <td class="text-center px-3 py-3 text-xs font-semibold" style="color:#0f172a;">${esc(item.students)}</td>
-          <td class="text-center px-3 py-3 text-xs font-semibold" style="color:#0f172a;">${esc(item.contact_hours)}</td>
-          <td class="text-center px-3 py-3 text-xs font-semibold" style="color:#0f172a;">${esc(item.amali_contact_hours || 0)}</td>
-          <td class="text-center px-2 py-2 align-top">
-            <button type="button" onclick="openOCEligibilityModal(${item.id})" class="w-6 h-6 rounded border flex items-center justify-center mx-auto transition-colors" style="border-color:#bfdbfe; background-color:${item.eligibility_state === 'validated' ? '#dcfce7' : '#ffffff'}; color:${item.eligibility_state === 'validated' ? '#15803d' : '#1d4ed8'};" title="Eligibility Setup">
-              <i data-lucide="clipboard-check" style="width:12px;height:12px;"></i>
-            </button>
-          </td>
-          <td class="text-center px-2 py-2 align-top">${groupMenuHtml}</td>
-          <td class="text-center px-2 py-2 align-top">
-            <div class="w-6 h-6 rounded border flex items-center justify-center mx-auto" style="border-color:${setupComplete ? '#bbf7d0' : '#fecaca'}; background-color:${setupComplete ? '#dcfce7' : '#fef2f2'};">
-              <i data-lucide="${setupComplete ? 'check' : 'x'}" style="width:12px;height:12px;color:${setupComplete ? '#15803d' : '#dc2626'};"></i>
-            </div>
-          </td>
-          <td class="text-center px-2 py-2 align-top" style="background-color:#eff6ff;">${lectureGroupHtml}</td>
-          <td class="text-center px-2 py-2 align-top" style="background-color:#eff6ff;">${lectureQuotaHtml}</td>
-          <td class="text-left px-2 py-2 align-top" style="background-color:#eff6ff;min-width:165px;">${lectureLecturerHtml}</td>
-          <td class="text-center px-2 py-2 align-top" style="background-color:#eff6ff;">${lectureActionHtml}</td>
-          <td class="text-center px-2 py-2 align-top" style="background-color:#fffbeb;">${practicalGroupHtml}</td>
-          <td class="text-center px-2 py-2 align-top" style="background-color:#fffbeb;">${practicalQuotaHtml}</td>
-          <td class="text-left px-2 py-2 align-top" style="background-color:#fffbeb;min-width:165px;">${practicalLecturerHtml}</td>
-          <td class="text-center px-2 py-2 align-top" style="background-color:#fffbeb;">${practicalActionHtml}</td>
-        `;
-        tbody.appendChild(row);
+        const buildSectionRow = (section, rowIndex) => {
+          const isPractical = section === 'practical';
+          const typeName = isPractical ? 'practical' : 'lecture';
+          const groupEntries = isPractical ? item.practical_group_entries : item.lecture_group_entries;
+          const groupValues = isPractical ? item.practical_group_values : item.lecture_group_values;
+          const quotas = isPractical ? item.practical_group_quotas : item.lecture_group_quotas;
+          const groupLecturers = isPractical ? item.practical_group_lecturers : item.lecture_group_lecturers;
+          const borderColor = isPractical ? '#fcd34d' : '#bfdbfe';
+          const addBtnStyle = isPractical
+            ? 'border-color:#fcd34d;color:#b45309;background-color:#fef3c7;'
+            : 'border-color:#bfdbfe;color:#0284c7;background-color:#dbeafe;';
+          const actionDeleteTitle = isPractical ? 'Delete Practical Group Row' : 'Delete Lecture Group Row';
+
+          if (rowIndex >= groupEntries.length) {
+            const empty = `<div class="text-[10px]" style="color:#94a3b8;">-</div>`;
+            return { group: empty, quota: empty, lecturer: empty, action: empty };
+          }
+
+          const selectedGroup = String(groupValues[rowIndex] || groupNumberOptions[0] || '1');
+          const quotaValue = quotas[rowIndex] ?? (isPractical ? (parseInt(item.practical_quota, 10) || 0) : (parseInt(item.quota, 10) || 0));
+          const lecturerRows = (Array.isArray(groupLecturers[rowIndex]) && groupLecturers[rowIndex].length)
+            ? groupLecturers[rowIndex]
+            : [{ id: '', name: '' }];
+
+          return {
+            group: `
+              <select data-oc-group-select="${item.id}-${typeName}-${rowIndex}" onchange="setOCTypeGroupDropdown(${item.id}, '${typeName}', ${rowIndex}, this.value)" class="w-full px-2 py-1 text-[10px] border rounded" style="border-color:${borderColor};background-color:#ffffff;color:#1e293b;">
+                ${groupNumberOptions.map(grp => `<option value="${esc(grp)}" ${selectedGroup === String(grp) ? 'selected' : ''}>${esc(grp)}</option>`).join('')}
+              </select>
+            `,
+            quota: `
+              <input type="text" value="${esc(quotaValue)}" class="w-full px-2 py-1 text-[10px] border rounded text-center" style="border-color:${borderColor};background-color:#ffffff;color:#1e293b;" onchange="setOCGroupQuota(${item.id}, '${typeName}', ${rowIndex}, this.value)">
+            `,
+            lecturer: `
+              ${lecturerRows.map((lecturer, lecturerIndex) => `
+                <div class="${lecturerIndex > 0 ? 'mt-1' : ''}">
+                  <select onchange="setOCGroupLecturer(${item.id}, '${typeName}', ${rowIndex}, ${lecturerIndex}, this.value)" class="w-full px-2 py-1 text-[10px] border rounded" style="border-color:${borderColor};background-color:#ffffff;color:#1e293b;">
+                    ${lecturerOptions(lecturer.id || '')}
+                  </select>
+                </div>
+              `).join('')}
+              <button type="button" onclick="addOCGroupLecturerRow(${item.id}, '${typeName}', ${rowIndex})" class="mt-1 px-2 py-1 text-[10px] font-semibold border rounded" style="${addBtnStyle}">Add Lecturer</button>
+            `,
+            action: `
+              <div class="flex items-center justify-center gap-1">
+                <button type="button" onclick="focusOCGroupRowControl(${item.id}, '${typeName}', ${rowIndex})" class="w-6 h-6 rounded flex items-center justify-center hover:bg-amber-100 transition-colors" title="Edit Group Row">
+                  <i data-lucide="pencil" style="width:12px;height:12px;color:#f59e0b;"></i>
+                </button>
+                <button type="button" onclick="removeOCGroupEntry(${item.id}, '${typeName}', ${rowIndex}, event)" class="w-6 h-6 rounded flex items-center justify-center hover:bg-red-100 transition-colors" title="${actionDeleteTitle}">
+                  <i data-lucide="trash-2" style="width:12px;height:12px;color:#ef4444;"></i>
+                </button>
+              </div>
+            `
+          };
+        };
+
+        for (let rowIndex = 0; rowIndex < sectionRows; rowIndex++) {
+          const lectureRow = buildSectionRow('lecture', rowIndex);
+          const practicalRow = buildSectionRow('practical', rowIndex);
+
+          const row = document.createElement('tr');
+          row.className = 'border-t';
+          row.style.borderColor = '#e2e8f0';
+          row.innerHTML = `
+            ${rowIndex === 0 && firstInGroup ? `
+              <td rowspan="${countByGroup[key]}" class="text-center px-3 py-3 text-xs font-semibold align-top" style="background-color:#f8fafc;color:#334155;">${esc(item.course_no)}</td>
+              <td rowspan="${countByGroup[key]}" class="text-left px-3 py-3 text-xs align-top" style="background-color:#f8fafc;">
+                <div class="font-bold" style="color:#0f172a;">${esc(item.code)}</div>
+                <div style="color:#475569;">(${esc(item.course_credit || `${item.credits}+0`)})</div>
+                <div class="font-semibold mt-1" style="color:#0f172a;">${esc(item.name_en)}</div>
+              </td>
+            ` : ''}
+            ${rowIndex === 0 ? `
+              <td rowspan="${sectionRows}" class="text-left px-3 py-3 text-xs align-top">
+                <div class="font-semibold" style="color:#0f172a;">${esc(item.programme)}</div>
+                <div style="color:#64748b;">(${esc(item.programme_code)})</div>
+              </td>
+              <td rowspan="${sectionRows}" class="text-center px-3 py-3 text-xs align-top" style="color:#0f172a;">${esc(item.cohort)}</td>
+              <td rowspan="${sectionRows}" class="text-center px-3 py-3 text-xs font-semibold align-top" style="color:#0f172a;">${esc(item.students)}</td>
+              <td rowspan="${sectionRows}" class="text-center px-3 py-3 text-xs font-semibold align-top" style="color:#0f172a;">${esc(item.contact_hours)}</td>
+              <td rowspan="${sectionRows}" class="text-center px-3 py-3 text-xs font-semibold align-top" style="color:#0f172a;">${esc(item.amali_contact_hours || 0)}</td>
+              <td rowspan="${sectionRows}" class="text-center px-2 py-2 align-top">
+                <button type="button" onclick="openOCEligibilityModal(${item.id})" class="w-6 h-6 rounded border flex items-center justify-center mx-auto transition-colors" style="border-color:#bfdbfe; background-color:${item.eligibility_state === 'validated' ? '#dcfce7' : '#ffffff'}; color:${item.eligibility_state === 'validated' ? '#15803d' : '#1d4ed8'};" title="Eligibility Setup">
+                  <i data-lucide="clipboard-check" style="width:12px;height:12px;"></i>
+                </button>
+              </td>
+              <td rowspan="${sectionRows}" class="text-center px-2 py-2 align-top">${groupMenuHtml}</td>
+              <td rowspan="${sectionRows}" class="text-center px-2 py-2 align-top">
+                <div class="w-6 h-6 rounded border flex items-center justify-center mx-auto" style="border-color:${setupComplete ? '#bbf7d0' : '#fecaca'}; background-color:${setupComplete ? '#dcfce7' : '#fef2f2'};">
+                  <i data-lucide="${setupComplete ? 'check' : 'x'}" style="width:12px;height:12px;color:${setupComplete ? '#15803d' : '#dc2626'};"></i>
+                </div>
+              </td>
+            ` : ''}
+            <td class="text-center px-2 py-2 align-top" style="background-color:#eff6ff;">${lectureRow.group}</td>
+            <td class="text-center px-2 py-2 align-top" style="background-color:#eff6ff;">${lectureRow.quota}</td>
+            <td class="text-left px-2 py-2 align-top" style="background-color:#eff6ff;min-width:165px;">${lectureRow.lecturer}</td>
+            <td class="text-center px-2 py-2 align-top" style="background-color:#eff6ff;">${lectureRow.action}</td>
+            <td class="text-center px-2 py-2 align-top" style="background-color:#fffbeb;">${practicalRow.group}</td>
+            <td class="text-center px-2 py-2 align-top" style="background-color:#fffbeb;">${practicalRow.quota}</td>
+            <td class="text-left px-2 py-2 align-top" style="background-color:#fffbeb;min-width:165px;">${practicalRow.lecturer}</td>
+            <td class="text-center px-2 py-2 align-top" style="background-color:#fffbeb;">${practicalRow.action}</td>
+          `;
+          tbody.appendChild(row);
+        }
       });
     }
 
@@ -2584,7 +2615,7 @@
   function setOCTypeGroupDropdown(id, type, index, value) {
     const item = courseData.find(x => x.id === id);
     if (!item || !value) return;
-    normalizeOCGroupDropdownValues(item);
+    syncOCLecturerCountsWithGroups(item);
 
     const valueListName = type === 'practical' ? 'practical_group_values' : 'lecture_group_values';
     if (!Array.isArray(item[valueListName])) return;
@@ -2594,6 +2625,7 @@
     if (type === 'lecture' && index === 0) item.group_number = value;
     if (type === 'practical' && index === 0) item.amali_group_number = value;
 
+    syncOCLecturerCountsWithGroups(item);
     renderOCTable();
   }
 
@@ -2605,11 +2637,19 @@
 
     const listName = type === 'practical' ? 'practical_group_entries' : 'lecture_group_entries';
     const valueListName = type === 'practical' ? 'practical_group_values' : 'lecture_group_values';
+    const quotaListName = type === 'practical' ? 'practical_group_quotas' : 'lecture_group_quotas';
+    const groupedLecturerListName = type === 'practical' ? 'practical_group_lecturers' : 'lecture_group_lecturers';
     if (!Array.isArray(item[listName])) return;
     if (index < 0 || index >= item[listName].length) return;
     item[listName].splice(index, 1);
     if (Array.isArray(item[valueListName]) && index < item[valueListName].length) {
       item[valueListName].splice(index, 1);
+    }
+    if (Array.isArray(item[quotaListName]) && index < item[quotaListName].length) {
+      item[quotaListName].splice(index, 1);
+    }
+    if (Array.isArray(item[groupedLecturerListName]) && index < item[groupedLecturerListName].length) {
+      item[groupedLecturerListName].splice(index, 1);
     }
     const lecturerListName = type === 'practical' ? 'amali_lecturers' : 'kuliah_lecturers';
     if (Array.isArray(item[lecturerListName]) && index < item[lecturerListName].length) {
@@ -2622,51 +2662,58 @@
   }
 
   function setOCLectureGroupValue(id, groupIndex, value) {
-    const item = courseData.find(x => x.id === id);
-    if (!item || !value) return;
-    normalizeOCGroupRows(item);
-    if (!item.lecture_groups[groupIndex]) return;
-    item.lecture_groups[groupIndex].group_number = value;
-    syncOCPrimaryGroupFields(item);
-    renderOCTable();
+    setOCTypeGroupDropdown(id, 'lecture', groupIndex, value);
   }
 
   function setOCGroupQuota(id, section, groupIndex, value) {
     const item = courseData.find(x => x.id === id);
     if (!item) return;
-    normalizeOCGroupRows(item);
-    const groups = section === 'practical' ? item.practical_groups : item.lecture_groups;
-    if (!groups[groupIndex]) return;
-    groups[groupIndex].quota = parseInt(value, 10) || 0;
-    syncOCPrimaryGroupFields(item);
+    syncOCLecturerCountsWithGroups(item);
+    const type = section === 'practical' ? 'practical' : 'lecture';
+    const quotaListName = type === 'practical' ? 'practical_group_quotas' : 'lecture_group_quotas';
+    if (!Array.isArray(item[quotaListName]) || groupIndex < 0 || groupIndex >= item[quotaListName].length) return;
+    item[quotaListName][groupIndex] = parseInt(value, 10) || 0;
+    if (type === 'lecture' && groupIndex === 0) item.quota = item[quotaListName][groupIndex];
+    if (type === 'practical' && groupIndex === 0) item.practical_quota = item[quotaListName][groupIndex];
+    syncOCLecturerCountsWithGroups(item);
     renderOCTable();
   }
 
   function setOCGroupLecturer(id, section, groupIndex, lecturerIndex, lecturerId) {
     const item = courseData.find(x => x.id === id);
     if (!item) return;
-    normalizeOCGroupRows(item);
-    const groups = section === 'practical' ? item.practical_groups : item.lecture_groups;
-    if (!groups[groupIndex]) return;
-    if (!Array.isArray(groups[groupIndex].lecturers) || !groups[groupIndex].lecturers.length) {
-      groups[groupIndex].lecturers = [{ id: '', name: '' }];
+    syncOCLecturerCountsWithGroups(item);
+    const type = section === 'practical' || section === 'amali' ? 'practical' : 'lecture';
+    const groupedLecturerListName = type === 'practical' ? 'practical_group_lecturers' : 'lecture_group_lecturers';
+    if (!Array.isArray(item[groupedLecturerListName]) || groupIndex < 0 || groupIndex >= item[groupedLecturerListName].length) return;
+    if (!Array.isArray(item[groupedLecturerListName][groupIndex]) || !item[groupedLecturerListName][groupIndex].length) {
+      item[groupedLecturerListName][groupIndex] = [{ id: '', name: '' }];
+    }
+    while (item[groupedLecturerListName][groupIndex].length <= lecturerIndex) {
+      item[groupedLecturerListName][groupIndex].push({ id: '', name: '' });
     }
     const selected = lecturerData.find(lecturer => lecturer.id === lecturerId) || { id: '', name: '' };
-    groups[groupIndex].lecturers[lecturerIndex] = { id: selected.id, name: selected.name };
-    syncOCPrimaryGroupFields(item);
+    item[groupedLecturerListName][groupIndex][lecturerIndex] = { id: selected.id, name: selected.name };
+    syncOCLecturerCountsWithGroups(item);
     renderOCTable();
   }
 
   function addOCGroupLecturerRow(id, section, groupIndex) {
     const item = courseData.find(x => x.id === id);
     if (!item) return;
-    normalizeOCGroupRows(item);
-    const groups = section === 'practical' ? item.practical_groups : item.lecture_groups;
-    if (!groups[groupIndex]) return;
-    if (!Array.isArray(groups[groupIndex].lecturers)) groups[groupIndex].lecturers = [];
-    groups[groupIndex].lecturers.push({ id: '', name: '' });
-    syncOCPrimaryGroupFields(item);
+    syncOCLecturerCountsWithGroups(item);
+    const type = section === 'practical' || section === 'amali' ? 'practical' : 'lecture';
+    const groupedLecturerListName = type === 'practical' ? 'practical_group_lecturers' : 'lecture_group_lecturers';
+    if (!Array.isArray(item[groupedLecturerListName]) || groupIndex < 0 || groupIndex >= item[groupedLecturerListName].length) return;
+    if (!Array.isArray(item[groupedLecturerListName][groupIndex])) item[groupedLecturerListName][groupIndex] = [];
+    item[groupedLecturerListName][groupIndex].push({ id: '', name: '' });
+    syncOCLecturerCountsWithGroups(item);
     renderOCTable();
+  }
+
+  function focusOCGroupRowControl(id, section, groupIndex) {
+    const control = document.querySelector(`[data-oc-group-select="${id}-${section}-${groupIndex}"]`);
+    if (control) control.focus();
   }
 
   function setOCActionGroup(id, value) {
@@ -2683,25 +2730,13 @@
   }
 
   function setOCLecturer(id, type, index, lecturerId) {
-    const item = courseData.find(x => x.id === id);
-    if (!item) return;
-    syncOCLecturerCountsWithGroups(item);
-
-    const listName = type === 'amali' ? 'amali_lecturers' : 'kuliah_lecturers';
-    if (!Array.isArray(item[listName]) || index < 0 || index >= item[listName].length) return;
-
-    const selected = lecturerData.find(lecturer => lecturer.id === lecturerId) || { id: '', name: '' };
-    item[listName][index] = { id: selected.id, name: selected.name };
-
-    syncOCLecturerCountsWithGroups(item);
-    renderOCTable();
+    const section = type === 'amali' || type === 'practical' ? 'practical' : 'lecture';
+    setOCGroupLecturer(id, section, index, 0, lecturerId);
   }
 
   function addOCLecturerRow(id, type) {
-    const item = courseData.find(x => x.id === id);
-    if (!item) return;
-    syncOCLecturerCountsWithGroups(item);
-    renderOCTable();
+    const section = type === 'amali' || type === 'practical' ? 'practical' : 'lecture';
+    addOCGroupLecturerRow(id, section, 0);
   }
 
   function openOCForm() {
