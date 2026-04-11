@@ -468,18 +468,18 @@
             <th rowspan="2" class="text-center px-3 py-3 text-[11px] font-bold uppercase tracking-wider" style="color: #475569;">Prac. Hours</th>
             <th rowspan="2" class="text-center px-3 py-3 text-[11px] font-bold uppercase tracking-wider" style="color: #475569;">Eligibility</th>
             <th rowspan="2" class="text-center px-3 py-3 text-[11px] font-bold uppercase tracking-wider" style="color: #475569;">Lecture Group Type</th>
-            <th rowspan="2" class="text-center px-3 py-3 text-[11px] font-bold uppercase tracking-wider" style="color: #475569;">Status</th>
-            <th colspan="3" class="text-center px-3 py-3 text-[11px] font-bold uppercase tracking-wider" style="color: #fff; background-color: #0284c7;">Lecture</th>
-            <th colspan="3" class="text-center px-3 py-3 text-[11px] font-bold uppercase tracking-wider" style="color: #fff; background-color: #f59e0b;">Practical</th>
-            <th rowspan="2" class="text-center px-3 py-3 text-[11px] font-bold uppercase tracking-wider" style="color: #475569;">Action</th>
+            <th colspan="4" class="text-center px-3 py-3 text-[11px] font-bold uppercase tracking-wider" style="color: #fff; background-color: #0284c7;">Lecture</th>
+            <th colspan="4" class="text-center px-3 py-3 text-[11px] font-bold uppercase tracking-wider" style="color: #fff; background-color: #f59e0b;">Practical</th>
            </tr>
            <tr style="background-color: #f8fafc; border-bottom: 2px solid #e2e8f0;">
             <th class="text-center px-3 py-2 text-[10px] font-bold uppercase tracking-wider" style="color: #0284c7; background-color: #eff6ff;">Group</th>
             <th class="text-center px-3 py-2 text-[10px] font-bold uppercase tracking-wider" style="color: #0284c7; background-color: #eff6ff;">Quota</th>
             <th class="text-left px-3 py-2 text-[10px] font-bold uppercase tracking-wider" style="color: #0284c7; background-color: #eff6ff;">Lecturer</th>
+            <th class="text-center px-3 py-2 text-[10px] font-bold uppercase tracking-wider" style="color: #0284c7; background-color: #eff6ff;">Action</th>
             <th class="text-center px-3 py-2 text-[10px] font-bold uppercase tracking-wider" style="color: #f59e0b; background-color: #fffbeb;">Group</th>
             <th class="text-center px-3 py-2 text-[10px] font-bold uppercase tracking-wider" style="color: #f59e0b; background-color: #fffbeb;">Quota</th>
             <th class="text-left px-3 py-2 text-[10px] font-bold uppercase tracking-wider" style="color: #f59e0b; background-color: #fffbeb;">Lecturer</th>
+            <th class="text-center px-3 py-2 text-[10px] font-bold uppercase tracking-wider" style="color: #f59e0b; background-color: #fffbeb;">Action</th>
             
            </tr>
           </thead>
@@ -2145,22 +2145,6 @@
     if (item.practical_group_values.length) item.amali_group_number = item.practical_group_values[0];
   }
 
-  function isOCSetupComplete(item) {
-    if (!item) return false;
-    normalizeOCGroupDropdownValues(item);
-
-    const totalTypeItems = (item.lecture_group_entries?.length || 0) + (item.practical_group_entries?.length || 0);
-    const hasLectureType = totalTypeItems > 0;
-    const hasLectureGroupSelection = (item.lecture_group_entries?.length || 0) > 0
-      && (item.lecture_group_values || []).length === item.lecture_group_entries.length
-      && item.lecture_group_values.every(value => String(value || '').trim() !== '');
-    const hasPracticalGroupSelection = (item.practical_group_entries?.length || 0) > 0
-      && (item.practical_group_values || []).length === item.practical_group_entries.length
-      && item.practical_group_values.every(value => String(value || '').trim() !== '');
-
-    return hasLectureType && hasLectureGroupSelection && hasPracticalGroupSelection;
-  }
-
   function renderOCTableStrict() {
     const totalPages = Math.max(1, Math.ceil(ocFilteredData.length / ocPageSize));
     if (ocCurrentPage > totalPages) ocCurrentPage = totalPages;
@@ -2202,7 +2186,6 @@
         const key = `${item.course_no}-${item.code}-${item.name_en}`;
         const firstInGroup = !seenGroup[key];
         seenGroup[key] = true;
-        const setupComplete = isOCSetupComplete(item);
 
         const lectureTypeListHtml = item.lecture_group_entries.map((groupNo, idx) => `
           <div class="flex items-center justify-between gap-1 ${idx > 0 ? 'mt-1' : ''}">
@@ -2241,6 +2224,17 @@
           <button type="button" onclick="addOCLecturerRow(${item.id}, 'kuliah')" class="px-2 py-1 text-[10px] font-semibold border rounded" style="border-color:#bfdbfe;color:#0284c7;background-color:#dbeafe;">Add Lecturer</button>
         `;
 
+        const lectureActionHtml = `
+          <div class="flex items-center justify-center gap-1">
+            <button type="button" onclick="editOCCourse(${item.id})" class="w-6 h-6 rounded flex items-center justify-center hover:bg-amber-100 transition-colors" title="Edit">
+              <i data-lucide="pencil" style="width:12px;height:12px;color:#f59e0b;"></i>
+            </button>
+            <button type="button" onclick="deleteOCCourse(${item.id})" class="w-6 h-6 rounded flex items-center justify-center hover:bg-red-100 transition-colors" title="Delete">
+              <i data-lucide="trash-2" style="width:12px;height:12px;color:#ef4444;"></i>
+            </button>
+          </div>
+        `;
+
         const practicalGroupHtml = item.practical_group_entries.length
           ? item.practical_group_entries.map((_, idx) => `
             <div class="${idx > 0 ? 'mt-1' : ''}">
@@ -2258,6 +2252,17 @@
         const practicalLecturerHtml = `
           ${amaliRows.map((lec, idx) => `<div class="mb-1"><select onchange="setOCLecturer(${item.id}, 'amali', ${idx}, this.value)" class="w-full px-2 py-1 text-[10px] border rounded" style="border-color:#fcd34d;background-color:#ffffff;color:#1e293b;">${lecturerOptions(lec.id)}</select></div>`).join('')}
           <button type="button" onclick="addOCLecturerRow(${item.id}, 'amali')" class="px-2 py-1 text-[10px] font-semibold border rounded" style="border-color:#fcd34d;color:#b45309;background-color:#fef3c7;">Add</button>
+        `;
+
+        const practicalActionHtml = `
+          <div class="flex items-center justify-center gap-1">
+            <button type="button" onclick="editOCCourse(${item.id})" class="w-6 h-6 rounded flex items-center justify-center hover:bg-amber-100 transition-colors" title="Edit">
+              <i data-lucide="pencil" style="width:12px;height:12px;color:#f59e0b;"></i>
+            </button>
+            <button type="button" onclick="deleteOCCourse(${item.id})" class="w-6 h-6 rounded flex items-center justify-center hover:bg-red-100 transition-colors" title="Delete">
+              <i data-lucide="trash-2" style="width:12px;height:12px;color:#ef4444;"></i>
+            </button>
+          </div>
         `;
 
         const groupMenuHtml = `
@@ -2310,27 +2315,14 @@
             </button>
           </td>
           <td class="text-center px-2 py-2 align-top">${groupMenuHtml}</td>
-          <td class="text-center px-2 py-2 align-top">
-            <div class="w-6 h-6 rounded border flex items-center justify-center mx-auto" style="border-color:${setupComplete ? '#bbf7d0' : '#fecaca'}; background-color:${setupComplete ? '#dcfce7' : '#fef2f2'};">
-              <i data-lucide="${setupComplete ? 'check' : 'x'}" style="width:12px;height:12px;color:${setupComplete ? '#15803d' : '#dc2626'};"></i>
-            </div>
-          </td>
           <td class="text-center px-2 py-2 align-top" style="background-color:#eff6ff;">${lectureGroupHtml}</td>
           <td class="text-center px-2 py-2 align-top" style="background-color:#eff6ff;">${lectureQuotaHtml}</td>
           <td class="text-left px-2 py-2 align-top" style="background-color:#eff6ff;min-width:165px;">${lectureLecturerHtml}</td>
+          <td class="text-center px-2 py-2 align-top" style="background-color:#eff6ff;">${lectureActionHtml}</td>
           <td class="text-center px-2 py-2 align-top" style="background-color:#fffbeb;">${practicalGroupHtml}</td>
           <td class="text-center px-2 py-2 align-top" style="background-color:#fffbeb;">${practicalQuotaHtml}</td>
           <td class="text-left px-2 py-2 align-top" style="background-color:#fffbeb;min-width:165px;">${practicalLecturerHtml}</td>
-          <td class="text-center px-2 py-2 align-top">
-            <div class="flex items-center justify-center gap-1">
-              <button type="button" onclick="editOCCourse(${item.id})" class="w-6 h-6 rounded flex items-center justify-center hover:bg-amber-100 transition-colors" title="Edit">
-                <i data-lucide="pencil" style="width:12px;height:12px;color:#f59e0b;"></i>
-              </button>
-              <button type="button" onclick="deleteOCCourse(${item.id})" class="w-6 h-6 rounded flex items-center justify-center hover:bg-red-100 transition-colors" title="Delete">
-                <i data-lucide="trash-2" style="width:12px;height:12px;color:#ef4444;"></i>
-              </button>
-            </div>
-          </td>
+          <td class="text-center px-2 py-2 align-top" style="background-color:#fffbeb;">${practicalActionHtml}</td>
         `;
         tbody.appendChild(row);
       });
