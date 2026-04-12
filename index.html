@@ -32,6 +32,42 @@
     ::-webkit-scrollbar { width: 5px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+
+    .mc-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
+    }
+
+    .mc-summary-card {
+      border-left-width: 4px;
+      transition: transform 0.15s ease;
+    }
+
+    .mc-summary-card:hover {
+      transform: translateY(-1px);
+    }
+
+    .mc-status-ready {
+      background-color: #ecfdf3;
+      color: #15803d;
+    }
+
+    .mc-status-pending {
+      background-color: #fef3c7;
+      color: #b45309;
+    }
+
+    .mc-status-warning {
+      background-color: #ffedd5;
+      color: #c2410c;
+    }
+
+    .mc-status-incomplete {
+      background-color: #fee2e2;
+      color: #b91c1c;
+    }
   </style>
   <style>body { box-sizing: border-box; }</style>
   <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
@@ -225,91 +261,94 @@
        <div class="flex gap-3 mt-6"><button class="px-4 py-2 text-sm font-medium rounded-lg transition-colors" style="background-color: #3b82f6; color: #fff;" onmouseover="this.style.backgroundColor='#2563eb'" onmouseout="this.style.backgroundColor='#3b82f6'"> <i data-lucide="save" style="width:14px;height:14px;display:inline;margin-right:6px;vertical-align:middle;"></i> Save </button> <button class="px-4 py-2 text-sm font-medium rounded-lg transition-colors" style="background-color: #f8fafc; border: 1px solid #e2e8f0; color: #64748b;" onmouseover="this.style.backgroundColor='#f1f5f9'" onmouseout="this.style.backgroundColor='#f8fafc'"> <i data-lucide="x" style="width:14px;height:14px;display:inline;margin-right:6px;vertical-align:middle;"></i> Cancel </button>
        </div>
       </div><!-- Main Course Module -->
-      <div id="main-course-module" class="hidden"><!-- Top Filter Bar -->
-       <div class="mb-6 rounded-xl p-5" style="background-color: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.06);">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
-         <div><label class="block text-xs font-medium mb-1.5" style="color: #64748b;">Faculty</label> <select id="mc-filter-faculty" class="w-full px-3 py-2 text-sm border rounded-lg transition-colors" style="background-color: #f8fafc; border-color: #e2e8f0; color: #1e293b;"> <option value="">All Faculties</option> <option value="FAKULTI PERHUTANAN DAN ALAM SEKITAR">FAKULTI PERHUTANAN DAN ALAM SEKITAR</option> <option value="FAKULTI PERUBATAN DAN SAINS KESIHATAN">FAKULTI PERUBATAN DAN SAINS KESIHATAN</option> <option value="FAKULTI EKOLOGI MANUSIA">FAKULTI EKOLOGI MANUSIA</option> </select>
+      <div id="main-course-module" class="hidden">
+       <div class="mc-card p-5 mb-4">
+        <h2 class="text-xl font-bold" style="color: #0f172a;">Main Course Offering</h2>
+        <p class="text-sm mt-1" style="color: #64748b;">Plan and manage course offerings for the selected semester/session</p>
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-3 mt-4">
+         <div class="md:col-span-4"><label class="block text-xs font-medium mb-1.5" style="color: #64748b;">Faculty</label> <select id="mc-filter-faculty" class="w-full px-3 py-2 text-sm border rounded-lg transition-colors" style="background-color: #f8fafc; border-color: #e2e8f0; color: #1e293b;"> <option value="">All Faculties</option> </select>
          </div>
-         <div><label class="block text-xs font-medium mb-1.5" style="color: #64748b;">Programme</label> <select id="mc-filter-programme" class="w-full px-3 py-2 text-sm border rounded-lg transition-colors" style="background-color: #f8fafc; border-color: #e2e8f0; color: #1e293b;"> <option value="">All Programmes</option> <option value="MBBS">MBBS</option> <option value="Nursing">Nursing</option> </select>
+         <div class="md:col-span-4"><label class="block text-xs font-medium mb-1.5" style="color: #64748b;">Programme</label> <select id="mc-filter-programme" class="w-full px-3 py-2 text-sm border rounded-lg transition-colors" style="background-color: #f8fafc; border-color: #e2e8f0; color: #1e293b;"> <option value="">All Programmes</option> </select>
          </div>
-         <div><label class="block text-xs font-medium mb-1.5" style="color: #64748b;">Semester / Session</label> <select id="mc-filter-semester" class="w-full px-3 py-2 text-sm border rounded-lg transition-colors" style="background-color: #f8fafc; border-color: #e2e8f0; color: #1e293b;"> <option value="">All Sessions</option> <option value="2026/2027-1">Semester 1 (2026/2027)</option> <option value="2026/2027-2">Semester 2 (2026/2027)</option> <option value="2025/2026-1">Semester 1 (2025/2026)</option> <option value="2025/2026-2">Semester 2 (2025/2026)</option> </select>
-         </div>
-         <div class="flex gap-2 items-end"><button id="mc-reset-btn" class="flex-1 px-3 py-2 text-sm border rounded-lg font-medium transition-colors" style="border-color: #e2e8f0; color: #64748b; background-color: #f8fafc;" onmouseover="this.style.backgroundColor='#f1f5f9'" onmouseout="this.style.backgroundColor='#f8fafc'">Reset</button>
+         <div class="md:col-span-4"><label class="block text-xs font-medium mb-1.5" style="color: #64748b;">Semester / Session</label> <select id="mc-filter-semester" class="w-full px-3 py-2 text-sm border rounded-lg transition-colors" style="background-color: #f8fafc; border-color: #e2e8f0; color: #1e293b;"> <option value="">All Sessions</option> </select>
          </div>
         </div>
        </div><!-- Summary Cards -->
-       <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
-        <div class="rounded-xl p-4" style="background-color: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.06); border-left: 4px solid #3b82f6;">
-         <div class="flex items-center justify-between">
+       <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-3 mb-4">
+        <div class="mc-card mc-summary-card p-4" style="border-left-color: #3b82f6;">
+         <div class="flex items-center justify-between gap-3">
           <div>
-           <p class="text-xs font-medium" style="color: #94a3b8;">Curriculum Courses</p>
-           <p class="text-2xl font-bold mt-1" style="color: #1e293b;">142</p>
+           <p class="text-xs font-medium uppercase tracking-wide" style="color: #64748b;">Curriculum Courses</p>
+           <p id="mc-summary-curriculum" class="text-2xl font-bold mt-1" style="color: #0f172a;">0</p>
+           <p id="mc-summary-curriculum-mini" class="text-[11px] mt-1" style="color: #64748b;">0 ready</p>
           </div>
-          <div class="w-12 h-12 rounded-lg flex items-center justify-center" style="background-color: #eff6ff;"><i data-lucide="book" style="width:24px;height:24px;color:#3b82f6;"></i>
+          <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background-color: #eff6ff;"><i data-lucide="book-open" style="width:18px;height:18px;color:#2563eb;"></i>
           </div>
          </div>
         </div>
-        <div class="rounded-xl p-4" style="background-color: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.06); border-left: 4px solid #f59e0b;">
-         <div class="flex items-center justify-between">
+        <div class="mc-card mc-summary-card p-4" style="border-left-color: #0ea5e9;">
+         <div class="flex items-center justify-between gap-3">
           <div>
-           <p class="text-xs font-medium" style="color: #94a3b8;">Requests</p>
-           <p class="text-2xl font-bold mt-1" style="color: #1e293b;">38</p>
+           <p class="text-xs font-medium uppercase tracking-wide" style="color: #64748b;">Requests</p>
+           <p id="mc-summary-request" class="text-2xl font-bold mt-1" style="color: #0f172a;">0</p>
+           <p id="mc-summary-request-mini" class="text-[11px] mt-1" style="color: #64748b;">0 courses requested</p>
           </div>
-          <div class="w-12 h-12 rounded-lg flex items-center justify-center" style="background-color: #fffbeb;"><i data-lucide="inbox" style="width:24px;height:24px;color:#f59e0b;"></i>
+          <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background-color: #e0f2fe;"><i data-lucide="clipboard-list" style="width:18px;height:18px;color:#0284c7;"></i>
           </div>
          </div>
         </div>
-        <div class="rounded-xl p-4" style="background-color: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.06); border-left: 4px solid #ef4444;">
-         <div class="flex items-center justify-between">
+        <div class="mc-card mc-summary-card p-4" style="border-left-color: #f59e0b;">
+         <div class="flex items-center justify-between gap-3">
           <div>
-           <p class="text-xs font-medium" style="color: #94a3b8;">Failed / Repeat</p>
-           <p class="text-2xl font-bold mt-1" style="color: #1e293b;">24</p>
+           <p class="text-xs font-medium uppercase tracking-wide" style="color: #64748b;">Failed / Repeat</p>
+           <p id="mc-summary-failed" class="text-2xl font-bold mt-1" style="color: #0f172a;">0</p>
+           <p id="mc-summary-failed-mini" class="text-[11px] mt-1" style="color: #64748b;">0 warning groups</p>
           </div>
-          <div class="w-12 h-12 rounded-lg flex items-center justify-center" style="background-color: #fee2e2;"><i data-lucide="alert-circle" style="width:24px;height:24px;color:#ef4444;"></i>
+          <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background-color: #ffedd5;"><i data-lucide="alert-triangle" style="width:18px;height:18px;color:#c2410c;"></i>
           </div>
          </div>
         </div>
-        <div class="rounded-xl p-4" style="background-color: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.06); border-left: 4px solid #8b5cf6;">
-         <div class="flex items-center justify-between">
+        <div class="mc-card mc-summary-card p-4" style="border-left-color: #a855f7;">
+         <div class="flex items-center justify-between gap-3">
           <div>
-           <p class="text-xs font-medium" style="color: #94a3b8;">Manual Entries</p>
-           <p class="text-2xl font-bold mt-1" style="color: #1e293b;">15</p>
+           <p class="text-xs font-medium uppercase tracking-wide" style="color: #64748b;">Manual Entries</p>
+           <p id="mc-summary-manual" class="text-2xl font-bold mt-1" style="color: #0f172a;">0</p>
+           <p id="mc-summary-manual-mini" class="text-[11px] mt-1" style="color: #64748b;">0 manual setups</p>
           </div>
-          <div class="w-12 h-12 rounded-lg flex items-center justify-center" style="background-color: #f3e8ff;"><i data-lucide="edit-3" style="width:24px;height:24px;color:#8b5cf6;"></i>
+          <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background-color: #f3e8ff;"><i data-lucide="file-pen-line" style="width:18px;height:18px;color:#7e22ce;"></i>
           </div>
          </div>
         </div>
-        <div class="rounded-xl p-4" style="background-color: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.06); border-left: 4px solid #10b981;">
-         <div class="flex items-center justify-between">
+        <div class="mc-card mc-summary-card p-4" style="border-left-color: #10b981;">
+         <div class="flex items-center justify-between gap-3">
           <div>
-           <p class="text-xs font-medium" style="color: #94a3b8;">Total Students</p>
-           <p class="text-2xl font-bold mt-1" style="color: #1e293b;">2,847</p>
+           <p class="text-xs font-medium uppercase tracking-wide" style="color: #64748b;">Total Students</p>
+           <p id="mc-summary-total" class="text-2xl font-bold mt-1" style="color: #0f172a;">0</p>
+           <p id="mc-summary-total-mini" class="text-[11px] mt-1" style="color: #64748b;">0 active groups</p>
           </div>
-          <div class="w-12 h-12 rounded-lg flex items-center justify-center" style="background-color: #f0fdf4;"><i data-lucide="users" style="width:24px;height:24px;color:#10b981;"></i>
+          <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background-color: #ecfdf5;"><i data-lucide="users" style="width:18px;height:18px;color:#047857;"></i>
           </div>
          </div>
         </div>
-       </div><!-- Action Bar -->
-       <div class="flex items-center justify-between mb-5 flex-wrap gap-3">
-        <div class="flex gap-2 flex-wrap"><button id="mc-bulk-actions-btn" class="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-colors" style="background-color: #f8fafc; border: 1px solid #e2e8f0; color: #64748b;" onmouseover="this.style.backgroundColor='#f1f5f9'" onmouseout="this.style.backgroundColor='#f8fafc'"> <i data-lucide="list" style="width:14px;height:14px;"></i> Bulk Actions </button> <button id="mc-filter-btn" class="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-colors" style="background-color: #f8fafc; border: 1px solid #e2e8f0; color: #64748b;" onmouseover="this.style.backgroundColor='#f1f5f9'" onmouseout="this.style.backgroundColor='#f8fafc'"> <i data-lucide="filter" style="width:14px;height:14px;"></i> Filter </button> <button id="mc-group-by-btn" class="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-colors" style="background-color: #f8fafc; border: 1px solid #e2e8f0; color: #64748b;" onmouseover="this.style.backgroundColor='#f1f5f9'" onmouseout="this.style.backgroundColor='#f8fafc'"> <i data-lucide="layout-grid" style="width:14px;height:14px;"></i> Group By </button> <button id="mc-auto-group-btn" class="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-colors" style="background-color: #f8fafc; border: 1px solid #e2e8f0; color: #64748b;" onmouseover="this.style.backgroundColor='#f1f5f9'" onmouseout="this.style.backgroundColor='#f8fafc'"> <i data-lucide="zap" style="width:14px;height:14px;"></i> Auto Calculate Group </button> <button id="mc-auto-assign-btn" class="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-colors" style="background-color: #f8fafc; border: 1px solid #e2e8f0; color: #64748b;" onmouseover="this.style.backgroundColor='#f1f5f9'" onmouseout="this.style.backgroundColor='#f8fafc'"> <i data-lucide="user-check" style="width:14px;height:14px;"></i> Auto Assign Lecturer </button>
-        </div><button id="mc-add-course-btn" class="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-colors" style="background-color: #3b82f6; color: #fff;" onmouseover="this.style.backgroundColor='#2563eb'" onmouseout="this.style.backgroundColor='#3b82f6'"> <i data-lucide="plus" style="width:14px;height:14px;"></i> Add Course </button>
+       </div><!-- Action Toolbar -->
+       <div class="mc-card p-3 mb-4 flex flex-wrap items-center justify-between gap-3">
+        <div class="flex flex-wrap items-center gap-2"><button id="mc-bulk-actions-btn" class="flex items-center gap-2 px-3 py-2 text-xs font-semibold rounded-lg transition-colors" style="background-color: #f8fafc; border: 1px solid #e2e8f0; color: #334155;"> <i data-lucide="chevrons-up-down" style="width:14px;height:14px;"></i> Bulk Actions </button> <button id="mc-filter-btn" class="flex items-center gap-2 px-3 py-2 text-xs font-semibold rounded-lg transition-colors" style="background-color: #f8fafc; border: 1px solid #e2e8f0; color: #334155;"> <i data-lucide="filter" style="width:14px;height:14px;"></i> Filter <span id="mc-filter-count" class="hidden px-1.5 py-0.5 rounded-full text-[10px] font-bold" style="background-color: #dbeafe; color: #1d4ed8;"></span> </button> <select id="mc-group-by-select" class="px-3 py-2 text-xs font-semibold border rounded-lg transition-colors" style="background-color: #f8fafc; border-color: #e2e8f0; color: #334155;"> <option value="course">Group By: Course</option> <option value="program">Group By: Program</option> <option value="status">Group By: Status</option> </select> <button id="mc-auto-group-btn" class="flex items-center gap-2 px-3 py-2 text-xs font-semibold rounded-lg transition-colors" style="background-color: #eff6ff; border: 1px solid #bfdbfe; color: #1d4ed8;"> <i data-lucide="calculator" style="width:14px;height:14px;"></i> Auto Calculate Group </button> <button id="mc-auto-assign-btn" class="flex items-center gap-2 px-3 py-2 text-xs font-semibold rounded-lg transition-colors" style="background-color: #f0fdf4; border: 1px solid #bbf7d0; color: #15803d;"> <i data-lucide="user-check" style="width:14px;height:14px;"></i> Auto Assign Lecturer </button> <button id="mc-reset-btn" class="flex items-center gap-2 px-3 py-2 text-xs font-semibold rounded-lg transition-colors" style="background-color: #f8fafc; border: 1px solid #e2e8f0; color: #64748b;"> <i data-lucide="rotate-ccw" style="width:14px;height:14px;"></i> Reset </button>
+        </div><button id="mc-add-course-btn" class="flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-lg transition-colors" style="background-color: #2563eb; color: #fff;"> <i data-lucide="plus" style="width:14px;height:14px;"></i> Add Course </button>
        </div><!-- Data Table -->
-       <div class="rounded-xl overflow-hidden" style="background-color: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.06);">
+       <div class="mc-card overflow-hidden">
         <div class="overflow-x-auto">
          <table class="w-full text-sm">
           <thead>
-           <tr style="background-color: #f0f4f8;">
-            <th class="text-center px-4 py-3 text-[11px] font-bold uppercase tracking-wider" style="color: #475569;">No.</th>
+           <tr style="background-color: #f8fafc;">
             <th class="text-left px-4 py-3 text-[11px] font-bold uppercase tracking-wider" style="color: #475569;">Course &amp; Code</th>
             <th class="text-left px-4 py-3 text-[11px] font-bold uppercase tracking-wider" style="color: #475569;">Program</th>
             <th class="text-center px-4 py-3 text-[11px] font-bold uppercase tracking-wider" style="color: #475569;">Curriculum</th>
             <th class="text-center px-4 py-3 text-[11px] font-bold uppercase tracking-wider" style="color: #475569;">Request</th>
-            <th class="text-center px-4 py-3 text-[11px] font-bold uppercase tracking-wider" style="color: #475569;">Failed</th>
+            <th class="text-center px-4 py-3 text-[11px] font-bold uppercase tracking-wider" style="color: #475569;">Failed / Repeat</th>
             <th class="text-center px-4 py-3 text-[11px] font-bold uppercase tracking-wider" style="color: #475569;">Manual</th>
             <th class="text-center px-4 py-3 text-[11px] font-bold uppercase tracking-wider" style="color: #475569;">Total</th>
             <th class="text-center px-4 py-3 text-[11px] font-bold uppercase tracking-wider" style="color: #475569;">Group</th>
             <th class="text-left px-4 py-3 text-[11px] font-bold uppercase tracking-wider" style="color: #475569;">Lecturer</th>
-            <th class="text-center px-4 py-3 text-[11px] font-bold uppercase tracking-wider" style="color: #475569;">Status</th>
             <th class="text-center px-4 py-3 text-[11px] font-bold uppercase tracking-wider" style="color: #475569;">Action</th>
            </tr>
           </thead>
@@ -317,9 +356,9 @@
          </table>
         </div>
         <div class="px-6 py-4 border-t flex items-center justify-between" style="border-color: #e2e8f0; background-color: #f8fafc;">
-         <div class="flex items-center gap-2"><button id="mc-prev-btn" class="w-8 h-8 flex items-center justify-center rounded border transition-colors" style="border-color: #e2e8f0; color: #64748b;" onmouseover="this.style.backgroundColor='#f1f5f9'" onmouseout="this.style.backgroundColor='transparent'"> <i data-lucide="chevron-left" style="width:14px;height:14px;"></i> </button> <span class="text-xs" style="color: #64748b;">Page <span id="mc-current-page">1</span> of <span id="mc-total-pages">1</span></span> <button id="mc-next-btn" class="w-8 h-8 flex items-center justify-center rounded border transition-colors" style="border-color: #e2e8f0; color: #64748b;" onmouseover="this.style.backgroundColor='#f1f5f9'" onmouseout="this.style.backgroundColor='transparent'"> <i data-lucide="chevron-right" style="width:14px;height:14px;"></i> </button>
+         <div class="flex items-center gap-2"><button id="mc-prev-btn" class="w-8 h-8 flex items-center justify-center rounded border transition-colors" style="border-color: #e2e8f0; color: #64748b;"> <i data-lucide="chevron-left" style="width:14px;height:14px;"></i> </button> <span class="text-xs" style="color: #64748b;">Page <span id="mc-current-page">1</span> of <span id="mc-total-pages">1</span></span> <button id="mc-next-btn" class="w-8 h-8 flex items-center justify-center rounded border transition-colors" style="border-color: #e2e8f0; color: #64748b;"> <i data-lucide="chevron-right" style="width:14px;height:14px;"></i> </button>
          </div>
-         <div class="flex gap-2"><select id="mc-page-size" class="px-3 py-1.5 text-xs border rounded-lg transition-colors" style="border-color: #e2e8f0; background-color: #f8fafc; color: #1e293b;"> <option value="5">5 per page</option> <option value="10" selected>10 per page</option> <option value="25">25 per page</option> <option value="50">50 per page</option> </select> <button id="mc-export-btn" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg transition-colors" style="background-color: #f8fafc; border: 1px solid #e2e8f0; color: #64748b;" onmouseover="this.style.backgroundColor='#f1f5f9'" onmouseout="this.style.backgroundColor='#f8fafc'"> <i data-lucide="download" style="width:12px;height:12px;"></i>Export </button>
+         <div class="flex gap-2"><select id="mc-page-size" class="px-3 py-1.5 text-xs border rounded-lg transition-colors" style="border-color: #e2e8f0; background-color: #fff; color: #1e293b;"> <option value="5">5 per page</option> <option value="10" selected>10 per page</option> <option value="25">25 per page</option> <option value="50">50 per page</option> </select> <button id="mc-export-btn" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg transition-colors" style="background-color: #ffffff; border: 1px solid #e2e8f0; color: #64748b;"> <i data-lucide="download" style="width:12px;height:12px;"></i>Export </button>
          </div>
         </div>
        </div>
@@ -1400,27 +1439,199 @@
     a.click();
   }
 
-  // ── Main Course Module Data ──
+    // ── Main Course Module Data ──
   const mainCourseData = [
-    { id: 1, code: 'MED101', name: 'Human Anatomy I', program: 'MBBS', curriculum: 62, request: 0, failed: 52, manual: 0, total: 52, group: 2, lecturer: 'Prof. Dr. Ahmad Hassan', status: 'ready' },
-    { id: 2, code: 'MED102', name: 'Physiology I', program: 'MBBS', curriculum: 58, request: 0, failed: 55, manual: 0, total: 55, group: 2, lecturer: 'Dr. Siti Noraini', status: 'ready' },
-    { id: 3, code: 'MED103', name: 'Biochemistry I', program: 'MBBS', curriculum: 50, request: 0, failed: 48, manual: 0, total: 48, group: 2, lecturer: 'Dr. Muhammad Ridho', status: 'ready' },
-    { id: 4, code: 'MED104', name: 'Pathology I', program: 'MBBS', curriculum: 45, request: 0, failed: 42, manual: 0, total: 42, group: 2, lecturer: 'Prof. Dr. Zaini Mohsin', status: 'ready' },
-    { id: 5, code: 'MED105', name: 'Pharmacology I', program: 'MBBS', curriculum: 55, request: 0, failed: 53, manual: 0, total: 53, group: 2, lecturer: 'Dr. Nur Hafizah', status: 'ready' },
-    { id: 6, code: 'MED201', name: 'Clinical Surgery', program: 'MBBS', curriculum: 30, request: 0, failed: 28, manual: 0, total: 28, group: 1, lecturer: 'Prof. Dr. Mohd Azlan', status: 'ready' },
-    { id: 7, code: 'MED202', name: 'Clinical Medicine', program: 'Nursing', curriculum: 25, request: 5, failed: 20, manual: 0, total: 25, group: 2, lecturer: 'Dr. Fatimah Saad', status: 'pending' },
-    { id: 8, code: 'MPU401', name: 'Islamic Studies', program: 'MBBS', curriculum: 80, request: 0, failed: 75, manual: 5, total: 80, group: 3, lecturer: 'Dr. Azmi Rahman', status: 'ready' },
-    { id: 9, code: 'MED203', name: 'Emergency Medicine', program: 'MBBS', curriculum: 20, request: 0, failed: 18, manual: 0, total: 18, group: 1, lecturer: 'Dr. Ismail Yahya', status: 'ready' },
-    { id: 10, code: 'MED106', name: 'Medical Ethics', program: 'MBBS', curriculum: 100, request: 0, failed: 92, manual: 0, total: 92, group: 3, lecturer: 'Prof. Dr. Radhiah Hassan', status: 'ready' }
+    {
+      id: 1,
+      code: 'SKP2101',
+      name: 'Kenegaraan Malaysia',
+      faculty: 'FAKULTI PERHUTANAN DAN ALAM SEKITAR',
+      program: 'Bachelor of Science in Industrial Chemistry (Hons)',
+      semester: '2026/2027-1',
+      curriculum: 49,
+      request: 9,
+      failed: 8,
+      manual: 2,
+      total: 68,
+      groups: [
+        { group: 'G1', curriculum: 24, request: 5, failed: 3, manual: 1, total: 33, lecturers: ['Dr. Askiah'], status: 'ready' },
+        { group: 'G2', curriculum: 25, request: 4, failed: 5, manual: 1, total: 35, lecturers: ['Dr. Nurul Aini'], status: 'pending' }
+      ]
+    },
+    {
+      id: 2,
+      code: 'SKP3112',
+      name: 'Falsafah Dan Isu Semasa',
+      faculty: 'FAKULTI PERHUTANAN DAN ALAM SEKITAR',
+      program: 'Bachelor of Forestry Science (Hons)',
+      semester: '2026/2027-1',
+      curriculum: 60,
+      request: 7,
+      failed: 10,
+      manual: 0,
+      total: 77,
+      groups: [
+        { group: 'G1', curriculum: 30, request: 2, failed: 4, manual: 0, total: 36, lecturers: ['Dr. Rashid Ahmad'], status: 'ready' },
+        { group: 'G2', curriculum: 30, request: 5, failed: 6, manual: 0, total: 41, lecturers: [''], status: 'incomplete' }
+      ]
+    },
+    {
+      id: 3,
+      code: 'SKP3122',
+      name: 'Penghayatan Etika Dan Peradaban',
+      faculty: 'FAKULTI EKOLOGI MANUSIA',
+      program: 'Bachelor of Human Development Science with Management (Hons)',
+      semester: '2026/2027-1',
+      curriculum: 54,
+      request: 6,
+      failed: 5,
+      manual: 3,
+      total: 68,
+      groups: [
+        { group: 'G1', curriculum: 27, request: 3, failed: 2, manual: 2, total: 34, lecturers: ['Dr. Fatimah Saad'], status: 'ready' },
+        { group: 'G2', curriculum: 27, request: 3, failed: 3, manual: 1, total: 34, lecturers: ['Dr. Hanafi Salleh'], status: 'warning' }
+      ]
+    },
+    {
+      id: 4,
+      code: 'CHM2204',
+      name: 'Organic Chemistry',
+      faculty: 'FAKULTI PERUBATAN DAN SAINS KESIHATAN',
+      program: 'Bachelor of Science in Industrial Chemistry (Hons)',
+      semester: '2026/2027-1',
+      curriculum: 72,
+      request: 2,
+      failed: 9,
+      manual: 0,
+      total: 83,
+      groups: [
+        { group: 'G1', curriculum: 36, request: 1, failed: 4, manual: 0, total: 41, lecturers: ['Prof. Dr. Ahmad Hassan'], status: 'ready' },
+        { group: 'G2', curriculum: 36, request: 1, failed: 5, manual: 0, total: 42, lecturers: ['Dr. Muhammad Ridho'], status: 'ready' }
+      ]
+    },
+    {
+      id: 5,
+      code: 'AQS2302',
+      name: 'Aquaculture System Management',
+      faculty: 'FAKULTI PERHUTANAN DAN ALAM SEKITAR',
+      program: 'Bachelor of Science in Aquaculture (Hons)',
+      semester: '2026/2027-1',
+      curriculum: 65,
+      request: 12,
+      failed: 11,
+      manual: 4,
+      total: 92,
+      groups: [
+        { group: 'G1', curriculum: 33, request: 5, failed: 4, manual: 2, total: 44, lecturers: ['Dr. Siti Noraini'], status: 'pending' },
+        { group: 'G2', curriculum: 32, request: 7, failed: 7, manual: 2, total: 48, lecturers: [''], status: 'incomplete' }
+      ]
+    },
+    {
+      id: 6,
+      code: 'BIO2205',
+      name: 'Bioindustrial Process Design',
+      faculty: 'FAKULTI PERHUTANAN DAN ALAM SEKITAR',
+      program: 'Bachelor of Bioindustrial Science (Hons)',
+      semester: '2026/2027-2',
+      curriculum: 58,
+      request: 3,
+      failed: 8,
+      manual: 1,
+      total: 70,
+      groups: [
+        { group: 'G1', curriculum: 29, request: 1, failed: 3, manual: 1, total: 34, lecturers: ['Prof. Dr. Zaini Mohsin'], status: 'ready' },
+        { group: 'G2', curriculum: 29, request: 2, failed: 5, manual: 0, total: 36, lecturers: ['Dr. Nur Hafizah'], status: 'warning' }
+      ]
+    },
+    {
+      id: 7,
+      code: 'FOR2103',
+      name: 'Forest Resource Inventory',
+      faculty: 'FAKULTI PERHUTANAN DAN ALAM SEKITAR',
+      program: 'Bachelor of Forestry Science (Hons)',
+      semester: '2026/2027-2',
+      curriculum: 46,
+      request: 4,
+      failed: 6,
+      manual: 0,
+      total: 56,
+      groups: [
+        { group: 'G1', curriculum: 23, request: 2, failed: 3, manual: 0, total: 28, lecturers: ['Dr. Ismail Yahya'], status: 'ready' },
+        { group: 'G2', curriculum: 23, request: 2, failed: 3, manual: 0, total: 28, lecturers: [''], status: 'pending' }
+      ]
+    },
+    {
+      id: 8,
+      code: 'HDM2108',
+      name: 'Community Development Studies',
+      faculty: 'FAKULTI EKOLOGI MANUSIA',
+      program: 'Bachelor of Human Development Science with Management (Hons)',
+      semester: '2026/2027-2',
+      curriculum: 51,
+      request: 5,
+      failed: 4,
+      manual: 2,
+      total: 62,
+      groups: [
+        { group: 'G1', curriculum: 26, request: 2, failed: 2, manual: 1, total: 31, lecturers: ['Dr. Azmi Rahman'], status: 'ready' },
+        { group: 'G2', curriculum: 25, request: 3, failed: 2, manual: 1, total: 31, lecturers: ['Dr. Radhiah Hassan'], status: 'ready' }
+      ]
+    }
   ];
 
   let mcFilteredData = [...mainCourseData];
   let mcCurrentPage = 1;
   let mcPageSize = 10;
+  let mcGroupBy = 'course';
+  let mcExpandedRows = new Set([mainCourseData[0].id]);
 
   function initMainCourseModule() {
-    renderMainCourseTable();
+    populateMainCourseFilters();
     setupMainCourseEventListeners();
+    applyMainCourseFilters();
+  }
+
+  function populateMainCourseFilters() {
+    const facultySelect = document.getElementById('mc-filter-faculty');
+    const programmeSelect = document.getElementById('mc-filter-programme');
+    const semesterSelect = document.getElementById('mc-filter-semester');
+    if (!facultySelect || !programmeSelect || !semesterSelect) return;
+
+    const selectedFaculty = facultySelect.value;
+    const selectedProgramme = programmeSelect.value;
+    const selectedSemester = semesterSelect.value;
+
+    const faculties = [...new Set(mainCourseData.map(item => item.faculty))].sort((a, b) => a.localeCompare(b));
+    const programmes = [...new Set(mainCourseData.map(item => item.program))].sort((a, b) => a.localeCompare(b));
+    const semesters = [...new Set(mainCourseData.map(item => item.semester))].sort((a, b) => a.localeCompare(b));
+
+    facultySelect.innerHTML = '<option value="">All Faculties</option>';
+    faculties.forEach(faculty => {
+      const option = document.createElement('option');
+      option.value = faculty;
+      option.textContent = faculty;
+      facultySelect.appendChild(option);
+    });
+
+    programmeSelect.innerHTML = '<option value="">All Programmes</option>';
+    programmes.forEach(programme => {
+      const option = document.createElement('option');
+      option.value = programme;
+      option.textContent = programme;
+      programmeSelect.appendChild(option);
+    });
+
+    semesterSelect.innerHTML = '<option value="">All Sessions</option>';
+    semesters.forEach(semester => {
+      const option = document.createElement('option');
+      option.value = semester;
+      option.textContent = semester;
+      semesterSelect.appendChild(option);
+    });
+
+    if (faculties.includes(selectedFaculty)) facultySelect.value = selectedFaculty;
+    if (programmes.includes(selectedProgramme)) programmeSelect.value = selectedProgramme;
+    if (semesters.includes(selectedSemester)) semesterSelect.value = selectedSemester;
   }
 
   function setupMainCourseEventListeners() {
@@ -1428,21 +1639,117 @@
     document.getElementById('mc-filter-faculty').onchange = applyMainCourseFilters;
     document.getElementById('mc-filter-programme').onchange = applyMainCourseFilters;
     document.getElementById('mc-filter-semester').onchange = applyMainCourseFilters;
-    document.getElementById('mc-page-size').onchange = (e) => { mcPageSize = parseInt(e.target.value); mcCurrentPage = 1; renderMainCourseTable(); };
-    document.getElementById('mc-prev-btn').onclick = () => { if (mcCurrentPage > 1) { mcCurrentPage--; renderMainCourseTable(); } };
-    document.getElementById('mc-next-btn').onclick = () => { const max = Math.ceil(mcFilteredData.length / mcPageSize); if (mcCurrentPage < max) { mcCurrentPage++; renderMainCourseTable(); } };
+    document.getElementById('mc-group-by-select').onchange = (e) => {
+      mcGroupBy = e.target.value;
+      applyMainCourseFilters();
+    };
+    document.getElementById('mc-page-size').onchange = (e) => {
+      mcPageSize = parseInt(e.target.value, 10);
+      mcCurrentPage = 1;
+      renderMainCourseTable();
+    };
+    document.getElementById('mc-prev-btn').onclick = () => {
+      if (mcCurrentPage > 1) {
+        mcCurrentPage--;
+        renderMainCourseTable();
+      }
+    };
+    document.getElementById('mc-next-btn').onclick = () => {
+      const max = Math.max(1, Math.ceil(mcFilteredData.length / mcPageSize));
+      if (mcCurrentPage < max) {
+        mcCurrentPage++;
+        renderMainCourseTable();
+      }
+    };
     document.getElementById('mc-export-btn').onclick = exportMainCourseData;
-    document.getElementById('mc-bulk-actions-btn').onclick = () => showMCNotification('Bulk actions menu');
-    document.getElementById('mc-filter-btn').onclick = () => showMCNotification('Filter panel opened');
-    document.getElementById('mc-group-by-btn').onclick = () => showMCNotification('Group by options');
+    document.getElementById('mc-bulk-actions-btn').onclick = () => showMCNotification('Bulk actions dropdown opened');
+    document.getElementById('mc-filter-btn').onclick = () => showMCNotification('Filter panel ready');
     document.getElementById('mc-auto-group-btn').onclick = () => showMCNotification('Auto calculating groups...');
     document.getElementById('mc-auto-assign-btn').onclick = () => showMCNotification('Auto assigning lecturers...');
     document.getElementById('mc-add-course-btn').onclick = () => showMCNotification('Add course form opened');
   }
 
+  function getMainCourseStatusWeight(status) {
+    const order = { incomplete: 0, warning: 1, pending: 2, ready: 3 };
+    return order[status] ?? 4;
+  }
+
+  function getMainCourseStatusClass(status) {
+    return `mc-status-${status}`;
+  }
+
+  function getMainCourseStatusLabel(status) {
+    if (status === 'ready') return 'Ready';
+    if (status === 'pending') return 'Pending';
+    if (status === 'warning') return 'Warning';
+    return 'Incomplete';
+  }
+
+  function getMainCourseCourseStatus(course) {
+    const statuses = course.groups.map(group => group.status);
+    if (statuses.includes('incomplete')) return 'incomplete';
+    if (statuses.includes('warning')) return 'warning';
+    if (statuses.includes('pending')) return 'pending';
+    return 'ready';
+  }
+
+  function sortMainCourseData(data) {
+    const sorted = [...data];
+    if (mcGroupBy === 'program') {
+      sorted.sort((a, b) => a.program.localeCompare(b.program) || a.code.localeCompare(b.code));
+      return sorted;
+    }
+    if (mcGroupBy === 'status') {
+      sorted.sort((a, b) => {
+        const statusDiff = getMainCourseStatusWeight(getMainCourseCourseStatus(a)) - getMainCourseStatusWeight(getMainCourseCourseStatus(b));
+        return statusDiff || a.code.localeCompare(b.code);
+      });
+      return sorted;
+    }
+    sorted.sort((a, b) => a.code.localeCompare(b.code));
+    return sorted;
+  }
+
+  function updateMainCourseFilterBadge() {
+    const activeFilters = [
+      document.getElementById('mc-filter-faculty').value,
+      document.getElementById('mc-filter-programme').value,
+      document.getElementById('mc-filter-semester').value
+    ].filter(Boolean).length;
+    const filterCount = document.getElementById('mc-filter-count');
+    if (!filterCount) return;
+    if (activeFilters > 0) {
+      filterCount.classList.remove('hidden');
+      filterCount.textContent = String(activeFilters);
+    } else {
+      filterCount.classList.add('hidden');
+      filterCount.textContent = '';
+    }
+  }
+
   function applyMainCourseFilters() {
-    mcFilteredData = mainCourseData;
+    const selectedFaculty = document.getElementById('mc-filter-faculty').value;
+    const selectedProgramme = document.getElementById('mc-filter-programme').value;
+    const selectedSemester = document.getElementById('mc-filter-semester').value;
+
+    const filtered = mainCourseData.filter(item => {
+      const matchFaculty = !selectedFaculty || item.faculty === selectedFaculty;
+      const matchProgramme = !selectedProgramme || item.program === selectedProgramme;
+      const matchSemester = !selectedSemester || item.semester === selectedSemester;
+      return matchFaculty && matchProgramme && matchSemester;
+    });
+
+    mcFilteredData = sortMainCourseData(filtered);
     mcCurrentPage = 1;
+
+    const validIds = new Set(mcFilteredData.map(item => item.id));
+    mcExpandedRows = new Set([...mcExpandedRows].filter(id => validIds.has(id)));
+    if (!mcExpandedRows.size && mcFilteredData.length) {
+      mcExpandedRows.add(mcFilteredData[0].id);
+    }
+
+    updateMainCourseFilterBadge();
+    renderMainCourseSummary();
     renderMainCourseTable();
   }
 
@@ -1450,56 +1757,200 @@
     document.getElementById('mc-filter-faculty').value = '';
     document.getElementById('mc-filter-programme').value = '';
     document.getElementById('mc-filter-semester').value = '';
-    mcFilteredData = [...mainCourseData];
-    mcCurrentPage = 1;
-    renderMainCourseTable();
+    document.getElementById('mc-group-by-select').value = 'course';
+    mcGroupBy = 'course';
+    applyMainCourseFilters();
+  }
+
+  function renderMainCourseSummary() {
+    const totals = mcFilteredData.reduce((acc, item) => {
+      acc.request += item.request;
+      acc.failed += item.failed;
+      acc.manual += item.manual;
+      acc.total += item.total;
+      acc.groups += item.groups.length;
+      acc.warningGroups += item.groups.filter(group => group.status === 'warning' || group.status === 'incomplete').length;
+      return acc;
+    }, { request: 0, failed: 0, manual: 0, total: 0, groups: 0, warningGroups: 0 });
+
+    const readyCourses = mcFilteredData.filter(item => getMainCourseCourseStatus(item) === 'ready').length;
+    const requestCourses = mcFilteredData.filter(item => item.request > 0).length;
+    const manualCourses = mcFilteredData.filter(item => item.manual > 0).length;
+
+    document.getElementById('mc-summary-curriculum').textContent = mcFilteredData.length.toLocaleString();
+    document.getElementById('mc-summary-request').textContent = totals.request.toLocaleString();
+    document.getElementById('mc-summary-failed').textContent = totals.failed.toLocaleString();
+    document.getElementById('mc-summary-manual').textContent = totals.manual.toLocaleString();
+    document.getElementById('mc-summary-total').textContent = totals.total.toLocaleString();
+
+    document.getElementById('mc-summary-curriculum-mini').textContent = `${readyCourses} ready`;
+    document.getElementById('mc-summary-request-mini').textContent = `${requestCourses} courses requested`;
+    document.getElementById('mc-summary-failed-mini').textContent = `${totals.warningGroups} warning groups`;
+    document.getElementById('mc-summary-manual-mini').textContent = `${manualCourses} manual setups`;
+    document.getElementById('mc-summary-total-mini').textContent = `${totals.groups} active groups`;
+  }
+
+  function getMainCourseRowLecturerSummary(course) {
+    const assignedGroups = course.groups.filter(group => group.lecturers.some(name => String(name || '').trim())).length;
+    const uniqueLecturers = [...new Set(course.groups.flatMap(group => group.lecturers).map(name => String(name || '').trim()).filter(Boolean))];
+    const mainLecturer = uniqueLecturers[0] || 'Pending assignment';
+    const courseStatus = getMainCourseCourseStatus(course);
+    return {
+      assignedGroups,
+      totalGroups: course.groups.length,
+      mainLecturer,
+      status: courseStatus
+    };
+  }
+
+  function buildMainCourseNestedRows(course) {
+    return course.groups.map(group => {
+      const lecturerList = group.lecturers.map(name => String(name || '').trim()).filter(Boolean);
+      const isAssigned = lecturerList.length > 0;
+      const lecturerValue = isAssigned ? lecturerList.join(', ') : 'Not assigned';
+      const lecturerTone = isAssigned ? '#0f766e' : '#b45309';
+      const lecturerState = isAssigned ? 'Assigned' : 'Pending Assignment';
+
+      return `
+        <tr class="border-t" style="border-color: #e2e8f0;">
+          <td class="px-3 py-2 text-xs font-semibold" style="color: #334155;">${group.group}</td>
+          <td class="px-3 py-2 text-center text-xs font-semibold" style="color: #0f172a;">${group.curriculum}</td>
+          <td class="px-3 py-2 text-center text-xs font-semibold" style="color: #0f172a;">${group.request}</td>
+          <td class="px-3 py-2 text-center text-xs font-semibold" style="color: #0f172a;">${group.failed}</td>
+          <td class="px-3 py-2 text-center text-xs font-semibold" style="color: #0f172a;">${group.manual}</td>
+          <td class="px-3 py-2 text-center text-xs font-semibold" style="color: #1d4ed8;">${group.total}</td>
+          <td class="px-3 py-2 text-xs">
+            <div style="color: #334155;">${lecturerValue}</div>
+            <div class="text-[11px] font-medium mt-1" style="color: ${lecturerTone};">${lecturerState}</div>
+          </td>
+          <td class="px-3 py-2 text-center text-xs">
+            <span class="inline-flex px-2 py-1 rounded-full text-[11px] font-semibold ${getMainCourseStatusClass(group.status)}">${getMainCourseStatusLabel(group.status)}</span>
+          </td>
+          <td class="px-3 py-2 text-center">
+            <button type="button" class="mc-group-config-btn inline-flex items-center gap-1.5 px-2.5 py-1.5 text-[11px] rounded-lg border font-semibold transition-colors" style="border-color: #cbd5e1; color: #334155; background-color: #ffffff;" data-course-id="${course.id}" data-group="${group.group}">
+              <i data-lucide="sliders-horizontal" style="width:12px;height:12px;"></i>
+              Configure
+            </button>
+          </td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  function buildMainCourseDetailRow(course) {
+    const summaryStatus = getMainCourseCourseStatus(course);
+    return `
+      <tr class="border-t" style="border-color: #dbeafe; background-color: #f8fbff;">
+        <td colspan="10" class="px-4 py-4">
+          <div class="border rounded-xl overflow-hidden" style="border-color: #dbeafe; background-color: #ffffff;">
+            <div class="px-4 py-3 flex items-center justify-between flex-wrap gap-2 border-b" style="border-color: #dbeafe; background-color: #eff6ff;">
+              <div>
+                <p class="text-xs font-semibold uppercase tracking-wide" style="color: #1d4ed8;">Group Breakdown</p>
+                <p class="text-xs mt-0.5" style="color: #334155;">${course.code} - ${course.name}</p>
+              </div>
+              <span class="inline-flex px-2 py-1 rounded-full text-[11px] font-semibold ${getMainCourseStatusClass(summaryStatus)}">${getMainCourseStatusLabel(summaryStatus)}</span>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-xs">
+                <thead>
+                  <tr style="background-color: #f8fafc;">
+                    <th class="text-left px-3 py-2 text-[10px] font-bold uppercase tracking-wider" style="color: #64748b;">Group</th>
+                    <th class="text-center px-3 py-2 text-[10px] font-bold uppercase tracking-wider" style="color: #64748b;">Curriculum</th>
+                    <th class="text-center px-3 py-2 text-[10px] font-bold uppercase tracking-wider" style="color: #64748b;">Request</th>
+                    <th class="text-center px-3 py-2 text-[10px] font-bold uppercase tracking-wider" style="color: #64748b;">Failed / Repeat</th>
+                    <th class="text-center px-3 py-2 text-[10px] font-bold uppercase tracking-wider" style="color: #64748b;">Manual</th>
+                    <th class="text-center px-3 py-2 text-[10px] font-bold uppercase tracking-wider" style="color: #64748b;">Total</th>
+                    <th class="text-left px-3 py-2 text-[10px] font-bold uppercase tracking-wider" style="color: #64748b;">Lecturer Status</th>
+                    <th class="text-center px-3 py-2 text-[10px] font-bold uppercase tracking-wider" style="color: #64748b;">Status</th>
+                    <th class="text-center px-3 py-2 text-[10px] font-bold uppercase tracking-wider" style="color: #64748b;">Action</th>
+                  </tr>
+                </thead>
+                <tbody>${buildMainCourseNestedRows(course)}</tbody>
+              </table>
+            </div>
+            <div class="px-4 py-2 border-t text-xs flex flex-wrap gap-4" style="border-color: #e2e8f0; background-color: #f8fafc; color: #334155;">
+              <span><strong>Sub Total Curriculum:</strong> ${course.curriculum}</span>
+              <span><strong>Sub Total Request:</strong> ${course.request}</span>
+              <span><strong>Sub Total Failed:</strong> ${course.failed}</span>
+              <span><strong>Sub Total Manual:</strong> ${course.manual}</span>
+              <span><strong>Sub Total Total:</strong> ${course.total}</span>
+            </div>
+          </div>
+        </td>
+      </tr>
+    `;
   }
 
   function renderMainCourseTable() {
-    const start = (mcCurrentPage - 1) * mcPageSize;
-    const end = start + mcPageSize;
-    const pageData = mcFilteredData.slice(start, end);
     const tbody = document.getElementById('mc-table-body');
     tbody.innerHTML = '';
 
-    pageData.forEach((item, i) => {
-      const rowColor = i % 2 === 0 ? 'transparent' : '#f8fafc';
-      const statusColor = item.status === 'ready' ? '#10b981' : item.status === 'pending' ? '#f59e0b' : '#ef4444';
-      const statusBg = item.status === 'ready' ? '#f0fdf4' : item.status === 'pending' ? '#fffbeb' : '#fee2e2';
-      const row = document.createElement('tr');
-      row.style.backgroundColor = rowColor;
-      row.className = 'border-t hover:bg-blue-50 transition-colors';
-      row.style.borderColor = '#e2e8f0';
-      row.innerHTML = `
-        <td class="text-center px-4 py-3 text-xs" style="color: #64748b;">${start + i + 1}</td>
-        <td class="text-left px-4 py-3 text-xs">
-          <div class="font-semibold" style="color: #1e293b;">${item.name.toUpperCase()}</div>
-          <div style="color: #94a3b8; font-size: 11px; margin-top: 2px;">${item.code}</div>
-        </td>
-        <td class="text-left px-4 py-3 text-xs font-medium" style="color: #475569;">${item.program}</td>
-        <td class="text-center px-4 py-3 text-xs font-medium" style="color: #1e293b;">${item.curriculum}</td>
-        <td class="text-center px-4 py-3 text-xs font-medium" style="color: #1e293b;">${item.request}</td>
-        <td class="text-center px-4 py-3 text-xs font-medium" style="color: #1e293b;">${item.failed}</td>
-        <td class="text-center px-4 py-3 text-xs font-medium" style="color: #1e293b;">${item.manual}</td>
-        <td class="text-center px-4 py-3 text-xs font-semibold" style="color: #3b82f6;">${item.total}</td>
-        <td class="text-center px-4 py-3 text-xs font-semibold" style="color: #1e293b;">${item.group}</td>
-        <td class="text-left px-4 py-3 text-xs" style="color: #475569;">${item.lecturer}</td>
-        <td class="text-center px-4 py-3">
-          <span class="text-[11px] font-medium px-2 py-0.5 rounded-full" style="background-color: ${statusBg}; color: ${statusColor};">
-            ${item.status.charAt(0).toUpperCase() + item.status.slice(1)}
-          </span>
-        </td>
-        <td class="text-center px-4 py-3">
-          <button class="px-2 py-1.5 text-xs border rounded-lg font-medium transition-colors" style="border-color: #e2e8f0; color: #3b82f6; background-color: #eff6ff;" onmouseover="this.style.backgroundColor='#dbeafe'" onmouseout="this.style.backgroundColor='#eff6ff'">
-            Configure
-          </button>
-        </td>
-      `;
-      tbody.appendChild(row);
-    });
+    const totalPages = Math.max(1, Math.ceil(mcFilteredData.length / mcPageSize));
+    if (mcCurrentPage > totalPages) mcCurrentPage = totalPages;
 
-    // Update pagination
-    const totalPages = Math.ceil(mcFilteredData.length / mcPageSize);
+    const start = (mcCurrentPage - 1) * mcPageSize;
+    const end = start + mcPageSize;
+    const pageData = mcFilteredData.slice(start, end);
+
+    if (!pageData.length) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="10" class="px-4 py-10 text-center text-sm" style="color: #94a3b8;">No course offering data found for the current filter.</td>
+        </tr>
+      `;
+    } else {
+      pageData.forEach((item, index) => {
+        const rowTone = index % 2 === 0 ? '#ffffff' : '#f8fafc';
+        const isExpanded = mcExpandedRows.has(item.id);
+        const lecturerSummary = getMainCourseRowLecturerSummary(item);
+        const row = document.createElement('tr');
+        row.className = 'border-t';
+        row.style.borderColor = '#e2e8f0';
+        row.style.backgroundColor = rowTone;
+        row.innerHTML = `
+          <td class="px-4 py-3 text-xs">
+            <div class="flex items-start gap-2">
+              <button type="button" class="mc-expand-btn w-6 h-6 rounded-md border flex items-center justify-center transition-colors" style="border-color: #cbd5e1; background-color: #ffffff; color: #475569;" data-id="${item.id}">
+                <i data-lucide="${isExpanded ? 'chevron-down' : 'chevron-right'}" style="width:13px;height:13px;"></i>
+              </button>
+              <div>
+                <div class="font-semibold" style="color: #0f172a;">${item.name}</div>
+                <div class="text-[11px] mt-0.5" style="color: #64748b;">${item.code}</div>
+              </div>
+            </div>
+          </td>
+          <td class="px-4 py-3 text-xs">
+            <div class="font-medium" style="color: #334155;">${item.program}</div>
+            <div class="text-[11px] mt-0.5" style="color: #94a3b8;">${item.semester}</div>
+          </td>
+          <td class="text-center px-4 py-3 text-xs font-semibold" style="color: #0f172a;">${item.curriculum}</td>
+          <td class="text-center px-4 py-3 text-xs font-semibold" style="color: #0369a1;">${item.request}</td>
+          <td class="text-center px-4 py-3 text-xs font-semibold" style="color: #b45309;">${item.failed}</td>
+          <td class="text-center px-4 py-3 text-xs font-semibold" style="color: #6d28d9;">${item.manual}</td>
+          <td class="text-center px-4 py-3 text-xs font-bold" style="color: #1d4ed8;">${item.total}</td>
+          <td class="text-center px-4 py-3 text-xs font-semibold" style="color: #334155;">${item.groups.length}</td>
+          <td class="px-4 py-3 text-xs">
+            <div class="font-medium" style="color: #334155;">${lecturerSummary.mainLecturer}</div>
+            <div class="text-[11px] mt-1" style="color: #64748b;">${lecturerSummary.assignedGroups}/${lecturerSummary.totalGroups} groups assigned</div>
+            <span class="inline-flex px-2 py-1 rounded-full text-[10px] font-semibold mt-1 ${getMainCourseStatusClass(lecturerSummary.status)}">${getMainCourseStatusLabel(lecturerSummary.status)}</span>
+          </td>
+          <td class="text-center px-4 py-3">
+            <button type="button" class="mc-config-btn inline-flex items-center gap-1.5 px-2.5 py-1.5 text-[11px] rounded-lg border font-semibold transition-colors" style="border-color: #cbd5e1; background-color: #ffffff; color: #334155;" data-id="${item.id}">
+              Configure
+              <i data-lucide="chevron-down" style="width:12px;height:12px;"></i>
+            </button>
+          </td>
+        `;
+        tbody.appendChild(row);
+
+        if (isExpanded) {
+          const detailFragment = document.createElement('tbody');
+          detailFragment.innerHTML = buildMainCourseDetailRow(item);
+          tbody.appendChild(detailFragment.firstElementChild);
+        }
+      });
+    }
+
     document.getElementById('mc-total-pages').textContent = totalPages;
     document.getElementById('mc-current-page').textContent = mcCurrentPage;
     document.getElementById('mc-prev-btn').style.opacity = mcCurrentPage === 1 ? '0.5' : '1';
@@ -1507,32 +1958,59 @@
     document.getElementById('mc-next-btn').style.opacity = mcCurrentPage === totalPages ? '0.5' : '1';
     document.getElementById('mc-next-btn').style.cursor = mcCurrentPage === totalPages ? 'not-allowed' : 'pointer';
 
+    tbody.querySelectorAll('.mc-expand-btn').forEach(button => {
+      button.onclick = (event) => {
+        event.stopPropagation();
+        const id = Number(button.dataset.id);
+        if (mcExpandedRows.has(id)) {
+          mcExpandedRows.delete(id);
+        } else {
+          mcExpandedRows.add(id);
+        }
+        renderMainCourseTable();
+      };
+    });
+
+    tbody.querySelectorAll('.mc-config-btn').forEach(button => {
+      button.onclick = () => {
+        showMCNotification(`Configure ${button.dataset.id} opened`);
+      };
+    });
+
+    tbody.querySelectorAll('.mc-group-config-btn').forEach(button => {
+      button.onclick = () => {
+        showMCNotification(`Configure ${button.dataset.group} opened`);
+      };
+    });
+
     lucide.createIcons();
   }
 
   function exportMainCourseData() {
-    let csv = 'No.,Course Code,Course Name,Program,Curriculum,Request,Failed,Manual,Total,Group,Lecturer,Status\n';
-    mcFilteredData.forEach((item, i) => {
-      csv += `${i + 1},"${item.code}","${item.name}","${item.program}",${item.curriculum},${item.request},${item.failed},${item.manual},${item.total},${item.group},"${item.lecturer}","${item.status}"\n`;
+    let csv = 'Course Code,Course Name,Program,Semester,Group,Curriculum,Request,Failed/Repeat,Manual,Total,Lecturer,Status\n';
+    mcFilteredData.forEach(course => {
+      course.groups.forEach(group => {
+        const lecturers = group.lecturers.map(name => String(name || '').trim()).filter(Boolean).join(' | ') || 'Not assigned';
+        csv += `"${course.code}","${course.name}","${course.program}","${course.semester}","${group.group}",${group.curriculum},${group.request},${group.failed},${group.manual},${group.total},"${lecturers}","${getMainCourseStatusLabel(group.status)}"\n`;
+      });
     });
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'main_course.csv';
+    a.download = 'main_course_offering.csv';
     a.click();
   }
 
   function showMCNotification(message) {
     const notification = document.createElement('div');
     notification.className = 'fixed bottom-4 right-4 px-4 py-3 rounded-lg text-sm text-white z-50 fade-in';
-    notification.style.backgroundColor = '#3b82f6';
+    notification.style.backgroundColor = '#2563eb';
     notification.textContent = message;
     document.body.appendChild(notification);
-    setTimeout(() => notification.remove(), 3000);
+    setTimeout(() => notification.remove(), 2500);
   }
-
-  // ── Lecturer Master Data ──
+// ── Lecturer Master Data ──
   const lecturerData = [
     { id: 'STAFF001', name: 'Prof. Dr. Ahmad Hassan', faculty: 'Medicine', department: 'Anatomy' },
     { id: 'STAFF002', name: 'Dr. Siti Noraini', faculty: 'Medicine', department: 'Physiology' },
@@ -4889,3 +5367,4 @@
   lucide.createIcons();</script>
   <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9e9b435472e2164f',t:'MTc3NTc1NjA3MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
+
