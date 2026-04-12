@@ -378,16 +378,20 @@
          <h2 class="text-lg font-bold mb-1" style="color: #1e293b;">Offered Course Management</h2>
          <p class="text-sm" style="color: #64748b;">Manage faculty course offerings for academic sessions</p>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-5 gap-3">
-         <div><label class="block text-xs font-medium mb-1.5" style="color: #64748b;">Faculty</label> <select id="oc-filter-faculty" class="w-full px-3 py-2 text-sm border rounded-lg transition-colors" style="background-color: #f8fafc; border-color: #e2e8f0; color: #1e293b;"> <option value="">All Faculties</option> <option value="FAKULTI PERHUTANAN DAN ALAM SEKITAR">FAKULTI PERHUTANAN DAN ALAM SEKITAR</option> <option value="FAKULTI PERUBATAN DAN SAINS KESIHATAN">FAKULTI PERUBATAN DAN SAINS KESIHATAN</option> <option value="FAKULTI EKOLOGI MANUSIA">FAKULTI EKOLOGI MANUSIA</option> </select>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-3 items-end">
+         <div class="lg:col-span-2"><label class="block text-xs font-medium mb-1.5" style="color: #64748b;">Semester</label> <select id="oc-filter-semester" class="w-full px-3 py-2 text-sm border rounded-lg transition-colors" style="background-color: #f8fafc; border-color: #e2e8f0; color: #1e293b;"> <option value="">All Semesters</option> <option value="2026/2027-1">Semester 1 (2026/2027)</option> <option value="2026/2027-2">Semester 2 (2026/2027)</option> <option value="2025/2026-1">Semester 1 (2025/2026)</option> <option value="2025/2026-2">Semester 2 (2025/2026)</option> <option value="2024/2025-1">Semester 1 (2024/2025)</option> </select>
          </div>
-         <div><label class="block text-xs font-medium mb-1.5" style="color: #64748b;">Programme</label> <select id="oc-filter-programme" class="w-full px-3 py-2 text-sm border rounded-lg transition-colors" style="background-color: #f8fafc; border-color: #e2e8f0; color: #1e293b;"> <option value="">All Programmes</option> <option value="MBBS">MBBS</option> <option value="Nursing">Nursing</option> </select>
+         <div class="lg:col-span-2"><label class="block text-xs font-medium mb-1.5" style="color: #64748b;">Faculty</label> <select id="oc-filter-faculty" class="w-full px-3 py-2 text-sm border rounded-lg transition-colors" style="background-color: #f8fafc; border-color: #e2e8f0; color: #1e293b;"> <option value="">All Faculties</option> <option value="FAKULTI PERHUTANAN DAN ALAM SEKITAR">FAKULTI PERHUTANAN DAN ALAM SEKITAR</option> <option value="FAKULTI PERUBATAN DAN SAINS KESIHATAN">FAKULTI PERUBATAN DAN SAINS KESIHATAN</option> <option value="FAKULTI EKOLOGI MANUSIA">FAKULTI EKOLOGI MANUSIA</option> </select>
          </div>
-         <div><label class="block text-xs font-medium mb-1.5" style="color: #64748b;">Semester</label> <select id="oc-filter-semester" class="w-full px-3 py-2 text-sm border rounded-lg transition-colors" style="background-color: #f8fafc; border-color: #e2e8f0; color: #1e293b;"> <option value="">All Semesters</option> <option value="2026/2027-1">Semester 1 (2026/2027)</option> <option value="2026/2027-2">Semester 2 (2026/2027)</option> <option value="2025/2026-1">Semester 1 (2025/2026)</option> <option value="2025/2026-2">Semester 2 (2025/2026)</option> <option value="2024/2025-1">Semester 1 (2024/2025)</option> </select>
+         <div class="lg:col-span-2"><label class="block text-xs font-medium mb-1.5" style="color: #64748b;">Programme</label> <select id="oc-filter-programme" class="w-full px-3 py-2 text-sm border rounded-lg transition-colors" style="background-color: #f8fafc; border-color: #e2e8f0; color: #1e293b;"> <option value="">All Programmes</option> </select>
          </div>
-         <div><label class="block text-xs font-medium mb-1.5" style="color: #64748b;">Search</label> <input type="text" id="oc-search-input" placeholder="Course code or name..." class="w-full px-3 py-2 text-sm border rounded-lg transition-colors" style="background-color: #f8fafc; border-color: #e2e8f0; color: #1e293b;">
+         <div class="lg:col-span-2"><label class="block text-xs font-medium mb-1.5" style="color: #64748b;">Course</label> <select id="oc-filter-course" class="w-full px-3 py-2 text-sm border rounded-lg transition-colors" style="background-color: #f8fafc; border-color: #e2e8f0; color: #1e293b;"> <option value="">All Courses</option> </select>
          </div>
-         <div class="flex gap-2 items-end"><button id="oc-reset-btn" class="flex-1 px-3 py-2 text-sm border rounded-lg font-medium transition-colors" style="border-color: #e2e8f0; color: #64748b; background-color: #f8fafc;" onmouseover="this.style.backgroundColor='#f1f5f9'" onmouseout="this.style.backgroundColor='#f8fafc'">Reset</button> <button id="oc-add-course-btn" class="flex-1 px-3 py-2 text-sm border rounded-lg font-medium transition-colors" style="border-color: #e2e8f0; color: #3b82f6; background-color: #eff6ff; border-color: #bfdbfe;" onmouseover="this.style.backgroundColor='#dbeafe'" onmouseout="this.style.backgroundColor='#eff6ff'"><i data-lucide="plus" style="width:12px;height:12px;display:inline;margin-right:4px;"></i>Add</button>
+         <div class="lg:col-span-2"><label class="block text-xs font-medium mb-1.5" style="color: #64748b;">Search</label> <input type="text" id="oc-search-input" placeholder="Search course code, course name, or programme name" class="w-full px-3 py-2 text-sm border rounded-lg transition-colors" style="background-color: #f8fafc; border-color: #e2e8f0; color: #1e293b;">
+         </div>
+         <div class="lg:col-span-1"><button id="oc-search-btn" class="w-full px-3 py-2 text-sm border rounded-lg font-medium transition-colors" style="border-color: #e2e8f0; color: #64748b; background-color: #f8fafc;" onmouseover="this.style.backgroundColor='#f1f5f9'" onmouseout="this.style.backgroundColor='#f8fafc'"><i data-lucide="search" style="width:12px;height:12px;display:inline;margin-right:4px;"></i>Search</button>
+         </div>
+         <div class="lg:col-span-1"><button id="oc-add-course-btn" class="w-full px-3 py-2 text-sm border rounded-lg font-medium transition-colors" style="border-color: #e2e8f0; color: #3b82f6; background-color: #eff6ff; border-color: #bfdbfe;" onmouseover="this.style.backgroundColor='#dbeafe'" onmouseout="this.style.backgroundColor='#eff6ff'"><i data-lucide="plus" style="width:12px;height:12px;display:inline;margin-right:4px;"></i>Add</button>
          </div>
         </div>
        </div><!-- Add/Edit Form Section -->
@@ -1548,7 +1552,51 @@
   let ocEligibilityEditingId = null;
   let ocEligibilityRaceValues = [];
 
+  function populateOCFilterDropdowns() {
+    const programmeSelect = document.getElementById('oc-filter-programme');
+    const courseSelect = document.getElementById('oc-filter-course');
+    if (!programmeSelect || !courseSelect) return;
+
+    const selectedProgramme = programmeSelect.value;
+    const selectedCourse = courseSelect.value;
+
+    const programmeOptions = Array.from(new Set(
+      courseData
+        .map(item => String(item.programme || '').trim())
+        .filter(Boolean)
+    )).sort((a, b) => a.localeCompare(b));
+
+    const courseOptions = Array.from(new Map(
+      courseData
+        .map(item => [String(item.code || '').trim(), String(item.name_en || '').trim()])
+        .filter(([code]) => Boolean(code))
+    ).entries()).sort((a, b) => a[0].localeCompare(b[0]));
+
+    programmeSelect.innerHTML = '<option value="">All Programmes</option>';
+    programmeOptions.forEach(programme => {
+      const option = document.createElement('option');
+      option.value = programme;
+      option.textContent = programme;
+      programmeSelect.appendChild(option);
+    });
+    if (programmeOptions.includes(selectedProgramme)) {
+      programmeSelect.value = selectedProgramme;
+    }
+
+    courseSelect.innerHTML = '<option value="">All Courses</option>';
+    courseOptions.forEach(([code, name]) => {
+      const option = document.createElement('option');
+      option.value = code;
+      option.textContent = name ? `${code} - ${name}` : code;
+      courseSelect.appendChild(option);
+    });
+    if (courseOptions.some(([code]) => code === selectedCourse)) {
+      courseSelect.value = selectedCourse;
+    }
+  }
+
   function initOfferedCoursesTable() {
+    populateOCFilterDropdowns();
     renderOCTable();
     setupOCEventListeners();
   }
@@ -1558,11 +1606,17 @@
     document.getElementById('oc-cancel-form-btn').onclick = closeOCForm;
     document.getElementById('oc-cancel-form-btn2').onclick = closeOCForm;
     document.getElementById('add-course-form').onsubmit = submitOCForm;
-    document.getElementById('oc-reset-btn').onclick = resetOCFilters;
+    document.getElementById('oc-search-btn').onclick = applyOCFilters;
     document.getElementById('oc-filter-faculty').onchange = applyOCFilters;
     document.getElementById('oc-filter-programme').onchange = applyOCFilters;
     document.getElementById('oc-filter-semester').onchange = applyOCFilters;
-    document.getElementById('oc-search-input').oninput = applyOCFilters;
+    document.getElementById('oc-filter-course').onchange = applyOCFilters;
+    document.getElementById('oc-search-input').onkeydown = (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        applyOCFilters();
+      }
+    };
     document.getElementById('oc-page-size').onchange = (e) => { ocPageSize = parseInt(e.target.value); ocCurrentPage = 1; renderOCTable(); };
     document.getElementById('oc-prev-btn').onclick = () => { if (ocCurrentPage > 1) { ocCurrentPage--; renderOCTable(); } };
     document.getElementById('oc-next-btn').onclick = () => { const max = Math.ceil(ocFilteredData.length / ocPageSize); if (ocCurrentPage < max) { ocCurrentPage++; renderOCTable(); } };
@@ -1762,15 +1816,17 @@
   function applyOCFilters() {
     const searchText = document.getElementById('oc-search-input').value.toLowerCase();
     const facultyFilter = document.getElementById('oc-filter-faculty').value;
-    const programmeFilter = document.getElementById('oc-filter-programme').value.toLowerCase();
+    const programmeFilter = document.getElementById('oc-filter-programme').value;
+    const courseFilter = document.getElementById('oc-filter-course').value;
     const semesterFilter = document.getElementById('oc-filter-semester').value;
     ocFilteredData = courseData.filter(item => {
       const courseText = `${item.code} ${item.name_en} ${item.programme} ${item.programme_code}`.toLowerCase();
       const matchSearch = !searchText || courseText.includes(searchText);
       const matchFaculty = !facultyFilter || item.faculty === facultyFilter;
-      const matchProgramme = !programmeFilter || item.programme.toLowerCase().includes(programmeFilter) || String(item.programme_code).toLowerCase().includes(programmeFilter);
+      const matchProgramme = !programmeFilter || item.programme === programmeFilter;
+      const matchCourse = !courseFilter || item.code === courseFilter;
       const matchSemester = !semesterFilter || item.cohort === semesterFilter;
-      return matchSearch && matchFaculty && matchProgramme && matchSemester;
+      return matchSearch && matchFaculty && matchProgramme && matchCourse && matchSemester;
     });
     ocCurrentPage = 1;
     renderOCTable();
@@ -1780,6 +1836,7 @@
     document.getElementById('oc-filter-faculty').value = '';
     document.getElementById('oc-filter-programme').value = '';
     document.getElementById('oc-filter-semester').value = '';
+    document.getElementById('oc-filter-course').value = '';
     document.getElementById('oc-search-input').value = '';
     ocFilteredData = [...courseData];
     ocCurrentPage = 1;
@@ -3009,6 +3066,7 @@
       courseData.push(newCourse);
     }
 
+    populateOCFilterDropdowns();
     applyOCFilters();
     closeOCForm();
     showOCNotification('Course saved successfully!');
@@ -3024,6 +3082,7 @@
     const item = courseData.find(x => x.id === id);
     if (confirm(`Delete course "${item.code} - ${item.name_en}"? This action cannot be undone.`)) {
       courseData = courseData.filter(x => x.id !== id);
+      populateOCFilterDropdowns();
       applyOCFilters();
       showOCNotification('Course deleted successfully!');
     }
