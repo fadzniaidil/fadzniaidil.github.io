@@ -634,6 +634,11 @@
        <div class="rounded-xl overflow-hidden" style="background-color:#ffffff; box-shadow:0 1px 3px rgba(0,0,0,0.06);">
         <iframe id="time-configuration-frame" data-src="modules/time-configuration.html" title="Time Configuration" class="w-full" style="height: calc(100vh - 220px); min-height: 760px; border: 0;" loading="lazy"></iframe>
        </div>
+      </div><!-- Failed Courses Frame Module -->
+      <div id="failed-courses-frame-module" class="hidden scheduling-config-module">
+       <div class="rounded-xl overflow-hidden" style="background-color:#ffffff; box-shadow:0 1px 3px rgba(0,0,0,0.06);">
+        <iframe id="failed-courses-frame" data-src="./modules/failed-repeat-course-suggestion.html?v=20260412-1" title="Failed / Repeat Course Suggestion" class="w-full" style="height: calc(100vh - 220px); min-height: 900px; border: 0;" loading="lazy"></iframe>
+       </div>
       </div><!-- Failed Courses Module -->
       <div id="failed-courses-module" class="hidden">
        <div class="mb-6 rounded-xl p-5" style="background-color: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.06);">
@@ -894,11 +899,20 @@
     }
   }
 
+  function initFailedCoursesFrame() {
+    const frame = document.getElementById('failed-courses-frame');
+    if (!frame) return;
+    const src = frame.dataset.src || './modules/failed-repeat-course-suggestion.html';
+    if (frame.getAttribute('src') !== src) {
+      frame.setAttribute('src', src);
+    }
+  }
+
   const submenuModuleMap = {
     'main-course': { moduleId: 'main-course-module', init: initMainCourseModule },
     'lecture-room': { moduleId: 'lecture-room-module', init: initLectureRoomTable },
     'offered-courses': { moduleId: 'offered-courses-module', init: initOfferedCoursesTable },
-    'failed-courses': { moduleId: 'failed-courses-module', init: initFailedCoursesModule },
+    'failed-courses': { moduleId: 'failed-courses-frame-module', init: initFailedCoursesFrame },
     'facility-registration': { moduleId: 'facility-registration-module', init: initFacilityRegistrationModule },
     'day-management': { moduleId: 'day-management-module', init: initDayManagementModule },
     'time-configuration': { moduleId: 'time-configuration-module', init: initTimeConfigurationModuleFrame },

@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Failed / Repeat Course Suggestion</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f1f5f9;
+      --card: #ffffff;
+      --line: #e2e8f0;
+      --line-strong: #cbd5e1;
+      --text: #0f172a;
+      --muted: #64748b;
+      --primary: #3b82f6;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 16px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "DM Sans", "Segoe UI", Arial, sans-serif;
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid #edf2f7;
+      border-radius: 14px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    }
+
+    .page-title {
+      margin: 0 0 12px;
+      font-size: 36px;
+      line-height: 1.05;
+      font-weight: 700;
+      color: #1e293b;
+      letter-spacing: -0.01em;
+    }
+
+    .filter-card {
+      padding: 14px 16px;
+      margin-bottom: 12px;
+    }
+
+    .filter-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      align-items: end;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .field label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #64748b;
+    }
+
+    .field select,
+    .field input {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      padding: 9px 12px;
+      background: #f8fafc;
+      color: #1e293b;
+      font-size: 14px;
+      font-weight: 500;
+      outline: none;
+    }
+
+    .btn {
+      border: 1px solid transparent;
+      border-radius: 9px;
+      padding: 9px 12px;
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .btn-reset {
+      border-color: var(--line);
+      color: #64748b;
+      background: #f8fafc;
+    }
+
+    .actions-row {
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .actions-left {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn-soft {
+      border-color: var(--line);
+      color: #64748b;
+      background: #f8fafc;
+    }
+
+    .btn-soft.disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .btn-analyse {
+      border-color: #bfdbfe;
+      color: #1d4ed8;
+      background: #eff6ff;
+    }
+
+    .total-text {
+      font-size: 12px;
+      color: #94a3b8;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .total-text strong {
+      color: #1e293b;
+      font-weight: 700;
+    }
+
+    .table-card {
+      overflow: hidden;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th {
+      background: #f8fafc;
+      border-bottom: 1px solid var(--line);
+      font-size: 11px;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      font-weight: 600;
+      text-align: left;
+      padding: 12px 10px;
+      white-space: nowrap;
+    }
+
+    td {
+      border-top: 1px solid var(--line);
+      padding: 10px;
+      font-size: 13px;
+      color: #334155;
+      font-weight: 500;
+      vertical-align: middle;
+    }
+
+    .center { text-align: center; }
+
+    .empty {
+      text-align: center;
+      color: #94a3b8;
+      padding: 24px 10px;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .footer {
+      padding: 12px 14px;
+      border-top: 1px solid var(--line);
+      background: #f8fafc;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .pager {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #64748b;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .pager-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: #64748b;
+      font-weight: 700;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .footer-right {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .small-select {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 6px 8px;
+      background: #fff;
+      color: #1e293b;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .small-btn {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 7px 10px;
+      font-size: 12px;
+      font-weight: 600;
+      background: #f8fafc;
+      color: #64748b;
+      cursor: not-allowed;
+      opacity: 0.65;
+    }
+
+    @media (max-width: 980px) {
+      .page-title { font-size: 30px; }
+      .filter-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 620px) {
+      body { padding: 12px; }
+      .page-title { font-size: 26px; }
+      .filter-grid { grid-template-columns: 1fr; }
+      .footer { align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+  <h1 class="page-title">Failed / Repeat Course Suggestion</h1>
+
+  <section class="card filter-card">
+    <div class="filter-grid">
+      <div class="field">
+        <label>Faculty</label>
+        <select>
+          <option>Medicine</option>
+          <option>Nursing</option>
+          <option>Science</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Program</label>
+        <select>
+          <option>Nursing</option>
+          <option>MBBS</option>
+          <option>Pharmacy</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Search</label>
+        <input type="text" placeholder="Search code or course...">
+      </div>
+      <div class="field">
+        <button class="btn btn-reset" type="button">Reset</button>
+      </div>
+    </div>
+  </section>
+
+  <div class="actions-row">
+    <div class="actions-left">
+      <button class="btn btn-soft disabled" type="button">Export</button>
+      <button class="btn btn-soft disabled" type="button">Auto Suggest</button>
+      <button class="btn btn-soft disabled" type="button">Merge Existing</button>
+      <button class="btn btn-soft disabled" type="button">Create Offering</button>
+      <button class="btn btn-analyse" type="button">Analyse</button>
+    </div>
+    <div class="total-text">Total: <strong>0</strong> courses</div>
+  </div>
+
+  <section class="card table-card">
+    <div style="overflow:auto;">
+      <table>
+        <thead>
+          <tr>
+            <th class="center" style="width:42px;"><input type="checkbox" style="width:15px;height:15px;accent-color:#3b82f6;"></th>
+            <th>Code</th>
+            <th>Course Name</th>
+            <th>Program</th>
+            <th class="center">Failed</th>
+            <th class="center">Eligible</th>
+            <th class="center">Status</th>
+            <th class="center">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td colspan="8" class="empty">No failed/repeat records available.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="footer">
+      <div class="pager">
+        <button class="pager-btn" type="button">&lt;</button>
+        <span>Page 1 of 1</span>
+        <button class="pager-btn" type="button">&gt;</button>
+      </div>
+      <div class="footer-right">
+        <select class="small-select">
+          <option>10 per page</option>
+          <option>25 per page</option>
+          <option>50 per page</option>
+        </select>
+        <button class="small-btn" type="button">Auto</button>
+        <button class="small-btn" type="button">Create</button>
+      </div>
+    </div>
+  </section>
+</body>
+</html>
