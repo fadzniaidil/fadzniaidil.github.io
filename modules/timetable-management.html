@@ -1,0 +1,841 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Timetable Management</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f1f5f9;
+      --card: #ffffff;
+      --line: #e2e8f0;
+      --text: #0f172a;
+      --muted: #64748b;
+      --primary: #3b82f6;
+      --primary-dark: #2563eb;
+      --lecture-bg: #dbeafe;
+      --lecture-border: #bfdbfe;
+      --lab-bg: #dcfce7;
+      --lab-border: #bbf7d0;
+      --red-bg: #fef2f2;
+      --red-border: #fecaca;
+      --orange-bg: #fff7ed;
+      --orange-border: #fed7aa;
+      --yellow-bg: #fefce8;
+      --yellow-border: #fde68a;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 16px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "DM Sans", "Segoe UI", Arial, sans-serif;
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid #edf2f7;
+      border-radius: 14px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    }
+
+    .header {
+      margin-bottom: 12px;
+      padding: 16px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .title {
+      margin: 0;
+      font-size: 30px;
+      line-height: 1.05;
+      font-weight: 700;
+      color: #1e293b;
+    }
+
+    .subtitle {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .btn {
+      border: 1px solid transparent;
+      border-radius: 10px;
+      padding: 9px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-primary:hover { background: var(--primary-dark); }
+    .btn-outline { background: #fff; border-color: #cbd5e1; color: #334155; }
+
+    .tt-card { overflow: hidden; margin-bottom: 12px; }
+    .tt-wrap { position: relative; overflow: auto; }
+
+    .tt-head {
+      display: grid;
+      grid-template-columns: 120px repeat(5, minmax(0, 1fr));
+      background: #f8fafc;
+      border-bottom: 1px solid var(--line);
+      position: sticky;
+      top: 0;
+      z-index: 5;
+    }
+
+    .tt-head > div {
+      padding: 11px 10px;
+      border-right: 1px solid var(--line);
+      font-size: 12px;
+      font-weight: 700;
+      color: #475569;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .tt-head > div:first-child {
+      text-align: left;
+      color: #64748b;
+    }
+
+    .tt-head > div:last-child { border-right: 0; }
+
+    .tt-body {
+      display: grid;
+      grid-template-columns: 120px repeat(5, minmax(0, 1fr));
+      align-items: stretch;
+    }
+
+    .time-axis {
+      position: relative;
+      border-right: 1px solid var(--line);
+      background: #fcfdff;
+    }
+
+    .time-label {
+      position: absolute;
+      left: 0;
+      right: 0;
+      transform: translateY(-50%);
+      padding: 0 10px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #64748b;
+      white-space: nowrap;
+    }
+
+    .day-board {
+      position: relative;
+      border-right: 1px solid var(--line);
+      background-image: repeating-linear-gradient(
+        to bottom,
+        transparent,
+        transparent calc(var(--hour-height) - 1px),
+        var(--line) calc(var(--hour-height) - 1px),
+        var(--line) var(--hour-height)
+      );
+      overflow: hidden;
+    }
+
+    .day-board:last-child { border-right: 0; }
+
+    .class-block {
+      position: absolute;
+      left: 8px;
+      right: 8px;
+      border-radius: 10px;
+      border: 1px solid transparent;
+      padding: 6px 8px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+      z-index: 2;
+      overflow: hidden;
+    }
+
+    .class-block.lecture { background: var(--lecture-bg); border-color: var(--lecture-border); }
+    .class-block.lab { background: var(--lab-bg); border-color: var(--lab-border); }
+
+    .class-code { font-size: 12px; font-weight: 800; color: #1e293b; line-height: 1.2; }
+    .class-meta { margin-top: 3px; font-size: 11px; font-weight: 700; color: #334155; line-height: 1.2; }
+
+    .overlay-layer {
+      position: absolute;
+      inset: 0;
+      z-index: 8;
+      pointer-events: none;
+    }
+
+    .overlay-slot {
+      position: absolute;
+      left: 8px;
+      right: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      pointer-events: auto;
+    }
+
+    .overlay-card {
+      border: 1px solid;
+      border-left-width: 5px;
+      border-radius: 12px;
+      padding: 8px 10px;
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      box-shadow: 0 8px 14px rgba(15, 23, 42, 0.12);
+      pointer-events: auto;
+    }
+
+    .overlay-card.lecturer { background: var(--red-bg); border-color: var(--red-border); }
+    .overlay-card.room { background: var(--orange-bg); border-color: var(--orange-border); }
+    .overlay-card.time { background: var(--yellow-bg); border-color: var(--yellow-border); }
+
+    .overlay-main { flex: 1; min-width: 0; }
+
+    .overlay-title {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: #0f172a;
+      margin-bottom: 4px;
+    }
+
+    .sev-icon {
+      width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #ef4444;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 800;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    .overlay-meta {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 3px 8px;
+      font-size: 12px;
+      color: #1f2937;
+      font-weight: 600;
+    }
+
+    .overlay-meta strong { color: #0f172a; font-weight: 800; }
+
+    .overlay-desc {
+      margin-top: 5px;
+      font-size: 12px;
+      color: #111827;
+      font-weight: 700;
+      line-height: 1.25;
+    }
+
+    .overlay-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      min-width: 106px;
+      pointer-events: auto;
+    }
+
+    .overlay-btn {
+      border-radius: 8px;
+      border: 1px solid transparent;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 6px 8px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .overlay-btn.details { background: #1d4ed8; border-color: #1d4ed8; color: #fff; }
+    .overlay-btn.manual { background: #fff; border-color: #cbd5e1; color: #334155; }
+
+    .summary {
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      border: 1px solid #bfdbfe;
+      background: #eff6ff;
+      color: #1e3a8a;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 10px;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.45);
+      z-index: 40;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .hidden { display: none !important; }
+
+    .modal-card {
+      width: 100%;
+      max-width: 680px;
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      box-shadow: 0 24px 42px rgba(15, 23, 42, 0.25);
+      overflow: hidden;
+    }
+
+    .modal-head {
+      padding: 12px 14px;
+      border-bottom: 1px solid #e2e8f0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      background: #f8fafc;
+    }
+
+    .modal-title { margin: 0; font-size: 15px; font-weight: 700; color: #0f172a; }
+
+    .close-btn {
+      border: 0;
+      background: transparent;
+      color: #64748b;
+      font-size: 18px;
+      line-height: 1;
+      cursor: pointer;
+      padding: 2px 6px;
+      border-radius: 6px;
+    }
+
+    .modal-body { padding: 14px; font-size: 13px; color: #334155; }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 6px 10px;
+      margin-bottom: 8px;
+    }
+
+    .detail-grid strong { color: #0f172a; font-weight: 700; }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .field { display: flex; flex-direction: column; gap: 5px; }
+    .field label { font-size: 12px; color: #475569; font-weight: 700; }
+
+    .field input,
+    .field select {
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 8px 9px;
+      font-size: 13px;
+      color: #0f172a;
+      background: #fff;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      padding: 12px 14px;
+      border-top: 1px solid #e2e8f0;
+      background: #f8fafc;
+    }
+
+    .toast {
+      position: fixed;
+      right: 16px;
+      bottom: 16px;
+      z-index: 999;
+      color: #fff;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 13px;
+      font-weight: 700;
+      box-shadow: 0 12px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .toast.success { background: #10b981; }
+    .toast.error { background: #ef4444; }
+
+    @media (max-width: 980px) {
+      .tt-head { grid-template-columns: 108px repeat(5, minmax(160px, 1fr)); }
+      .tt-body { grid-template-columns: 108px repeat(5, minmax(160px, 1fr)); }
+    }
+
+    @media (max-width: 860px) {
+      .overlay-meta { grid-template-columns: 1fr; }
+      .detail-grid, .form-grid { grid-template-columns: 1fr; }
+      .title { font-size: 24px; }
+    }
+  </style>
+</head>
+<body>
+  <section class="card header">
+    <div>
+      <h1 class="title">Timetable Management</h1>
+      <p class="subtitle">Validate, detect conflicts, and manage timetable conflicts directly from the grid overlay.</p>
+    </div>
+    <button id="refresh-btn" class="btn btn-primary" type="button">Check Conflict</button>
+  </section>
+
+  <section class="card tt-card">
+    <div class="tt-wrap">
+      <div class="tt-head" id="tt-head">
+        <div>Time</div>
+        <div>Monday</div>
+        <div>Tuesday</div>
+        <div>Wednesday</div>
+        <div>Thursday</div>
+        <div>Friday</div>
+      </div>
+      <div class="tt-body" id="tt-body">
+        <div class="time-axis" id="time-axis"></div>
+        <div class="day-board" data-day="Monday"></div>
+        <div class="day-board" data-day="Tuesday"></div>
+        <div class="day-board" data-day="Wednesday"></div>
+        <div class="day-board" data-day="Thursday"></div>
+        <div class="day-board" data-day="Friday"></div>
+      </div>
+      <div id="overlay-layer" class="overlay-layer"></div>
+    </div>
+  </section>
+
+  <section class="card summary">
+    <span id="conflict-chip" class="chip">0 Conflicts Detected</span>
+    <span style="font-size:12px;color:#64748b;font-weight:600;">Overlays are rendered only when conflicts are detected.</span>
+  </section>
+
+  <div id="detail-modal" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <div class="modal-head">
+        <h3 class="modal-title">Conflict Details</h3>
+        <button type="button" class="close-btn" data-close="detail">x</button>
+      </div>
+      <div id="detail-body" class="modal-body"></div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" data-close="detail">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="manual-modal" class="modal-backdrop hidden">
+    <div class="modal-card" style="max-width:560px;">
+      <div class="modal-head">
+        <h3 class="modal-title">Manual Fix</h3>
+        <button type="button" class="close-btn" data-close="manual">x</button>
+      </div>
+      <form id="manual-form">
+        <div class="modal-body">
+          <div class="form-grid">
+            <div class="field">
+              <label for="mf-day">Day</label>
+              <select id="mf-day" required></select>
+            </div>
+            <div class="field">
+              <label for="mf-room">Room</label>
+              <select id="mf-room" required></select>
+            </div>
+            <div class="field">
+              <label for="mf-start">Start Time</label>
+              <input id="mf-start" type="time" required>
+            </div>
+            <div class="field">
+              <label for="mf-end">End Time</label>
+              <input id="mf-end" type="time" required>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" data-close="manual">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Fix</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+    const dayStartHour = 8;
+    const dayEndHour = 18;
+    const hourHeight = 74;
+    const dayStartMin = dayStartHour * 60;
+    const pxPerMinute = hourHeight / 60;
+    const boardHeight = (dayEndHour - dayStartHour) * hourHeight;
+    const roomOptions = ["DK1", "DK2", "DK4", "Lab 202", "Lab 204", "BKB1", "BKB2"];
+
+    document.documentElement.style.setProperty("--hour-height", `${hourHeight}px`);
+
+    const conflictTypeMeta = {
+      lecturer: {
+        label: "Lecturer Conflict",
+        className: "lecturer",
+        description: "Lecturer is assigned to two classes at the same time"
+      },
+      room: {
+        label: "Room Conflict",
+        className: "room",
+        description: "Room is assigned to two classes at the same time"
+      },
+      time: {
+        label: "Time Conflict",
+        className: "time",
+        description: "Time overlap detected for the same group"
+      }
+    };
+
+    let timetableRecords = [
+      { id: 1, day: "Monday", start: "09:00", end: "10:30", type: "Lecture", courseCode: "CY102", courseName: "Data Structures", lecturer: "Dr. Adnan", group: "2", room: "Lab 202" },
+      { id: 2, day: "Monday", start: "09:40", end: "11:00", type: "Lecture", courseCode: "CS210", courseName: "Algorithms", lecturer: "Dr. Adnan", group: "3", room: "DK1" },
+      { id: 3, day: "Tuesday", start: "10:00", end: "12:00", type: "Lab", courseCode: "DB300", courseName: "Database Lab", lecturer: "Dr. Azura", group: "1", room: "Lab 202" },
+      { id: 4, day: "Tuesday", start: "10:20", end: "11:20", type: "Lecture", courseCode: "NW220", courseName: "Computer Networks", lecturer: "Dr. Naim", group: "4", room: "Lab 202" },
+      { id: 5, day: "Wednesday", start: "14:00", end: "16:00", type: "Lecture", courseCode: "OS310", courseName: "Operating Systems", lecturer: "Dr. Shila", group: "5", room: "DK2" },
+      { id: 6, day: "Wednesday", start: "15:00", end: "16:30", type: "Lab", courseCode: "SE250", courseName: "Software Engineering Lab", lecturer: "Dr. Hafiz", group: "5", room: "Lab 204" }
+    ];
+
+    let activeConflicts = [];
+    let manualFixRecordId = null;
+
+    const ttHeadEl = document.getElementById("tt-head");
+    const timeAxisEl = document.getElementById("time-axis");
+    const dayBoards = Array.from(document.querySelectorAll(".day-board"));
+    const overlayLayerEl = document.getElementById("overlay-layer");
+    const conflictChipEl = document.getElementById("conflict-chip");
+
+    const detailModal = document.getElementById("detail-modal");
+    const detailBody = document.getElementById("detail-body");
+    const manualModal = document.getElementById("manual-modal");
+    const manualForm = document.getElementById("manual-form");
+    const mfDay = document.getElementById("mf-day");
+    const mfRoom = document.getElementById("mf-room");
+    const mfStart = document.getElementById("mf-start");
+    const mfEnd = document.getElementById("mf-end");
+
+    function escapeHtml(value) {
+      return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function parseTime(value) {
+      const [h, m] = String(value).split(":").map(Number);
+      return (h * 60) + m;
+    }
+
+    function formatClock(time) {
+      const mins = typeof time === "number" ? time : parseTime(time);
+      const h = Math.floor(mins / 60);
+      const m = mins % 60;
+      const suffix = h >= 12 ? "pm" : "am";
+      const h12 = h % 12 === 0 ? 12 : h % 12;
+      return `${h12}:${String(m).padStart(2, "0")}${suffix}`;
+    }
+
+    function toY(min) {
+      return (min - dayStartMin) * pxPerMinute;
+    }
+
+    function overlapRange(aStart, aEnd, bStart, bEnd) {
+      const start = Math.max(aStart, bStart);
+      const end = Math.min(aEnd, bEnd);
+      return end > start ? { start, end } : null;
+    }
+
+    function showToast(message, type = "success") {
+      const toast = document.createElement("div");
+      toast.className = `toast ${type === "error" ? "error" : "success"}`;
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 2200);
+    }
+
+    function renderTimeAxis() {
+      timeAxisEl.style.height = `${boardHeight}px`;
+      timeAxisEl.innerHTML = "";
+      for (let hour = dayStartHour; hour < dayEndHour; hour++) {
+        const el = document.createElement("div");
+        el.className = "time-label";
+        el.style.top = `${(hour - dayStartHour) * hourHeight + 2}px`;
+        el.textContent = `${formatClock(`${String(hour).padStart(2, "0")}:00`)} - ${formatClock(`${String(hour + 1).padStart(2, "0")}:00`)}`;
+        timeAxisEl.appendChild(el);
+      }
+    }
+
+    function renderGridBlocks() {
+      dayBoards.forEach((board) => {
+        const day = board.dataset.day;
+        board.style.height = `${boardHeight}px`;
+        board.innerHTML = "";
+
+        const dayItems = timetableRecords
+          .filter((item) => item.day === day)
+          .sort((a, b) => parseTime(a.start) - parseTime(b.start));
+
+        dayItems.forEach((item) => {
+          const startMin = parseTime(item.start);
+          const endMin = parseTime(item.end);
+          const top = Math.max(0, toY(startMin) + 4);
+          const height = Math.max(42, (endMin - startMin) * pxPerMinute - 8);
+          const block = document.createElement("div");
+          block.className = `class-block ${item.type === "Lab" ? "lab" : "lecture"}`;
+          block.style.top = `${top}px`;
+          block.style.height = `${height}px`;
+          block.innerHTML = `
+            <div class="class-code">${escapeHtml(item.courseCode)}: ${escapeHtml(item.courseName)}</div>
+            <div class="class-meta">Group ${escapeHtml(item.group)} | ${escapeHtml(item.lecturer)} | ${escapeHtml(item.room)}</div>
+            <div class="class-meta">${formatClock(item.start)} - ${formatClock(item.end)}</div>
+          `;
+          board.appendChild(block);
+        });
+      });
+    }
+
+    function detectConflicts() {
+      const found = [];
+      let seq = 1;
+      for (let i = 0; i < timetableRecords.length; i++) {
+        for (let j = i + 1; j < timetableRecords.length; j++) {
+          const a = timetableRecords[i];
+          const b = timetableRecords[j];
+          if (a.day !== b.day) continue;
+          const overlap = overlapRange(parseTime(a.start), parseTime(a.end), parseTime(b.start), parseTime(b.end));
+          if (!overlap) continue;
+
+          const pushConflict = (typeKey, description) => {
+            const meta = conflictTypeMeta[typeKey];
+            found.push({
+              id: `CF-${seq++}`,
+              typeKey,
+              type: meta.label,
+              className: meta.className,
+              day: a.day,
+              courseName: a.courseName,
+              codeGroup: `${a.courseCode} - Group ${a.group}`,
+              lecturer: a.lecturer,
+              room: a.room,
+              time: `${formatClock(overlap.start)} - ${formatClock(overlap.end)}`,
+              description: description || meta.description,
+              overlapStart: overlap.start,
+              overlapEnd: overlap.end,
+              primaryRecordId: a.id,
+              secondaryRecordId: b.id,
+              secondaryInfo: `${b.courseCode} - ${b.courseName} | Group ${b.group} | ${b.lecturer} | ${b.room} | ${formatClock(b.start)} - ${formatClock(b.end)}`
+            });
+          };
+
+          if (a.lecturer === b.lecturer) pushConflict("lecturer", "Lecturer is assigned to two classes at the same time");
+          if (a.room === b.room) pushConflict("room", "Room is assigned to two classes at the same time");
+          if (a.group === b.group) pushConflict("time", "Time overlap detected between classes in the same group");
+        }
+      }
+      return found.sort((x, y) => x.overlapStart - y.overlapStart);
+    }
+
+    function renderOverlayRows(conflicts) {
+      overlayLayerEl.innerHTML = "";
+      if (!conflicts.length) return;
+
+      const rowMap = new Map();
+      conflicts.forEach((conflict) => {
+        const key = `${conflict.overlapStart}-${conflict.overlapEnd}`;
+        if (!rowMap.has(key)) rowMap.set(key, []);
+        rowMap.get(key).push(conflict);
+      });
+
+      const headHeight = ttHeadEl.offsetHeight;
+      Array.from(rowMap.entries())
+        .sort((a, b) => Number(a[0].split("-")[0]) - Number(b[0].split("-")[0]))
+        .forEach(([key, items]) => {
+          const start = Number(key.split("-")[0]);
+          const slot = document.createElement("div");
+          slot.className = "overlay-slot";
+          slot.style.top = `${headHeight + toY(start) + 2}px`;
+
+          items.forEach((conflict) => {
+            const card = document.createElement("article");
+            card.className = `overlay-card ${conflict.className}`;
+            card.innerHTML = `
+              <div class="overlay-main">
+                <div class="overlay-title">
+                  <span class="sev-icon">!</span>
+                  <span>${escapeHtml(conflict.type)}</span>
+                  <span style="border:1px solid #cbd5e1;border-radius:999px;padding:1px 7px;font-size:11px;text-transform:none;">${escapeHtml(conflict.day)}</span>
+                </div>
+                <div class="overlay-meta">
+                  <span><strong>Course:</strong> ${escapeHtml(conflict.courseName)}</span>
+                  <span><strong>Course Code and Group:</strong> ${escapeHtml(conflict.codeGroup)}</span>
+                  <span><strong>Lecturer:</strong> ${escapeHtml(conflict.lecturer)}</span>
+                  <span><strong>Room:</strong> ${escapeHtml(conflict.room)}</span>
+                  <span><strong>Time:</strong> ${escapeHtml(conflict.time)}</span>
+                  <span><strong>Conflict With:</strong> ${escapeHtml(conflict.secondaryInfo)}</span>
+                </div>
+                <div class="overlay-desc">${escapeHtml(conflict.description)}</div>
+              </div>
+              <div class="overlay-actions">
+                <button type="button" class="overlay-btn details" data-action="details" data-conflict-id="${escapeHtml(conflict.id)}">View Details</button>
+                <button type="button" class="overlay-btn manual" data-action="manual" data-conflict-id="${escapeHtml(conflict.id)}">Manual Fix</button>
+              </div>
+            `;
+            slot.appendChild(card);
+          });
+
+          overlayLayerEl.appendChild(slot);
+        });
+    }
+
+    function openDetailModal(conflictId) {
+      const conflict = activeConflicts.find((c) => c.id === conflictId);
+      if (!conflict) return;
+      detailBody.innerHTML = `
+        <div class="detail-grid">
+          <div><strong>Conflict Type:</strong> ${escapeHtml(conflict.type)}</div>
+          <div><strong>Day:</strong> ${escapeHtml(conflict.day)}</div>
+          <div><strong>Course Name:</strong> ${escapeHtml(conflict.courseName)}</div>
+          <div><strong>Course Code and Group:</strong> ${escapeHtml(conflict.codeGroup)}</div>
+          <div><strong>Lecturer Name:</strong> ${escapeHtml(conflict.lecturer)}</div>
+          <div><strong>Room:</strong> ${escapeHtml(conflict.room)}</div>
+          <div><strong>Time:</strong> ${escapeHtml(conflict.time)}</div>
+          <div><strong>Conflict Description:</strong> ${escapeHtml(conflict.description)}</div>
+        </div>
+        <div><strong>Related Assignment:</strong> ${escapeHtml(conflict.secondaryInfo)}</div>
+      `;
+      detailModal.classList.remove("hidden");
+    }
+
+    function openManualModal(conflictId) {
+      const conflict = activeConflicts.find((c) => c.id === conflictId);
+      if (!conflict) return;
+      const record = timetableRecords.find((r) => r.id === conflict.primaryRecordId);
+      if (!record) return;
+      manualFixRecordId = record.id;
+      mfDay.value = record.day;
+      mfRoom.value = record.room;
+      mfStart.value = record.start;
+      mfEnd.value = record.end;
+      manualModal.classList.remove("hidden");
+    }
+
+    function closeModal(type) {
+      if (type === "detail") detailModal.classList.add("hidden");
+      if (type === "manual") {
+        manualModal.classList.add("hidden");
+        manualFixRecordId = null;
+      }
+    }
+
+    function rerender() {
+      renderTimeAxis();
+      renderGridBlocks();
+      activeConflicts = detectConflicts();
+      renderOverlayRows(activeConflicts);
+      conflictChipEl.textContent = `${activeConflicts.length} Conflict${activeConflicts.length === 1 ? "" : "s"} Detected`;
+    }
+
+    function initManualFormOptions() {
+      mfDay.innerHTML = days.map((day) => `<option value="${escapeHtml(day)}">${escapeHtml(day)}</option>`).join("");
+      mfRoom.innerHTML = roomOptions.map((room) => `<option value="${escapeHtml(room)}">${escapeHtml(room)}</option>`).join("");
+    }
+
+    document.getElementById("refresh-btn").addEventListener("click", () => {
+      rerender();
+      showToast("Conflict overlays updated.");
+    });
+
+    overlayLayerEl.addEventListener("click", (e) => {
+      const btn = e.target.closest("button[data-action]");
+      if (!btn) return;
+      const conflictId = btn.dataset.conflictId;
+      if (!conflictId) return;
+      if (btn.dataset.action === "details") openDetailModal(conflictId);
+      if (btn.dataset.action === "manual") openManualModal(conflictId);
+    });
+
+    manualForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      if (manualFixRecordId == null) return;
+      const record = timetableRecords.find((r) => r.id === manualFixRecordId);
+      if (!record) return;
+      const nextDay = mfDay.value;
+      const nextRoom = mfRoom.value;
+      const nextStart = mfStart.value;
+      const nextEnd = mfEnd.value;
+      if (!nextDay || !nextRoom || !nextStart || !nextEnd) {
+        showToast("Please complete all fields.", "error");
+        return;
+      }
+      if (parseTime(nextEnd) <= parseTime(nextStart)) {
+        showToast("End time must be later than start time.", "error");
+        return;
+      }
+      record.day = nextDay;
+      record.room = nextRoom;
+      record.start = nextStart;
+      record.end = nextEnd;
+      closeModal("manual");
+      rerender();
+      showToast("Manual fix saved.");
+    });
+
+    document.addEventListener("click", (e) => {
+      const closeType = e.target.getAttribute("data-close");
+      if (!closeType) return;
+      closeModal(closeType);
+    });
+
+    detailModal.addEventListener("click", (e) => {
+      if (e.target === detailModal) closeModal("detail");
+    });
+
+    manualModal.addEventListener("click", (e) => {
+      if (e.target === manualModal) closeModal("manual");
+    });
+
+    window.addEventListener("resize", () => renderOverlayRows(activeConflicts));
+
+    initManualFormOptions();
+    rerender();
+  </script>
+</body>
+</html>

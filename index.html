@@ -614,6 +614,11 @@
        <div class="rounded-xl overflow-hidden" style="background-color:#ffffff; box-shadow:0 1px 3px rgba(0,0,0,0.06);">
         <iframe id="timetable-generate-frame" data-src="./modules/timetable-generate.html?v=20260410-1" title="Timetable Generate" class="w-full" style="height: calc(100vh - 220px); min-height: 980px; border: 0;" loading="lazy"></iframe>
        </div>
+      </div><!-- Timetable Management Module -->
+      <div id="timetable-management-module" class="hidden scheduling-config-module">
+       <div class="rounded-xl overflow-hidden" style="background-color:#ffffff; box-shadow:0 1px 3px rgba(0,0,0,0.06);">
+        <iframe id="timetable-management-frame" data-src="./modules/timetable-management.html?v=20260412-1" title="Timetable Management" class="w-full" style="height: calc(100vh - 220px); min-height: 980px; border: 0;" loading="lazy"></iframe>
+       </div>
       </div><!-- Time Configuration Module -->
       <div id="distance-detection-setup-module" class="hidden scheduling-config-module">
        <div class="rounded-xl overflow-hidden" style="background-color:#ffffff; box-shadow:0 1px 3px rgba(0,0,0,0.06);">
@@ -758,6 +763,7 @@
         label: 'Timetable',
         icon: 'calendar-days',
         children: [
+          { id: 'timetable-management', label: 'Timetable Management' },
           { id: 'timetable-generate', label: 'Timetable Generate' },
           { id: 'distance-detection-setup', label: 'Distance Detection Setup' }
         ]
@@ -870,6 +876,15 @@
     }
   }
 
+  function initTimetableManagementFrame() {
+    const frame = document.getElementById('timetable-management-frame');
+    if (!frame) return;
+    const src = frame.dataset.src || './modules/timetable-management.html';
+    if (frame.getAttribute('src') !== src) {
+      frame.setAttribute('src', src);
+    }
+  }
+
   function initDistanceDetectionSetupFrame() {
     const frame = document.getElementById('distance-detection-setup-frame');
     if (!frame) return;
@@ -891,6 +906,7 @@
     'week': { moduleId: 'week-module', init: initWeekManagementModule },
     'lecture-schedule': { moduleId: 'lecture-schedule-combination-module', init: initLectureScheduleCombinationFrame },
     'lecture-schedule-combination': { moduleId: 'lecture-schedule-combination-module', init: initLectureScheduleCombinationFrame },
+    'timetable-management': { moduleId: 'timetable-management-module', init: initTimetableManagementFrame },
     'timetable-generate': { moduleId: 'timetable-generate-module', init: initTimetableGenerateFrame },
     'distance-detection-setup': { moduleId: 'distance-detection-setup-module', init: initDistanceDetectionSetupFrame },
     'schedule-conflict-detection': { moduleId: 'schedule-conflict-detection-module', init: initScheduleConflictDetectionFrame }
