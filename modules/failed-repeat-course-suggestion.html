@@ -7,13 +7,21 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #f1f5f9;
+      --bg: #eef2f7;
       --card: #ffffff;
       --line: #e2e8f0;
       --line-strong: #cbd5e1;
       --text: #0f172a;
       --muted: #64748b;
       --primary: #3b82f6;
+      --success: #4c9b62;
+      --success-dark: #3f8654;
+      --blue-soft: #eff6ff;
+      --blue-border: #bfdbfe;
+      --red-soft: #fef2f2;
+      --red-border: #fecaca;
+      --yellow-soft: #fffbeb;
+      --yellow-border: #fde68a;
     }
 
     * { box-sizing: border-box; }
@@ -22,36 +30,87 @@
       margin: 0;
       padding: 16px;
       background: var(--bg);
-      color: var(--text);
       font-family: "DM Sans", "Segoe UI", Arial, sans-serif;
+      color: var(--text);
       font-size: 14px;
       line-height: 1.45;
     }
 
+    .screen {
+      max-width: 1160px;
+      margin: 0 auto;
+    }
+
     .card {
       background: var(--card);
-      border: 1px solid #edf2f7;
-      border-radius: 14px;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+      border: 1px solid #e7edf5;
+      border-radius: 12px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
     }
 
-    .page-title {
-      margin: 0 0 12px;
-      font-size: 36px;
-      line-height: 1.05;
+    .head {
+      padding: 16px 18px;
+      border-bottom: 1px solid #edf2f7;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .title {
+      margin: 0;
+      font-size: 42px;
+      line-height: 1.02;
+      letter-spacing: -0.02em;
       font-weight: 700;
-      color: #1e293b;
-      letter-spacing: -0.01em;
+      color: #0f172a;
     }
 
-    .filter-card {
-      padding: 14px 16px;
-      margin-bottom: 12px;
+    .btn {
+      border: 1px solid transparent;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 1;
+      cursor: pointer;
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
     }
 
-    .filter-grid {
+    .btn-success {
+      background: var(--success);
+      color: #ffffff;
+      border-color: #3f8654;
+    }
+
+    .btn-success:hover { background: var(--success-dark); }
+
+    .plus-icon {
+      display: inline-flex;
+      width: 16px;
+      height: 16px;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.15);
+      font-size: 14px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .filters {
+      padding: 14px 16px 12px;
+      border-bottom: 1px solid #edf2f7;
+    }
+
+    .filters-grid {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-columns: repeat(6, minmax(0, 1fr));
       gap: 10px;
       align-items: end;
     }
@@ -65,278 +124,752 @@
     .field label {
       font-size: 12px;
       font-weight: 600;
-      color: #64748b;
+      color: #475569;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
     }
 
     .field select,
     .field input {
       width: 100%;
       border: 1px solid var(--line);
-      border-radius: 9px;
-      padding: 9px 12px;
-      background: #f8fafc;
-      color: #1e293b;
+      border-radius: 8px;
+      padding: 9px 11px;
       font-size: 14px;
-      font-weight: 500;
+      font-weight: 600;
+      color: #1e293b;
+      background: #ffffff;
       outline: none;
     }
 
-    .btn {
-      border: 1px solid transparent;
-      border-radius: 9px;
-      padding: 9px 12px;
-      font-size: 14px;
-      font-weight: 600;
-      line-height: 1;
-      cursor: pointer;
-      white-space: nowrap;
+    .field select {
+      appearance: none;
+      background-image:
+        linear-gradient(45deg, transparent 50%, #64748b 50%),
+        linear-gradient(135deg, #64748b 50%, transparent 50%),
+        linear-gradient(to right, #ffffff, #ffffff);
+      background-position:
+        calc(100% - 16px) calc(50% - 2px),
+        calc(100% - 11px) calc(50% - 2px),
+        100% 0;
+      background-size: 5px 5px, 5px 5px, 2.4em 100%;
+      background-repeat: no-repeat;
+      padding-right: 30px;
     }
 
-    .btn-reset {
-      border-color: var(--line);
-      color: #64748b;
-      background: #f8fafc;
+    .intake-wrap {
+      position: relative;
     }
 
-    .actions-row {
-      margin-bottom: 12px;
+    .intake-wrap input { padding-right: 34px; }
+
+    .search-icon {
+      position: absolute;
+      right: 11px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 14px;
+      height: 14px;
+      border: 2px solid #94a3b8;
+      border-radius: 999px;
+      pointer-events: none;
+    }
+
+    .search-icon::after {
+      content: "";
+      position: absolute;
+      width: 7px;
+      height: 2px;
+      background: #94a3b8;
+      right: -6px;
+      bottom: -2px;
+      transform: rotate(45deg);
+      border-radius: 2px;
+    }
+
+    .info {
+      margin: 0 16px 12px;
+      border: 1px solid #dbeafe;
+      background: #eff6ff;
+      border-radius: 8px;
+      padding: 10px 12px;
       display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      color: #334155;
+    }
+
+    .info-dot {
+      width: 20px;
+      height: 20px;
+      border-radius: 999px;
+      background: #3b82f6;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      display: inline-flex;
       align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .action-top {
+      margin: 0 16px 10px;
+      display: flex;
       justify-content: space-between;
+      align-items: center;
       gap: 10px;
       flex-wrap: wrap;
     }
 
-    .actions-left {
-      display: flex;
+    .left-actions,
+    .right-actions {
+      display: inline-flex;
       gap: 8px;
+      align-items: center;
       flex-wrap: wrap;
     }
 
-    .btn-soft {
-      border-color: var(--line);
-      color: #64748b;
-      background: #f8fafc;
-    }
-
-    .btn-soft.disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-
-    .btn-analyse {
-      border-color: #bfdbfe;
-      color: #1d4ed8;
-      background: #eff6ff;
-    }
-
-    .total-text {
-      font-size: 12px;
-      color: #94a3b8;
-      font-weight: 600;
+    .chip-btn {
+      border: 1px solid var(--line);
+      background: #ffffff;
+      color: #334155;
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
       white-space: nowrap;
     }
 
-    .total-text strong {
-      color: #1e293b;
-      font-weight: 700;
+    .chip-btn.secondary {
+      background: #f8fafc;
+      border-color: #dbe4ee;
+      color: #475569;
     }
 
-    .table-card {
-      overflow: hidden;
+    .chip-btn.success {
+      background: #4c9b62;
+      border-color: #3f8654;
+      color: #ffffff;
+    }
+
+    .chip-btn.caret::after {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-right: 2px solid currentColor;
+      border-bottom: 2px solid currentColor;
+      transform: rotate(45deg);
+      margin-left: 2px;
+      opacity: 0.75;
+    }
+
+    .table-wrap {
+      margin: 0 16px;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      overflow: auto;
+      background: #fff;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
+      min-width: 1020px;
     }
 
     th {
       background: #f8fafc;
-      border-bottom: 1px solid var(--line);
-      font-size: 11px;
-      color: #64748b;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      font-weight: 600;
+      border-bottom: 1px solid #e2e8f0;
+      font-size: 13px;
+      font-weight: 700;
+      color: #475569;
       text-align: left;
-      padding: 12px 10px;
+      padding: 11px 10px;
       white-space: nowrap;
     }
 
     td {
-      border-top: 1px solid var(--line);
+      border-top: 1px solid #e2e8f0;
       padding: 10px;
       font-size: 13px;
-      color: #334155;
+      color: #1f2937;
       font-weight: 500;
       vertical-align: middle;
+      position: relative;
+      white-space: nowrap;
     }
+
+    tr:first-child td { border-top: 0; }
+    tr:nth-child(even) td { background: #fcfdff; }
 
     .center { text-align: center; }
 
-    .empty {
-      text-align: center;
-      color: #94a3b8;
-      padding: 24px 10px;
-      font-size: 13px;
-      font-weight: 500;
+    .check-cell {
+      padding-left: 14px;
+      width: 44px;
     }
 
-    .footer {
-      padding: 12px 14px;
-      border-top: 1px solid var(--line);
-      background: #f8fafc;
-      display: flex;
-      justify-content: space-between;
+    .check-cell::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: transparent;
+    }
+
+    .check-cell.accent-blue::before { background: #60a5fa; }
+    .check-cell.accent-red::before { background: #f87171; }
+    .check-cell.accent-purple::before { background: #a78bfa; }
+
+    .row-check {
+      width: 16px;
+      height: 16px;
+      accent-color: #3b82f6;
+      cursor: pointer;
+    }
+
+    .manual-tag {
+      margin-left: 6px;
+      display: inline-flex;
       align-items: center;
+      border-radius: 999px;
+      border: 1px solid #dbe4ee;
+      background: #f8fafc;
+      color: #64748b;
+      font-size: 10px;
+      font-weight: 700;
+      line-height: 1;
+      padding: 3px 6px;
+      vertical-align: middle;
+    }
+
+    .offer-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      padding: 3px 9px;
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .offer-badge::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: currentColor;
+      opacity: 0.8;
+    }
+
+    .offer-badge.no {
+      background: var(--red-soft);
+      border-color: var(--red-border);
+      color: #b91c1c;
+    }
+
+    .offer-badge.in {
+      background: var(--blue-soft);
+      border-color: var(--blue-border);
+      color: #1d4ed8;
+    }
+
+    .suggest-wrap {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .suggest-btn {
+      border: 1px solid #3f8654;
+      background: #4c9b62;
+      color: #ffffff;
+      border-radius: 7px;
+      padding: 6px 10px;
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      min-width: 140px;
+      justify-content: space-between;
+    }
+
+    .suggest-btn.merge {
+      border-color: #2563eb;
+      background: #3b82f6;
+    }
+
+    .suggest-btn.ignore {
+      border-color: #cbd5e1;
+      background: #f8fafc;
+      color: #475569;
+    }
+
+    .more-btn {
+      width: 24px;
+      height: 24px;
+      border: 1px solid #dbe4ee;
+      border-radius: 7px;
+      background: #ffffff;
+      color: #64748b;
+      font-size: 16px;
+      line-height: 1;
+      cursor: pointer;
+    }
+
+    .suggest-menu {
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0;
+      min-width: 145px;
+      border: 1px solid #e2e8f0;
+      border-radius: 9px;
+      background: #ffffff;
+      box-shadow: 0 12px 18px rgba(15, 23, 42, 0.14);
+      overflow: hidden;
+      z-index: 8;
+    }
+
+    .suggest-item {
+      width: 100%;
+      border: 0;
+      border-bottom: 1px solid #edf2f7;
+      background: #ffffff;
+      color: #1f2937;
+      padding: 8px 10px;
+      text-align: left;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .suggest-item:last-child { border-bottom: 0; }
+    .suggest-item:hover { background: #f8fafc; }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      display: inline-block;
+      flex-shrink: 0;
+    }
+
+    .dot.green { background: #22c55e; }
+    .dot.blue { background: #3b82f6; }
+    .dot.gray { background: #d1d5db; }
+
+    .table-foot {
+      margin: 0 16px;
+      border: 1px solid #e2e8f0;
+      border-top: 0;
+      border-radius: 0 0 10px 10px;
+      background: #f8fafc;
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       gap: 10px;
       flex-wrap: wrap;
+    }
+
+    .showing {
+      font-size: 12px;
+      color: #64748b;
+      font-weight: 600;
     }
 
     .pager {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      color: #64748b;
       font-size: 12px;
-      font-weight: 600;
-    }
-
-    .pager-btn {
-      width: 30px;
-      height: 30px;
-      border-radius: 8px;
-      border: 1px solid var(--line);
-      background: #fff;
       color: #64748b;
       font-weight: 700;
-      cursor: pointer;
-      line-height: 1;
     }
 
-    .footer-right {
-      display: inline-flex;
+    .page-size {
+      border: 1px solid #dbe4ee;
+      border-radius: 7px;
+      padding: 5px 8px;
+      background: #fff;
+      color: #334155;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .nav-btn {
+      width: 24px;
+      height: 24px;
+      border: 1px solid #dbe4ee;
+      border-radius: 7px;
+      background: #fff;
+      color: #475569;
+      font-size: 14px;
+      line-height: 1;
+      cursor: pointer;
+    }
+
+    .page-box {
+      min-width: 28px;
+      text-align: center;
+      border: 1px solid #dbe4ee;
+      border-radius: 7px;
+      background: #fff;
+      color: #334155;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 8px;
+    }
+
+    .action-bottom {
+      margin: 12px 16px 16px;
+      display: flex;
+      justify-content: space-between;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
       flex-wrap: wrap;
     }
 
-    .small-select {
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      padding: 6px 8px;
-      background: #fff;
-      color: #1e293b;
-      font-size: 12px;
-      font-weight: 600;
+    .toast {
+      position: fixed;
+      right: 16px;
+      bottom: 16px;
+      border-radius: 9px;
+      padding: 10px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      background: #10b981;
+      box-shadow: 0 12px 18px rgba(0, 0, 0, 0.2);
+      z-index: 20;
     }
 
-    .small-btn {
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      padding: 7px 10px;
-      font-size: 12px;
-      font-weight: 600;
-      background: #f8fafc;
-      color: #64748b;
-      cursor: not-allowed;
-      opacity: 0.65;
+    @media (max-width: 1180px) {
+      .title { font-size: 34px; }
+      .filters-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
     }
 
-    @media (max-width: 980px) {
-      .page-title { font-size: 30px; }
-      .filter-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    }
-
-    @media (max-width: 620px) {
+    @media (max-width: 760px) {
       body { padding: 12px; }
-      .page-title { font-size: 26px; }
-      .filter-grid { grid-template-columns: 1fr; }
-      .footer { align-items: flex-start; }
+      .title { font-size: 28px; }
+      .filters-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 520px) {
+      .filters-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
-  <h1 class="page-title">Failed / Repeat Course Suggestion</h1>
+  <main class="screen">
+    <section class="card">
+      <div class="head">
+        <h1 class="title">Failed / Repeat Course Suggestion</h1>
+        <button id="analyse-btn" class="btn btn-success" type="button">
+          <span class="plus-icon">+</span>
+          Analyse Failed Courses
+        </button>
+      </div>
 
-  <section class="card filter-card">
-    <div class="filter-grid">
-      <div class="field">
-        <label>Faculty</label>
-        <select>
-          <option>Medicine</option>
-          <option>Nursing</option>
-          <option>Science</option>
-        </select>
+      <div class="filters">
+        <div class="filters-grid">
+          <div class="field">
+            <label>Semester Semasa</label>
+            <select>
+              <option>Sem 2 2023/2024</option>
+              <option>Sem 1 2023/2024</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Next Semester</label>
+            <select>
+              <option>Sem 1 2024/2025</option>
+              <option>Sem 2 2024/2025</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Sem 1 2024/2025</label>
+            <select>
+              <option>FSKTM</option>
+              <option>FKPM</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Fakulti</label>
+            <select>
+              <option>FSKTM</option>
+              <option>FKPM</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Program</label>
+            <select>
+              <option>All Programs</option>
+              <option>BCS</option>
+              <option>BIT</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Intake</label>
+            <div class="intake-wrap">
+              <input id="search-input" type="text" placeholder="All Intakes">
+              <span class="search-icon"></span>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="field">
-        <label>Program</label>
-        <select>
-          <option>Nursing</option>
-          <option>MBBS</option>
-          <option>Pharmacy</option>
-        </select>
-      </div>
-      <div class="field">
-        <label>Search</label>
-        <input type="text" placeholder="Search code or course...">
-      </div>
-      <div class="field">
-        <button class="btn btn-reset" type="button">Reset</button>
-      </div>
-    </div>
-  </section>
 
-  <div class="actions-row">
-    <div class="actions-left">
-      <button class="btn btn-soft disabled" type="button">Export</button>
-      <button class="btn btn-soft disabled" type="button">Auto Suggest</button>
-      <button class="btn btn-soft disabled" type="button">Merge Existing</button>
-      <button class="btn btn-soft disabled" type="button">Create Offering</button>
-      <button class="btn btn-analyse" type="button">Analyse</button>
-    </div>
-    <div class="total-text">Total: <strong>0</strong> courses</div>
-  </div>
+      <div class="info">
+        <span class="info-dot">i</span>
+        <div>Review failed courses from the current semester and plan offerings for the next semester. Modify the suggested actions before creating new offerings.</div>
+      </div>
 
-  <section class="card table-card">
-    <div style="overflow:auto;">
-      <table>
-        <thead>
-          <tr>
-            <th class="center" style="width:42px;"><input type="checkbox" style="width:15px;height:15px;accent-color:#3b82f6;"></th>
-            <th>Code</th>
-            <th>Course Name</th>
-            <th>Program</th>
-            <th class="center">Failed</th>
-            <th class="center">Eligible</th>
-            <th class="center">Status</th>
-            <th class="center">Action</th>
+      <div class="action-top">
+        <div class="left-actions">
+          <label class="chip-btn"><input id="select-all-top" type="checkbox" style="width:15px;height:15px;accent-color:#3b82f6;"> Select All</label>
+          <button class="chip-btn secondary caret" type="button">Export List</button>
+        </div>
+        <div class="right-actions">
+          <button class="chip-btn secondary" type="button">Auto Suggest Action</button>
+          <button class="chip-btn success caret" type="button">Create Selected Offering</button>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th class="center" style="width:44px;"><input id="header-check" type="checkbox" style="width:15px;height:15px;accent-color:#3b82f6;"></th>
+              <th>Course Code</th>
+              <th>Course Name</th>
+              <th>Program</th>
+              <th class="center">Total Failed</th>
+              <th class="center">Eligible Repeats</th>
+              <th class="center">Existing Offer</th>
+              <th class="center">Suggested Action</th>
+            </tr>
+          </thead>
+          <tbody id="table-body"></tbody>
+        </table>
+      </div>
+
+      <div class="table-foot">
+        <div class="showing" id="showing-text">Showing 1 to 4 of 4 courses</div>
+        <div class="pager">
+          <span>Previous:</span>
+          <select class="page-size">
+            <option>10</option>
+            <option>25</option>
+            <option>50</option>
+          </select>
+          <button class="nav-btn" type="button">&lt;</button>
+          <div class="page-box">1</div>
+          <button class="nav-btn" type="button">&gt;</button>
+          <span>Next</span>
+        </div>
+      </div>
+
+      <div class="action-bottom">
+        <div class="left-actions">
+          <label class="chip-btn"><input id="select-all-bottom" type="checkbox" style="width:15px;height:15px;accent-color:#3b82f6;"> Select All</label>
+          <button class="chip-btn secondary" type="button">Auto Suggest Action</button>
+          <button class="chip-btn success caret" type="button">Create Selected Offering</button>
+        </div>
+        <div class="right-actions">
+          <button class="chip-btn" style="background:#3b82f6;border-color:#2563eb;color:#fff;" type="button">Merge to Existing Offering</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const rowData = [
+      { id: 1, code: "CSI101", name: "Programming I", program: "BCS", failed: 24, eligible: 21, existing: "no", action: "New Offering", selected: true, accent: "blue", menuOpen: false, manual: false },
+      { id: 2, code: "CSI102", name: "Data Structure", program: "BCS", failed: 18, eligible: 16, existing: "in", action: "Merge Existing", selected: true, accent: "blue", menuOpen: true, manual: false },
+      { id: 3, code: "CSI205", name: "Computer Network", program: "BCS", failed: 3, eligible: 2, existing: "no", action: "Ignore", selected: false, accent: "red", menuOpen: false, manual: false },
+      { id: 4, code: "SBS203", name: "Probability & Statistics", program: "BCS", failed: 41, eligible: 38, existing: "no", action: "New Offering", selected: false, accent: "purple", menuOpen: false, manual: true }
+    ];
+
+    let activeRows = [...rowData];
+
+    const tableBody = document.getElementById("table-body");
+    const headerCheck = document.getElementById("header-check");
+    const selectAllTop = document.getElementById("select-all-top");
+    const selectAllBottom = document.getElementById("select-all-bottom");
+    const searchInput = document.getElementById("search-input");
+    const showingText = document.getElementById("showing-text");
+
+    function escapeHtml(value) {
+      return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function getActionClass(action) {
+      if (action === "Merge Existing") return "merge";
+      if (action === "Ignore") return "ignore";
+      return "";
+    }
+
+    function renderTable() {
+      if (!activeRows.length) {
+        tableBody.innerHTML = `<tr><td colspan="8" class="center" style="padding:22px;color:#94a3b8;font-weight:600;">No course records found.</td></tr>`;
+        showingText.textContent = "Showing 0 to 0 of 0 courses";
+        syncHeaderChecks();
+        return;
+      }
+
+      tableBody.innerHTML = activeRows.map((row) => {
+        const actionClass = getActionClass(row.action);
+        return `
+          <tr data-row-id="${row.id}">
+            <td class="check-cell accent-${row.accent}">
+              <input class="row-check" type="checkbox" data-row-check="${row.id}" ${row.selected ? "checked" : ""}>
+            </td>
+            <td>
+              ${escapeHtml(row.code)}
+              ${row.manual ? '<span class="manual-tag">MANUAL</span>' : ""}
+            </td>
+            <td>${escapeHtml(row.name)}</td>
+            <td>${escapeHtml(row.program)}</td>
+            <td class="center">${escapeHtml(row.failed)}</td>
+            <td class="center">${escapeHtml(row.eligible)}</td>
+            <td class="center">
+              <span class="offer-badge ${row.existing === "in" ? "in" : "no"}">${row.existing === "in" ? "In Offering" : "No Offering"}</span>
+            </td>
+            <td class="center">
+              <div class="suggest-wrap">
+                <button class="suggest-btn ${actionClass}" type="button" data-action-toggle="${row.id}">
+                  <span>${escapeHtml(row.action)}</span>
+                  <span style="font-size:11px;opacity:0.85;">v</span>
+                </button>
+                <button class="more-btn" type="button">...</button>
+                ${row.menuOpen ? `
+                  <div class="suggest-menu">
+                    <button class="suggest-item" type="button" data-action-pick="${row.id}" data-value="New Offering"><span class="dot green"></span>Offer as New</button>
+                    <button class="suggest-item" type="button" data-action-pick="${row.id}" data-value="Merge Existing"><span class="dot blue"></span>Merge Existing</button>
+                    <button class="suggest-item" type="button" data-action-pick="${row.id}" data-value="Ignore"><span class="dot gray"></span>Ignore</button>
+                  </div>
+                ` : ""}
+              </div>
+            </td>
           </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td colspan="8" class="empty">No failed/repeat records available.</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="footer">
-      <div class="pager">
-        <button class="pager-btn" type="button">&lt;</button>
-        <span>Page 1 of 1</span>
-        <button class="pager-btn" type="button">&gt;</button>
-      </div>
-      <div class="footer-right">
-        <select class="small-select">
-          <option>10 per page</option>
-          <option>25 per page</option>
-          <option>50 per page</option>
-        </select>
-        <button class="small-btn" type="button">Auto</button>
-        <button class="small-btn" type="button">Create</button>
-      </div>
-    </div>
-  </section>
+        `;
+      }).join("");
+
+      showingText.textContent = `Showing 1 to ${activeRows.length} of ${activeRows.length} courses`;
+      syncHeaderChecks();
+    }
+
+    function syncHeaderChecks() {
+      const allChecked = activeRows.length > 0 && activeRows.every((row) => row.selected);
+      headerCheck.checked = allChecked;
+      selectAllTop.checked = allChecked;
+      selectAllBottom.checked = allChecked;
+    }
+
+    function setAllChecked(checked) {
+      activeRows = activeRows.map((row) => ({ ...row, selected: checked }));
+      renderTable();
+    }
+
+    function showToast(message) {
+      const toast = document.createElement("div");
+      toast.className = "toast";
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 2200);
+    }
+
+    function applySearchFilter() {
+      const keyword = searchInput.value.toLowerCase().trim();
+      if (!keyword) {
+        activeRows = rowData.map((row) => ({ ...row }));
+      } else {
+        activeRows = rowData
+          .filter((row) => {
+            const text = `${row.code} ${row.name} ${row.program}`.toLowerCase();
+            return text.includes(keyword);
+          })
+          .map((row) => ({ ...row, menuOpen: false }));
+      }
+      renderTable();
+    }
+
+    headerCheck.addEventListener("change", (e) => setAllChecked(e.target.checked));
+    selectAllTop.addEventListener("change", (e) => setAllChecked(e.target.checked));
+    selectAllBottom.addEventListener("change", (e) => setAllChecked(e.target.checked));
+    searchInput.addEventListener("input", applySearchFilter);
+
+    document.getElementById("analyse-btn").addEventListener("click", () => {
+      showToast("Failed course analysis completed.");
+    });
+
+    tableBody.addEventListener("change", (e) => {
+      const check = e.target.closest("input[data-row-check]");
+      if (!check) return;
+      const rowId = parseInt(check.dataset.rowCheck, 10);
+      activeRows = activeRows.map((row) => row.id === rowId ? { ...row, selected: check.checked } : row);
+      renderTable();
+    });
+
+    tableBody.addEventListener("click", (e) => {
+      const toggle = e.target.closest("button[data-action-toggle]");
+      const pick = e.target.closest("button[data-action-pick]");
+
+      if (toggle) {
+        const rowId = parseInt(toggle.dataset.actionToggle, 10);
+        activeRows = activeRows.map((row) => ({
+          ...row,
+          menuOpen: row.id === rowId ? !row.menuOpen : false
+        }));
+        renderTable();
+        return;
+      }
+
+      if (pick) {
+        const rowId = parseInt(pick.dataset.actionPick, 10);
+        const nextValue = pick.dataset.value;
+        activeRows = activeRows.map((row) => {
+          if (row.id !== rowId) return { ...row, menuOpen: false };
+          return { ...row, action: nextValue, menuOpen: false };
+        });
+        renderTable();
+      }
+    });
+
+    document.addEventListener("click", (e) => {
+      const inMenu = e.target.closest(".suggest-wrap");
+      if (inMenu) return;
+      const hasOpen = activeRows.some((row) => row.menuOpen);
+      if (!hasOpen) return;
+      activeRows = activeRows.map((row) => ({ ...row, menuOpen: false }));
+      renderTable();
+    });
+
+    renderTable();
+  </script>
 </body>
 </html>
