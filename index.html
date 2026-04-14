@@ -135,19 +135,22 @@
        <!-- Add New Day Section -->
        <div class="mb-6 rounded-xl p-5" style="background-color: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.06); position: relative; z-index: 120;">
         <h3 class="text-sm font-bold mb-4" style="color: #1e293b;">Add New Day</h3>
-        <form id="day-form" class="grid grid-cols-1 md:grid-cols-5 gap-3 items-end">
+        <form id="day-form" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-3 items-end">
          <div>
-          <label class="block text-xs font-medium mb-1.5" style="color: #64748b;">Day (Malay) <span style="color: #dc2626;">*</span></label> <input type="text" id="day-malay" placeholder="e.g. Isnin" maxlength="50" required class="w-full px-3 py-2 text-sm border rounded-lg transition-colors" style="border-color: #e2e8f0; background-color: #f8fafc; color: #1e293b;">
+          <label class="block text-xs font-medium mb-1.5" style="color: #64748b;">Day Description (Malay) <span style="color: #dc2626;">*</span></label> <input type="text" id="day-malay" placeholder="e.g. Isnin" maxlength="50" required class="w-full px-3 py-2 text-sm border rounded-lg transition-colors" style="border-color: #e2e8f0; background-color: #f8fafc; color: #1e293b;">
          </div>
          <div>
-          <label class="block text-xs font-medium mb-1.5" style="color: #64748b;">Day (English) <span style="color: #dc2626;">*</span></label> <input type="text" id="day-english" placeholder="e.g. Monday" maxlength="50" required class="w-full px-3 py-2 text-sm border rounded-lg transition-colors" style="border-color: #e2e8f0; background-color: #f8fafc; color: #1e293b;">
+          <label class="block text-xs font-medium mb-1.5" style="color: #64748b;">Abbreviation (MS) <span style="color: #dc2626;">*</span></label> <input type="text" id="day-abbr-ms" placeholder="e.g. Isn" maxlength="20" required class="w-full px-3 py-2 text-sm border rounded-lg transition-colors" style="border-color: #e2e8f0; background-color: #f8fafc; color: #1e293b;">
          </div>
          <div>
-          <label class="block text-xs font-medium mb-1.5" style="color: #64748b;">Indexing <span style="color: #dc2626;">*</span></label> <select id="day-index" required class="w-full px-3 py-2 text-sm border rounded-lg transition-colors" style="border-color: #e2e8f0; background-color: #f8fafc; color: #1e293b;"> <option value="">Select indexing...</option> <option value="1">1</option> <option value="2">2</option> <option value="3">3</option> <option value="4">4</option> <option value="5">5</option> <option value="6">6</option> <option value="7">7</option> </select>
+          <label class="block text-xs font-medium mb-1.5" style="color: #64748b;">Day Description (English) <span style="color: #dc2626;">*</span></label> <input type="text" id="day-english" placeholder="e.g. Monday" maxlength="50" required class="w-full px-3 py-2 text-sm border rounded-lg transition-colors" style="border-color: #e2e8f0; background-color: #f8fafc; color: #1e293b;">
+         </div>
+         <div>
+          <label class="block text-xs font-medium mb-1.5" style="color: #64748b;">Abbreviation (EN) <span style="color: #dc2626;">*</span></label> <input type="text" id="day-abbr-en" placeholder="e.g. Mon" maxlength="20" required class="w-full px-3 py-2 text-sm border rounded-lg transition-colors" style="border-color: #e2e8f0; background-color: #f8fafc; color: #1e293b;">
          </div>
          <div>
           <label class="block text-xs font-medium mb-1.5" style="color: #64748b;">Status</label> <select id="day-status" class="w-full px-3 py-2 text-sm border rounded-lg transition-colors" style="border-color: #e2e8f0; background-color: #f8fafc; color: #1e293b;"> <option value="active">Active</option> <option value="inactive">Inactive</option> </select>
-         </div><button type="submit" class="px-4 py-2 text-sm font-medium rounded-lg transition-colors flex items-center gap-2" style="background-color: #3b82f6; color: #fff;" onmouseover="this.style.backgroundColor='#2563eb'" onmouseout="this.style.backgroundColor='#3b82f6'"> <i data-lucide="plus" style="width:14px;height:14px;"></i>Add </button>
+         </div><button id="day-submit-btn" type="submit" class="px-4 py-2 text-sm font-medium rounded-lg transition-colors flex items-center gap-2" style="background-color: #3b82f6; color: #fff;" onmouseover="this.style.backgroundColor='#2563eb'" onmouseout="this.style.backgroundColor='#3b82f6'"> <i data-lucide="plus" style="width:14px;height:14px;"></i><span id="day-submit-btn-text">Add</span> </button>
         </form>
        </div><!-- Day List Section -->
        <div class="rounded-xl overflow-hidden" style="background-color: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.06);">
@@ -156,8 +159,10 @@
           <thead>
            <tr style="background-color: #f8fafc;">
             <th class="text-left text-[11px] font-semibold uppercase tracking-wider px-6 py-3" style="color: #64748b;">No.</th>
-            <th class="text-left text-[11px] font-semibold uppercase tracking-wider px-6 py-3" style="color: #64748b;">Day (Malay)</th>
-            <th class="text-left text-[11px] font-semibold uppercase tracking-wider px-6 py-3" style="color: #64748b;">Day (English)</th>
+            <th class="text-left text-[11px] font-semibold uppercase tracking-wider px-6 py-3" style="color: #64748b;">Day Description (Malay)</th>
+            <th class="text-left text-[11px] font-semibold uppercase tracking-wider px-6 py-3" style="color: #64748b;">Abbreviation (MS)</th>
+            <th class="text-left text-[11px] font-semibold uppercase tracking-wider px-6 py-3" style="color: #64748b;">Day Description (English)</th>
+            <th class="text-left text-[11px] font-semibold uppercase tracking-wider px-6 py-3" style="color: #64748b;">Abbreviation (EN)</th>
             <th class="text-center text-[11px] font-semibold uppercase tracking-wider px-6 py-3" style="color: #64748b;">Index</th>
             <th class="text-center text-[11px] font-semibold uppercase tracking-wider px-6 py-3" style="color: #64748b;">Is Friday</th>
             <th class="text-center text-[11px] font-semibold uppercase tracking-wider px-6 py-3" style="color: #64748b;">Is Weekend</th>
@@ -970,13 +975,13 @@
 
   // ── Day Management Module ──
   const dayData = [
-    { id: 1, malay: 'Isnin', english: 'Monday', index: 1, isFriday: false, isWeekend: false, status: 'active' },
-    { id: 2, malay: 'Selasa', english: 'Tuesday', index: 2, isFriday: false, isWeekend: false, status: 'active' },
-    { id: 3, malay: 'Rabu', english: 'Wednesday', index: 3, isFriday: false, isWeekend: false, status: 'active' },
-    { id: 4, malay: 'Khamis', english: 'Thursday', index: 4, isFriday: false, isWeekend: false, status: 'active' },
-    { id: 5, malay: 'Jumaat', english: 'Friday', index: 5, isFriday: true, isWeekend: false, status: 'active' },
-    { id: 6, malay: 'Sabtu', english: 'Saturday', index: 6, isFriday: false, isWeekend: true, status: 'active' },
-    { id: 7, malay: 'Ahad', english: 'Sunday', index: 7, isFriday: false, isWeekend: true, status: 'active' }
+    { id: 1, malay: 'Isnin', abbr_ms: 'Isn', english: 'Monday', abbr_en: 'Mon', index: 1, isFriday: false, isWeekend: false, status: 'active' },
+    { id: 2, malay: 'Selasa', abbr_ms: 'Sel', english: 'Tuesday', abbr_en: 'Tue', index: 2, isFriday: false, isWeekend: false, status: 'active' },
+    { id: 3, malay: 'Rabu', abbr_ms: 'Rab', english: 'Wednesday', abbr_en: 'Wed', index: 3, isFriday: false, isWeekend: false, status: 'active' },
+    { id: 4, malay: 'Khamis', abbr_ms: 'Kha', english: 'Thursday', abbr_en: 'Thu', index: 4, isFriday: false, isWeekend: false, status: 'active' },
+    { id: 5, malay: 'Jumaat', abbr_ms: 'Jum', english: 'Friday', abbr_en: 'Fri', index: 5, isFriday: true, isWeekend: false, status: 'active' },
+    { id: 6, malay: 'Sabtu', abbr_ms: 'Sab', english: 'Saturday', abbr_en: 'Sat', index: 6, isFriday: false, isWeekend: true, status: 'active' },
+    { id: 7, malay: 'Ahad', abbr_ms: 'Ahd', english: 'Sunday', abbr_en: 'Sun', index: 7, isFriday: false, isWeekend: true, status: 'active' }
   ];
 
   let dayEditingId = null;
@@ -991,7 +996,23 @@
   }
 
   function setupDayEventListeners() {
-    document.getElementById('day-form').addEventListener('submit', submitDayForm);
+    const form = document.getElementById('day-form');
+    form.addEventListener('submit', submitDayForm);
+    form.addEventListener('reset', resetDayFormMode);
+  }
+
+  function resetDayFormMode() {
+    dayEditingId = null;
+    const submitBtnText = document.getElementById('day-submit-btn-text');
+    if (submitBtnText) submitBtnText.textContent = 'Add';
+  }
+
+  function getNextDayIndex() {
+    const usedIndexes = new Set(dayData.map(d => d.index));
+    for (let i = 1; i <= 7; i++) {
+      if (!usedIndexes.has(i)) return i;
+    }
+    return dayData.length + 1;
   }
 
   function renderDayTable() {
@@ -1007,7 +1028,9 @@
       row.innerHTML = `
         <td class="px-6 py-3 text-sm" style="color: #64748b;">${i + 1}</td>
         <td class="px-6 py-3 text-sm font-medium" style="color: #1e293b;">${item.malay}</td>
+        <td class="px-6 py-3 text-sm" style="color: #475569;">${item.abbr_ms || '-'}</td>
         <td class="px-6 py-3 text-sm" style="color: #475569;">${item.english}</td>
+        <td class="px-6 py-3 text-sm" style="color: #475569;">${item.abbr_en || '-'}</td>
         <td class="text-center px-6 py-3 text-sm font-medium" style="color: #1e293b;">${item.index}</td>
         <td class="text-center px-6 py-3">
           <label class="relative inline-flex items-center cursor-pointer">
@@ -1035,6 +1058,9 @@
         </td>
         <td class="text-center px-6 py-3">
           <div class="flex gap-1.5 justify-center">
+            <button onclick="editDayRecord(${item.id})" class="w-7 h-7 rounded flex items-center justify-center hover:bg-amber-100 transition-colors" title="Edit">
+              <i data-lucide="pencil" style="width:13px;height:13px;color:#f59e0b;"></i>
+            </button>
             <button onclick="deleteDayRecord(${item.id})" class="w-7 h-7 rounded flex items-center justify-center hover:bg-red-100 transition-colors" title="Delete">
               <i data-lucide="trash-2" style="width:13px;height:13px;color:#ef4444;"></i>
             </button>
@@ -1080,12 +1106,13 @@
     e.preventDefault();
 
     const malay = document.getElementById('day-malay').value.trim();
+    const abbrMs = document.getElementById('day-abbr-ms').value.trim();
     const english = document.getElementById('day-english').value.trim();
-    const index = parseInt(document.getElementById('day-index').value);
+    const abbrEn = document.getElementById('day-abbr-en').value.trim();
     const status = document.getElementById('day-status').value;
 
     // Validation
-    if (!malay || !english || !index) {
+    if (!malay || !abbrMs || !english || !abbrEn) {
       showDayNotification('Please fill in all required fields.', 'error');
       return;
     }
@@ -1095,15 +1122,19 @@
       return;
     }
 
-    // Check duplicates
-    if (dayData.some(d => (d.malay.toLowerCase() === malay.toLowerCase() || d.english.toLowerCase() === english.toLowerCase()) && d.id !== dayEditingId)) {
-      showDayNotification('Day name already exists.', 'error');
+    if (abbrMs.length > 20 || abbrEn.length > 20) {
+      showDayNotification('Abbreviation cannot exceed 20 characters.', 'error');
       return;
     }
 
-    // Check unique index
-    if (dayData.some(d => d.index === index && d.id !== dayEditingId)) {
-      showDayNotification('Indexing must be unique.', 'error');
+    // Check duplicates
+    if (dayData.some(d => (
+      d.malay.toLowerCase() === malay.toLowerCase() ||
+      d.english.toLowerCase() === english.toLowerCase() ||
+      (d.abbr_ms || '').toLowerCase() === abbrMs.toLowerCase() ||
+      (d.abbr_en || '').toLowerCase() === abbrEn.toLowerCase()
+    ) && d.id !== dayEditingId)) {
+      showDayNotification('Day description or abbreviation already exists.', 'error');
       return;
     }
 
@@ -1112,20 +1143,58 @@
       return;
     }
 
-    const newDay = {
-      id: Math.max(...dayData.map(d => d.id), 0) + 1,
-      malay,
-      english,
-      index,
-      isFriday: false,
-      isWeekend: false,
-      status
-    };
+    const isEditMode = dayEditingId !== null;
 
-    dayData.push(newDay);
+    if (isEditMode) {
+      const item = dayData.find(d => d.id === dayEditingId);
+      if (!item) {
+        showDayNotification('Selected day record was not found.', 'error');
+        return;
+      }
+
+      item.malay = malay;
+      item.abbr_ms = abbrMs;
+      item.english = english;
+      item.abbr_en = abbrEn;
+      item.status = status;
+    } else {
+      const newDay = {
+        id: Math.max(...dayData.map(d => d.id), 0) + 1,
+        malay,
+        abbr_ms: abbrMs,
+        english,
+        abbr_en: abbrEn,
+        index: getNextDayIndex(),
+        isFriday: false,
+        isWeekend: false,
+        status
+      };
+
+      dayData.push(newDay);
+    }
+
     document.getElementById('day-form').reset();
+    resetDayFormMode();
     renderDayTable();
-    showDayNotification('Day has been successfully added.');
+    showDayNotification(isEditMode ? 'Day has been successfully updated.' : 'Day has been successfully added.');
+  }
+
+  function editDayRecord(id) {
+    const item = dayData.find(d => d.id === id);
+    if (!item) return;
+    dayEditingId = id;
+
+    document.getElementById('day-malay').value = item.malay;
+    document.getElementById('day-abbr-ms').value = item.abbr_ms || '';
+    document.getElementById('day-english').value = item.english;
+    document.getElementById('day-abbr-en').value = item.abbr_en || '';
+    document.getElementById('day-status').value = item.status;
+
+    const submitBtnText = document.getElementById('day-submit-btn-text');
+    if (submitBtnText) submitBtnText.textContent = 'Update';
+
+    document.getElementById('day-form').scrollIntoView({ behavior: 'smooth' });
+    document.getElementById('day-malay').focus();
   }
 
   function deleteDayRecord(id) {
@@ -1133,6 +1202,10 @@
     if (confirm(`Delete day "${item.english} (${item.malay})"? This action cannot be undone.`)) {
       const index = dayData.findIndex(d => d.id === id);
       dayData.splice(index, 1);
+      if (dayEditingId === id) {
+        document.getElementById('day-form').reset();
+        resetDayFormMode();
+      }
       renderDayTable();
       showDayNotification('Day has been successfully deleted.');
     }
