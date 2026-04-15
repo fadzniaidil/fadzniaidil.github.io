@@ -392,51 +392,80 @@
          </div>
         </div>
        </div>
-      </div><!-- Lecture Room Type Module -->
+      </div><!-- Room Usage Type Module -->
       <div id="lecture-room-module" class="hidden scheduling-config-module">
-       <div class="mb-6 rounded-xl p-5" style="background-color: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.06);">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-         <div>
-          <label class="block text-xs font-medium mb-1.5" style="color: #64748b;">Room Type Abbreviation</label> <select id="filter-code" class="w-full px-3 py-2 text-sm border rounded-lg transition-colors" style="background-color: #f8fafc; border-color: #e2e8f0; color: #1e293b;"> <option value="">All Abbreviations</option> <option value="LT">LT - Lecture Theatre</option> <option value="CL">CL - Classroom</option> <option value="LAB">LAB - Laboratory</option> <option value="SEM">SEM - Seminar</option> </select>
-         </div>
-         <div>
-          <label class="block text-xs font-medium mb-1.5" style="color: #64748b;">Search</label> <input type="text" id="search-input" placeholder="Search by abbreviation or description..." class="w-full px-3 py-2 text-sm border rounded-lg transition-colors" style="background-color: #f8fafc; border-color: #e2e8f0; color: #1e293b;">
-         </div>
-         <div>
-          <label class="block text-xs font-medium mb-1.5" style="color: #64748b;">Page Size</label> <select id="page-size" class="w-full px-3 py-2 text-sm border rounded-lg transition-colors" style="background-color: #f8fafc; border-color: #e2e8f0; color: #1e293b;"> <option value="5">5 per page</option> <option value="10" selected>10 per page</option> <option value="25">25 per page</option> <option value="50">50 per page</option> </select>
-         </div>
-         <div class="flex gap-2 items-end">
-          <button id="reset-btn" class="flex-1 px-3 py-2 text-sm border rounded-lg font-medium transition-colors" style="border-color: #e2e8f0; color: #64748b; background-color: #f8fafc;" onmouseover="this.style.backgroundColor='#f1f5f9'" onmouseout="this.style.backgroundColor='#f8fafc'">Reset</button>
-         </div>
-        </div>
-       </div><!-- Action Buttons & Pagination Info -->
-       <div class="flex items-center justify-between mb-5">
-        <div class="flex gap-3">
-         <button id="add-btn" class="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-colors" style="background-color: #3b82f6; color: #fff;" onmouseover="this.style.backgroundColor='#2563eb'" onmouseout="this.style.backgroundColor='#3b82f6'"> <i data-lucide="plus" style="width:14px;height:14px;"></i> Add Room Type </button> <button id="print-btn" class="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-colors" style="background-color: #f8fafc; border: 1px solid #e2e8f0; color: #64748b;" onmouseover="this.style.backgroundColor='#f1f5f9'" onmouseout="this.style.backgroundColor='#f8fafc'"> <i data-lucide="printer" style="width:14px;height:14px;"></i> Export </button>
-        </div>
-        <div class="text-xs" style="color: #94a3b8;">
-         Total: <span id="total-records" class="font-semibold" style="color: #1e293b;">0</span> records
-        </div>
-       </div><!-- Data Table -->
        <div class="rounded-xl overflow-hidden" style="background-color: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.06);">
+        <div class="px-5 py-4 border-b flex flex-wrap items-end gap-3" style="border-color: #e2e8f0;">
+         <div class="min-w-[240px] flex-1">
+          <label class="block text-xs font-medium mb-1.5" style="color: #64748b;">Search</label> <input id="rut-search-input" type="text" placeholder="Search code, activity, or description..." class="w-full px-3 py-2 text-sm border rounded-lg transition-colors" style="background-color: #f8fafc; border-color: #e2e8f0; color: #1e293b;">
+         </div>
+         <div class="w-[150px]">
+          <label class="block text-xs font-medium mb-1.5" style="color: #64748b;">Page Size</label> <select id="rut-page-size" class="w-full px-3 py-2 text-sm border rounded-lg transition-colors" style="background-color: #ffffff; border-color: #e2e8f0; color: #1e293b;"> <option value="5">5 per page</option> <option value="10" selected>10 per page</option> <option value="25">25 per page</option> <option value="50">50 per page</option> </select>
+         </div>
+         <div class="flex gap-2">
+          <button id="rut-reset-btn" class="px-3 py-2 text-sm border rounded-lg font-medium transition-colors" style="border-color: #e2e8f0; color: #64748b; background-color: #f8fafc;" onmouseover="this.style.backgroundColor='#f1f5f9'" onmouseout="this.style.backgroundColor='#f8fafc'">Reset</button> <button id="rut-export-btn" class="px-3 py-2 text-sm border rounded-lg font-medium transition-colors" style="border-color: #e2e8f0; color: #64748b; background-color: #ffffff;" onmouseover="this.style.backgroundColor='#f8fafc'" onmouseout="this.style.backgroundColor='#ffffff'">Export</button>
+         </div>
+        </div>
         <div class="overflow-x-auto">
-         <table class="w-full">
+         <table class="w-full min-w-[1180px]">
           <thead>
            <tr style="background-color: #f8fafc;">
-            <th class="text-left text-[11px] font-semibold uppercase tracking-wider px-6 py-3" style="color: #64748b;">No.</th>
-            <th class="text-left text-[11px] font-semibold uppercase tracking-wider px-6 py-3" style="color: #64748b;">Abbreviation</th>
-            <th class="text-left text-[11px] font-semibold uppercase tracking-wider px-6 py-3" style="color: #64748b;">Description (Malay)</th>
-            <th class="text-left text-[11px] font-semibold uppercase tracking-wider px-6 py-3" style="color: #64748b;">Description (English)</th>
-            <th class="text-left text-[11px] font-semibold uppercase tracking-wider px-6 py-3" style="color: #64748b;">Status</th>
-            <th class="text-left text-[11px] font-semibold uppercase tracking-wider px-6 py-3" style="color: #64748b;">Actions</th>
+            <th class="text-left text-[11px] font-semibold uppercase tracking-wider px-4 py-3" style="color: #64748b;">No.</th>
+            <th class="text-left text-[11px] font-semibold uppercase tracking-wider px-4 py-3" style="color: #64748b;">Room Usage Code</th>
+            <th class="text-left text-[11px] font-semibold uppercase tracking-wider px-4 py-3" style="color: #64748b;">Room Type (MS)</th>
+            <th class="text-left text-[11px] font-semibold uppercase tracking-wider px-4 py-3" style="color: #64748b;">Room Type (EN)</th>
+            <th class="text-center text-[11px] font-semibold uppercase tracking-wider px-4 py-3" style="color: #64748b;">Status</th>
+            <th class="text-center text-[11px] font-semibold uppercase tracking-wider px-4 py-3" style="color: #64748b;">Action</th>
            </tr>
           </thead>
-          <tbody id="table-body"></tbody>
+          <tbody>
+           <tr class="border-t align-top" style="border-color: #e2e8f0; background-color: #f8fafc;">
+            <td class="px-4 py-4 text-sm" style="color: #64748b;">-</td>
+            <td class="px-4 py-4">
+             <label class="block text-[11px] font-semibold mb-1.5 uppercase tracking-wider" style="color: #94a3b8;">Auto</label> <input id="rut-form-code" type="text" readonly class="w-full px-3 py-2 text-sm border rounded-lg" style="border-color: #e2e8f0; background-color: #ffffff; color: #1e293b;">
+            </td>
+            <td class="px-4 py-4">
+             <div class="space-y-1.5 text-sm" style="color: #334155;">
+              <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" class="rut-activity-checkbox" value="Amali" style="width:16px;height:16px;accent-color:#3b82f6;"> <span>Amali</span></label>
+              <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" class="rut-activity-checkbox" value="Kuliah" style="width:16px;height:16px;accent-color:#3b82f6;"> <span>Kuliah</span></label>
+              <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" class="rut-activity-checkbox" value="Klinikal" style="width:16px;height:16px;accent-color:#3b82f6;"> <span>Klinikal</span></label>
+              <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" class="rut-activity-checkbox" value="Peperiksaan" style="width:16px;height:16px;accent-color:#3b82f6;"> <span>Peperiksaan</span></label>
+              <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" class="rut-activity-checkbox" value="Tutorial" style="width:16px;height:16px;accent-color:#3b82f6;"> <span>Tutorial</span></label>
+              <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" class="rut-activity-checkbox" value="Bilik Seminar" style="width:16px;height:16px;accent-color:#3b82f6;"> <span>Bilik Seminar</span></label>
+              <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" class="rut-activity-checkbox" value="Dewan Bedah" style="width:16px;height:16px;accent-color:#3b82f6;"> <span>Dewan Bedah</span></label>
+              <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" class="rut-activity-checkbox" value="Endoskopi" style="width:16px;height:16px;accent-color:#3b82f6;"> <span>Endoskopi</span></label>
+              <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" class="rut-activity-checkbox" value="Gelanggang" style="width:16px;height:16px;accent-color:#3b82f6;"> <span>Gelanggang</span></label>
+              <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" class="rut-activity-checkbox" value="Dewan Senat" style="width:16px;height:16px;accent-color:#3b82f6;"> <span>Dewan Senat</span></label>
+             </div>
+             <p class="text-xs mt-2.5" style="color: #64748b;">Description (MS): <span id="rut-form-desc-ms" class="font-medium" style="color: #334155;">-</span></p>
+            </td>
+            <td class="px-4 py-4">
+             <label class="block text-[11px] font-semibold mb-1.5 uppercase tracking-wider" style="color: #94a3b8;">Auto Generated</label> <input id="rut-form-desc-en" type="text" readonly class="w-full px-3 py-2 text-sm border rounded-lg" style="border-color: #e2e8f0; background-color: #ffffff; color: #1e293b;">
+            </td>
+            <td class="px-4 py-4 text-center">
+             <label class="relative inline-flex items-center cursor-pointer">
+              <input id="rut-form-status" type="checkbox" class="sr-only peer" checked>
+              <div class="w-9 h-5 rounded-full transition-colors" style="background-color:#10b981;"></div>
+              <span class="absolute left-1 text-white text-[10px] font-bold peer-checked:hidden">○</span>
+              <span class="absolute left-4 text-white text-[10px] font-bold hidden peer-checked:block">●</span>
+             </label>
+            </td>
+            <td class="px-4 py-4">
+             <div class="flex items-center justify-center gap-2">
+              <button id="rut-save-btn" class="px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors" style="background-color:#3b82f6;color:#ffffff;" onmouseover="this.style.backgroundColor='#2563eb'" onmouseout="this.style.backgroundColor='#3b82f6'">Save</button> <button id="rut-cancel-btn" class="hidden px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors" style="background-color:#f8fafc;border:1px solid #e2e8f0;color:#64748b;" onmouseover="this.style.backgroundColor='#f1f5f9'" onmouseout="this.style.backgroundColor='#f8fafc'">Cancel</button>
+             </div>
+            </td>
+           </tr>
+          </tbody>
+          <tbody id="rut-table-body"></tbody>
          </table>
         </div>
-        <div class="px-6 py-4 border-t flex items-center justify-between" style="border-color: #e2e8f0; background-color: #f8fafc;">
+        <div class="px-4 py-3 border-t flex flex-wrap items-center justify-between gap-3" style="border-color: #e2e8f0; background-color: #f8fafc;">
+         <div class="text-xs" style="color: #94a3b8;">
+          Total: <span id="rut-total-records" class="font-semibold" style="color: #1e293b;">0</span> records
+         </div>
          <div class="flex items-center gap-2">
-          <button id="prev-btn" class="w-8 h-8 flex items-center justify-center rounded border transition-colors" style="border-color: #e2e8f0; color: #64748b;" onmouseover="this.style.backgroundColor='#f1f5f9'" onmouseout="this.style.backgroundColor='transparent'"> <i data-lucide="chevron-left" style="width:14px;height:14px;"></i> </button> <span class="text-xs" style="color: #64748b;">Page <span id="current-page">1</span> of <span id="total-pages">1</span></span> <button id="next-btn" class="w-8 h-8 flex items-center justify-center rounded border transition-colors" style="border-color: #e2e8f0; color: #64748b;" onmouseover="this.style.backgroundColor='#f1f5f9'" onmouseout="this.style.backgroundColor='transparent'"> <i data-lucide="chevron-right" style="width:14px;height:14px;"></i> </button>
+          <button id="rut-prev-btn" class="w-8 h-8 flex items-center justify-center rounded border transition-colors" style="border-color:#e2e8f0;color:#64748b;" onmouseover="this.style.backgroundColor='#f1f5f9'" onmouseout="this.style.backgroundColor='transparent'"><i data-lucide="chevron-left" style="width:14px;height:14px;"></i></button> <span class="text-xs" style="color:#64748b;">Page <span id="rut-current-page">1</span> of <span id="rut-total-pages">1</span></span> <button id="rut-next-btn" class="w-8 h-8 flex items-center justify-center rounded border transition-colors" style="border-color:#e2e8f0;color:#64748b;" onmouseover="this.style.backgroundColor='#f1f5f9'" onmouseout="this.style.backgroundColor='transparent'"><i data-lucide="chevron-right" style="width:14px;height:14px;"></i></button>
          </div>
         </div>
        </div>
@@ -761,46 +790,9 @@
          </div>
         </div>
        </div>
-      </div>
-     </div><!-- Add/Edit Form Modal -->
-     <div id="form-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center" style="background-color: rgba(0,0,0,0.5);">
-      <div class="bg-white rounded-xl w-full max-w-2xl mx-4 fade-in" style="box-shadow: 0 20px 25px rgba(0,0,0,0.15);">
-       <div class="px-6 py-4 border-b flex items-center justify-between" style="border-color: #e2e8f0;">
-        <h2 id="form-title" class="text-lg font-bold" style="color: #1e293b;">Add Room Type</h2><button id="close-form" class="w-6 h-6 rounded flex items-center justify-center hover:bg-slate-100 transition-colors"> <i data-lucide="x" style="width:14px;height:14px;color:#94a3b8;"></i> </button>
-       </div>
-       <div class="p-6">
-        <form id="room-form">
-         <div class="mb-5">
-          <label class="block text-sm font-medium mb-1.5" style="color: #1e293b;">Abbreviation <span style="color: #ef4444;">*</span></label> <input type="text" id="form-code" placeholder="e.g., LT, CL, LAB" required class="w-full px-4 py-2 text-sm border rounded-lg transition-colors" style="border-color: #e2e8f0; background-color: #f8fafc; color: #1e293b;">
-         </div>
-         <div class="mb-5">
-          <label class="block text-sm font-medium mb-1.5" style="color: #1e293b;">Description (Malay) <span style="color: #ef4444;">*</span></label> <input type="text" id="form-desc-ms" placeholder="Deskripsi dalam Bahasa Melayu" required class="w-full px-4 py-2 text-sm border rounded-lg transition-colors" style="border-color: #e2e8f0; background-color: #f8fafc; color: #1e293b;">
-         </div>
-         <div class="mb-6">
-          <label class="block text-sm font-medium mb-1.5" style="color: #1e293b;">Description (English) <span style="color: #ef4444;">*</span></label> <textarea id="form-desc-en" rows="3" placeholder="Description in English" required class="w-full px-4 py-2 text-sm border rounded-lg transition-colors" style="border-color: #e2e8f0; background-color: #f8fafc; color: #1e293b; resize: none;"></textarea>
-         </div>
-         <div class="flex gap-3 justify-end">
-          <button type="button" id="cancel-btn" class="px-4 py-2 text-sm font-medium rounded-lg transition-colors" style="border: 1px solid #e2e8f0; color: #64748b; background-color: #f8fafc;" onmouseover="this.style.backgroundColor='#f1f5f9'" onmouseout="this.style.backgroundColor='#f8fafc'">Cancel</button> <button type="submit" class="px-4 py-2 text-sm font-medium rounded-lg transition-colors" style="background-color: #3b82f6; color: #fff;" onmouseover="this.style.backgroundColor='#2563eb'" onmouseout="this.style.backgroundColor='#3b82f6'">Save</button>
-         </div>
-        </form>
-       </div>
-      </div>
-     </div><!-- Delete Confirmation Modal -->
-     <div id="delete-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center" style="background-color: rgba(0,0,0,0.5);">
-      <div class="bg-white rounded-xl w-full max-w-sm mx-4 fade-in" style="box-shadow: 0 20px 25px rgba(0,0,0,0.15);">
-       <div class="p-6 text-center">
-        <div class="w-12 h-12 rounded-full mx-auto mb-4 flex items-center justify-center" style="background-color: #fee2e2;">
-         <i data-lucide="alert-circle" style="width:24px;height:24px;color:#dc2626;"></i>
-        </div>
-        <h3 class="text-lg font-bold mb-2" style="color: #1e293b;">Delete Room Type?</h3>
-        <p class="text-sm mb-6" style="color: #64748b;">Are you sure you want to delete <span id="delete-name" class="font-semibold" style="color: #1e293b;"></span>? This action cannot be undone.</p>
-        <div class="flex gap-3 justify-center">
-         <button id="delete-cancel" class="px-4 py-2 text-sm font-medium rounded-lg transition-colors" style="border: 1px solid #e2e8f0; color: #64748b; background-color: #f8fafc;" onmouseover="this.style.backgroundColor='#f1f5f9'" onmouseout="this.style.backgroundColor='#f8fafc'">Cancel</button> <button id="delete-confirm" class="px-4 py-2 text-sm font-medium rounded-lg transition-colors" style="background-color: #dc2626; color: #fff;" onmouseover="this.style.backgroundColor='#b91c1c'" onmouseout="this.style.backgroundColor='#dc2626'">Delete</button>
-        </div>
        </div>
       </div>
      </div>
-    </div>
    </main>
   </div>
   <script>
@@ -825,7 +817,7 @@
         icon: 'calendar',
         children: [
           { id: 'day-management', label: 'Day' },
-          { id: 'lecture-room', label: 'Lecture Room Type' },
+          { id: 'lecture-room', label: 'Room Usage Type' },
           { id: 'time-configuration', label: 'Time Configuration' },
           { id: 'week', label: 'Week' },
           { id: 'group', label: 'Group' },
@@ -1350,190 +1342,416 @@
     }
   }
 
-  // ── Lecture Room Type Module ──
-  let roomTypeData = [
-    { id: 1, code: 'LT', desc_ms: 'Teater Kuliah', desc_en: 'Lecture Theatre', status: 'active' },
-    { id: 2, code: 'CL', desc_ms: 'Bilik Darjah', desc_en: 'Classroom', status: 'active' },
-    { id: 3, code: 'LAB', desc_ms: 'Makmal', desc_en: 'Laboratory', status: 'active' },
-    { id: 4, code: 'SEM', desc_ms: 'Bilik Seminar', desc_en: 'Seminar Room', status: 'inactive' },
-    { id: 5, code: 'LIB', desc_ms: 'Perpustakaan', desc_en: 'Library Study Room', status: 'active' },
-    { id: 6, code: 'CONF', desc_ms: 'Bilik Konferensi', desc_en: 'Conference Room', status: 'active' },
-    { id: 7, code: 'GYM', desc_ms: 'Dewan Sukan', desc_en: 'Sports Hall', status: 'active' },
-    { id: 8, code: 'CLINIC', desc_ms: 'Klinik', desc_en: 'Clinical Room', status: 'active' },
-    { id: 9, code: 'STUDIO', desc_ms: 'Studio Seni', desc_en: 'Art Studio', status: 'inactive' },
-    { id: 10, code: 'COMP', desc_ms: 'Makmal Komputer', desc_en: 'Computer Lab', status: 'active' }
+  // ── Room Usage Type Module ──
+  const rutActivityCatalog = [
+    { ms: 'Kuliah', en: 'Lecture', code: 'K', order: 1 },
+    { ms: 'Amali', en: 'Laboratory', code: 'A', order: 2 },
+    { ms: 'Klinikal', en: 'Clinical', code: 'C', order: 3 },
+    { ms: 'Peperiksaan', en: 'Examination', code: 'P', order: 4 },
+    { ms: 'Tutorial', en: 'Tutorial', code: 'T', order: 5 },
+    { ms: 'Bilik Seminar', en: 'Seminar Room', code: 'BS', order: 6 },
+    { ms: 'Dewan Bedah', en: 'Surgical Theatre', code: 'DB', order: 7 },
+    { ms: 'Endoskopi', en: 'Endoscopy', code: 'E', order: 8 },
+    { ms: 'Gelanggang', en: 'Court', code: 'G', order: 9 },
+    { ms: 'Dewan Senat', en: 'Senate Hall', code: 'DS', order: 10 }
   ];
 
-  let filteredData = [...roomTypeData];
-  let currentPage = 1;
-  let pageSize = 10;
-  let editingId = null;
+  const rutActivityLookup = rutActivityCatalog.reduce((acc, item) => {
+    acc[item.ms] = item;
+    return acc;
+  }, {});
+
+  let roomUsageTypeData = [
+    createRoomUsageTypeRecord(1, ['Amali'], 'active'),
+    createRoomUsageTypeRecord(2, ['Kuliah', 'Amali'], 'active'),
+    createRoomUsageTypeRecord(3, ['Kuliah', 'Amali', 'Klinikal'], 'active')
+  ];
+  let rutFilteredData = [...roomUsageTypeData];
+  let rutCurrentPage = 1;
+  let rutPageSize = 10;
+  let rutEditingId = null;
+  let rutListenersBound = false;
 
   function initLectureRoomTable() {
-    renderTable();
-    setupEventListeners();
+    const pageSizeSelect = document.getElementById('rut-page-size');
+    if (pageSizeSelect) {
+      rutPageSize = parseInt(pageSizeSelect.value, 10) || 10;
+    }
+    rutFilteredData = [...roomUsageTypeData];
+    rutCurrentPage = 1;
+    renderRoomUsageTypeTable();
+    if (!rutListenersBound) {
+      setupRoomUsageTypeEventListeners();
+      rutListenersBound = true;
+    }
+    resetRoomUsageTypeForm();
+    lucide.createIcons();
   }
 
-  function setupEventListeners() {
-    document.getElementById('add-btn').onclick = openForm;
-    document.getElementById('close-form').onclick = closeForm;
-    document.getElementById('cancel-btn').onclick = closeForm;
-    document.getElementById('room-form').onsubmit = submitForm;
-    document.getElementById('reset-btn').onclick = resetFilters;
-    document.getElementById('filter-code').onchange = applyFilters;
-    document.getElementById('search-input').oninput = applyFilters;
-    document.getElementById('page-size').onchange = (e) => { pageSize = parseInt(e.target.value); currentPage = 1; renderTable(); };
-    document.getElementById('prev-btn').onclick = () => { if (currentPage > 1) { currentPage--; renderTable(); } };
-    document.getElementById('next-btn').onclick = () => { const max = Math.ceil(filteredData.length / pageSize); if (currentPage < max) { currentPage++; renderTable(); } };
-    document.getElementById('print-btn').onclick = exportData;
-    document.getElementById('delete-cancel').onclick = closeDeleteModal;
-  }
+  function setupRoomUsageTypeEventListeners() {
+    const searchInput = document.getElementById('rut-search-input');
+    const pageSizeSelect = document.getElementById('rut-page-size');
+    const resetBtn = document.getElementById('rut-reset-btn');
+    const exportBtn = document.getElementById('rut-export-btn');
+    const prevBtn = document.getElementById('rut-prev-btn');
+    const nextBtn = document.getElementById('rut-next-btn');
+    const saveBtn = document.getElementById('rut-save-btn');
+    const cancelBtn = document.getElementById('rut-cancel-btn');
+    const statusToggle = document.getElementById('rut-form-status');
 
-  function applyFilters() {
-    const codeFilter = document.getElementById('filter-code').value;
-    const searchText = document.getElementById('search-input').value.toLowerCase();
-    filteredData = roomTypeData.filter(item => {
-      const matchCode = !codeFilter || item.code === codeFilter;
-      const matchSearch = !searchText || item.code.toLowerCase().includes(searchText) || item.desc_ms.toLowerCase().includes(searchText) || item.desc_en.toLowerCase().includes(searchText);
-      return matchCode && matchSearch;
+    if (searchInput) searchInput.addEventListener('input', applyRoomUsageTypeFilters);
+    if (pageSizeSelect) {
+      pageSizeSelect.addEventListener('change', (e) => {
+        rutPageSize = parseInt(e.target.value, 10) || 10;
+        rutCurrentPage = 1;
+        renderRoomUsageTypeTable();
+      });
+    }
+    if (resetBtn) resetBtn.addEventListener('click', resetRoomUsageTypeFilters);
+    if (exportBtn) exportBtn.addEventListener('click', exportRoomUsageTypeData);
+    if (prevBtn) {
+      prevBtn.addEventListener('click', () => {
+        if (rutCurrentPage > 1) {
+          rutCurrentPage -= 1;
+          renderRoomUsageTypeTable();
+        }
+      });
+    }
+    if (nextBtn) {
+      nextBtn.addEventListener('click', () => {
+        const maxPage = Math.max(1, Math.ceil(rutFilteredData.length / rutPageSize));
+        if (rutCurrentPage < maxPage) {
+          rutCurrentPage += 1;
+          renderRoomUsageTypeTable();
+        }
+      });
+    }
+    if (saveBtn) saveBtn.addEventListener('click', saveRoomUsageTypeRecord);
+    if (cancelBtn) {
+      cancelBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        resetRoomUsageTypeForm();
+      });
+    }
+    if (statusToggle) statusToggle.addEventListener('change', syncRUTFormStatusVisual);
+
+    document.querySelectorAll('.rut-activity-checkbox').forEach((checkbox) => {
+      checkbox.addEventListener('change', updateRoomUsageTypeDerivedFields);
     });
-    currentPage = 1;
-    renderTable();
   }
 
-  function resetFilters() {
-    document.getElementById('filter-code').value = '';
-    document.getElementById('search-input').value = '';
-    filteredData = [...roomTypeData];
-    currentPage = 1;
-    renderTable();
+  function formatNaturalList(items, conjunction) {
+    if (items.length === 0) return '';
+    if (items.length === 1) return items[0];
+    if (items.length === 2) return `${items[0]} ${conjunction} ${items[1]}`;
+    return `${items.slice(0, -1).join(', ')} ${conjunction} ${items[items.length - 1]}`;
   }
 
-  function renderTable() {
-    const start = (currentPage - 1) * pageSize;
-    const end = start + pageSize;
-    const pageData = filteredData.slice(start, end);
-    const tbody = document.getElementById('table-body');
+  function normalizeRoomUsageActivities(activities) {
+    const uniqueActivities = [...new Set(
+      activities
+        .map(item => String(item || '').trim())
+        .filter(item => rutActivityLookup[item])
+    )];
+
+    return uniqueActivities.sort((a, b) => rutActivityLookup[a].order - rutActivityLookup[b].order);
+  }
+
+  function buildRoomUsageTypeData(activities) {
+    const normalizedActivities = normalizeRoomUsageActivities(activities);
+    const mappedActivities = normalizedActivities.map(item => rutActivityLookup[item]);
+    const code = mappedActivities.map(item => item.code).join('/');
+    const englishLabels = mappedActivities.map(item => item.en);
+
+    const desc_ms = normalizedActivities.length === 1
+      ? `${normalizedActivities[0]} Sahaja`
+      : formatNaturalList(normalizedActivities, 'dan');
+    const desc_en = englishLabels.length === 1
+      ? `${englishLabels[0]} Only`
+      : formatNaturalList(englishLabels, 'and');
+
+    return {
+      activities: normalizedActivities,
+      code,
+      key: code,
+      desc_ms,
+      desc_en
+    };
+  }
+
+  function createRoomUsageTypeRecord(id, activities, status = 'active') {
+    const derived = buildRoomUsageTypeData(activities);
+    return {
+      id,
+      activities: derived.activities,
+      code: derived.code,
+      key: derived.key,
+      desc_ms: derived.desc_ms,
+      desc_en: derived.desc_en,
+      status
+    };
+  }
+
+  function getRoomUsageTypeSelectedActivities() {
+    return Array.from(document.querySelectorAll('.rut-activity-checkbox:checked')).map(cb => cb.value);
+  }
+
+  function updateRoomUsageTypeDerivedFields() {
+    const selectedActivities = getRoomUsageTypeSelectedActivities();
+    const codeEl = document.getElementById('rut-form-code');
+    const descMsEl = document.getElementById('rut-form-desc-ms');
+    const descEnEl = document.getElementById('rut-form-desc-en');
+
+    if (!codeEl || !descMsEl || !descEnEl) return;
+
+    if (selectedActivities.length === 0) {
+      codeEl.value = '';
+      descMsEl.textContent = '-';
+      descEnEl.value = '';
+      return;
+    }
+
+    const derived = buildRoomUsageTypeData(selectedActivities);
+    codeEl.value = derived.code;
+    descMsEl.textContent = derived.desc_ms;
+    descEnEl.value = derived.desc_en;
+  }
+
+  function syncRUTFormStatusVisual() {
+    const statusToggle = document.getElementById('rut-form-status');
+    if (!statusToggle) return;
+    const track = statusToggle.nextElementSibling;
+    if (track) {
+      track.style.backgroundColor = statusToggle.checked ? '#10b981' : '#cbd5e1';
+    }
+  }
+
+  function setRoomUsageTypeFormMode(mode) {
+    const saveBtn = document.getElementById('rut-save-btn');
+    const cancelBtn = document.getElementById('rut-cancel-btn');
+    if (!saveBtn || !cancelBtn) return;
+
+    if (mode === 'edit') {
+      saveBtn.textContent = 'Update';
+      cancelBtn.classList.remove('hidden');
+    } else {
+      saveBtn.textContent = 'Save';
+      cancelBtn.classList.add('hidden');
+    }
+  }
+
+  function resetRoomUsageTypeForm() {
+    rutEditingId = null;
+    document.querySelectorAll('.rut-activity-checkbox').forEach(cb => { cb.checked = false; });
+    const statusToggle = document.getElementById('rut-form-status');
+    if (statusToggle) {
+      statusToggle.checked = true;
+      syncRUTFormStatusVisual();
+    }
+    setRoomUsageTypeFormMode('add');
+    updateRoomUsageTypeDerivedFields();
+  }
+
+  function saveRoomUsageTypeRecord(e) {
+    if (e && typeof e.preventDefault === 'function') e.preventDefault();
+
+    const selectedActivities = normalizeRoomUsageActivities(getRoomUsageTypeSelectedActivities());
+    if (selectedActivities.length === 0) {
+      showNotification('Please select at least one activity.', 'error');
+      return;
+    }
+
+    const derived = buildRoomUsageTypeData(selectedActivities);
+    const duplicateExists = roomUsageTypeData.some(item => item.key === derived.key && item.id !== rutEditingId);
+    if (duplicateExists) {
+      showNotification('This combination already exists.', 'error');
+      return;
+    }
+
+    const statusToggle = document.getElementById('rut-form-status');
+    const status = statusToggle && !statusToggle.checked ? 'inactive' : 'active';
+
+    if (rutEditingId) {
+      const target = roomUsageTypeData.find(item => item.id === rutEditingId);
+      if (!target) return;
+      target.activities = derived.activities;
+      target.code = derived.code;
+      target.key = derived.key;
+      target.desc_ms = derived.desc_ms;
+      target.desc_en = derived.desc_en;
+      target.status = status;
+    } else {
+      roomUsageTypeData.push({
+        id: Math.max(...roomUsageTypeData.map(item => item.id), 0) + 1,
+        activities: derived.activities,
+        code: derived.code,
+        key: derived.key,
+        desc_ms: derived.desc_ms,
+        desc_en: derived.desc_en,
+        status
+      });
+    }
+
+    applyRoomUsageTypeFilters();
+    resetRoomUsageTypeForm();
+    showNotification('Record saved successfully.');
+  }
+
+  function applyRoomUsageTypeFilters() {
+    const searchText = (document.getElementById('rut-search-input')?.value || '').toLowerCase().trim();
+    rutFilteredData = roomUsageTypeData.filter(item => {
+      if (!searchText) return true;
+      const haystack = [
+        item.code,
+        item.activities.join(', '),
+        item.desc_ms,
+        item.desc_en,
+        item.status
+      ].join(' ').toLowerCase();
+      return haystack.includes(searchText);
+    });
+
+    rutCurrentPage = 1;
+    renderRoomUsageTypeTable();
+  }
+
+  function resetRoomUsageTypeFilters() {
+    const searchInput = document.getElementById('rut-search-input');
+    if (searchInput) searchInput.value = '';
+    rutFilteredData = [...roomUsageTypeData];
+    rutCurrentPage = 1;
+    renderRoomUsageTypeTable();
+  }
+
+  function renderRoomUsageTypeTable() {
+    const tbody = document.getElementById('rut-table-body');
+    if (!tbody) return;
+
+    const totalPages = Math.max(1, Math.ceil(rutFilteredData.length / rutPageSize));
+    if (rutCurrentPage > totalPages) rutCurrentPage = totalPages;
+
+    const start = (rutCurrentPage - 1) * rutPageSize;
+    const pageData = rutFilteredData.slice(start, start + rutPageSize);
     tbody.innerHTML = '';
 
-    pageData.forEach((item, i) => {
-      const rowColor = i % 2 === 0 ? 'transparent' : '#f8fafc';
+    if (pageData.length === 0) {
       const row = document.createElement('tr');
-      row.style.backgroundColor = rowColor;
-      row.className = 'border-t hover:bg-blue-50 transition-colors cursor-pointer';
+      row.className = 'border-t';
       row.style.borderColor = '#e2e8f0';
-      row.innerHTML = `
-        <td class="px-6 py-3 text-sm" style="color: #64748b;">${start + i + 1}</td>
-        <td class="px-6 py-3 text-sm font-medium" style="color: #1e293b;">${item.code}</td>
-        <td class="px-6 py-3 text-sm" style="color: #475569;">${item.desc_ms}</td>
-        <td class="px-6 py-3 text-sm" style="color: #475569;">${item.desc_en}</td>
-        <td class="px-6 py-3">
-          <span class="text-[11px] font-medium px-2 py-0.5 rounded-full" style="background-color: ${item.status === 'active' ? '#f0fdf4' : '#fef2f2'}; color: ${item.status === 'active' ? '#16a34a' : '#dc2626'};">
-            ${item.status === 'active' ? 'Active' : 'Inactive'}
-          </span>
-        </td>
-        <td class="px-6 py-3">
-          <div class="flex gap-1.5">
-            <button onclick="viewRoom(${item.id})" class="w-7 h-7 rounded flex items-center justify-center hover:bg-blue-100 transition-colors" title="View">
-              <i data-lucide="eye" style="width:13px;height:13px;color:#3b82f6;"></i>
-            </button>
-            <button onclick="editRoom(${item.id})" class="w-7 h-7 rounded flex items-center justify-center hover:bg-amber-100 transition-colors" title="Edit">
-              <i data-lucide="pencil" style="width:13px;height:13px;color:#f59e0b;"></i>
-            </button>
-            <button onclick="deleteRoom(${item.id})" class="w-7 h-7 rounded flex items-center justify-center hover:bg-red-100 transition-colors" title="Delete">
-              <i data-lucide="trash-2" style="width:13px;height:13px;color:#ef4444;"></i>
-            </button>
-          </div>
-        </td>
-      `;
+      row.innerHTML = '<td colspan="6" class="px-4 py-6 text-center text-sm" style="color:#94a3b8;">No room usage type records found.</td>';
       tbody.appendChild(row);
-    });
+    } else {
+      pageData.forEach((item, index) => {
+        const row = document.createElement('tr');
+        row.className = 'border-t hover:bg-blue-50 transition-colors';
+        row.style.borderColor = '#e2e8f0';
+        row.style.backgroundColor = index % 2 === 0 ? 'transparent' : '#f8fafc';
+        row.innerHTML = `
+          <td class="px-4 py-3 text-sm" style="color:#64748b;">${start + index + 1}</td>
+          <td class="px-4 py-3 text-sm font-semibold" style="color:#1e293b;">${item.code}</td>
+          <td class="px-4 py-3">
+            <div class="text-sm" style="color:#1e293b;">${item.activities.join(', ')}</div>
+            <div class="text-xs mt-1" style="color:#64748b;">${item.desc_ms}</div>
+          </td>
+          <td class="px-4 py-3 text-sm" style="color:#475569;">${item.desc_en}</td>
+          <td class="px-4 py-3 text-center">
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" class="sr-only peer" ${item.status === 'active' ? 'checked' : ''} onchange="toggleRoomUsageTypeStatus(${item.id}, this.checked)">
+              <div class="w-9 h-5 rounded-full transition-colors" style="background-color:${item.status === 'active' ? '#10b981' : '#cbd5e1'};"></div>
+              <span class="absolute left-1 text-white text-[10px] font-bold peer-checked:hidden">○</span>
+              <span class="absolute left-4 text-white text-[10px] font-bold hidden peer-checked:block">●</span>
+            </label>
+          </td>
+          <td class="px-4 py-3 text-center">
+            <div class="flex items-center justify-center gap-1.5">
+              <button onclick="editRoomUsageTypeRecord(${item.id})" class="w-7 h-7 rounded flex items-center justify-center hover:bg-amber-100 transition-colors" title="Edit">
+                <i data-lucide="pencil" style="width:13px;height:13px;color:#f59e0b;"></i>
+              </button>
+              <button onclick="deleteRoomUsageTypeRecord(${item.id})" class="w-7 h-7 rounded flex items-center justify-center hover:bg-red-100 transition-colors" title="Delete">
+                <i data-lucide="trash-2" style="width:13px;height:13px;color:#ef4444;"></i>
+              </button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
 
-    // Update pagination
-    const totalPages = Math.ceil(filteredData.length / pageSize);
-    document.getElementById('total-records').textContent = filteredData.length;
-    document.getElementById('current-page').textContent = currentPage;
-    document.getElementById('total-pages').textContent = totalPages;
-    document.getElementById('prev-btn').style.opacity = currentPage === 1 ? '0.5' : '1';
-    document.getElementById('prev-btn').style.cursor = currentPage === 1 ? 'not-allowed' : 'pointer';
-    document.getElementById('next-btn').style.opacity = currentPage === totalPages ? '0.5' : '1';
-    document.getElementById('next-btn').style.cursor = currentPage === totalPages ? 'not-allowed' : 'pointer';
+    const totalRecordsEl = document.getElementById('rut-total-records');
+    const currentPageEl = document.getElementById('rut-current-page');
+    const totalPagesEl = document.getElementById('rut-total-pages');
+    const prevBtn = document.getElementById('rut-prev-btn');
+    const nextBtn = document.getElementById('rut-next-btn');
+
+    if (totalRecordsEl) totalRecordsEl.textContent = String(rutFilteredData.length);
+    if (currentPageEl) currentPageEl.textContent = String(rutCurrentPage);
+    if (totalPagesEl) totalPagesEl.textContent = String(totalPages);
+    if (prevBtn) {
+      prevBtn.style.opacity = rutCurrentPage === 1 ? '0.5' : '1';
+      prevBtn.style.cursor = rutCurrentPage === 1 ? 'not-allowed' : 'pointer';
+    }
+    if (nextBtn) {
+      nextBtn.style.opacity = rutCurrentPage >= totalPages ? '0.5' : '1';
+      nextBtn.style.cursor = rutCurrentPage >= totalPages ? 'not-allowed' : 'pointer';
+    }
 
     lucide.createIcons();
   }
 
-  function openForm() {
-    editingId = null;
-    document.getElementById('form-title').textContent = 'Add Room Type';
-    document.getElementById('form-code').value = '';
-    document.getElementById('form-desc-ms').value = '';
-    document.getElementById('form-desc-en').value = '';
-    document.getElementById('form-modal').classList.remove('hidden');
-  }
+  function editRoomUsageTypeRecord(id) {
+    const item = roomUsageTypeData.find(record => record.id === id);
+    if (!item) return;
 
-  function closeForm() {
-    document.getElementById('form-modal').classList.add('hidden');
-    editingId = null;
-  }
+    rutEditingId = id;
+    document.querySelectorAll('.rut-activity-checkbox').forEach(cb => {
+      cb.checked = item.activities.includes(cb.value);
+    });
 
-  function editRoom(id) {
-    editingId = id;
-    const item = roomTypeData.find(x => x.id === id);
-    document.getElementById('form-title').textContent = 'Edit Room Type';
-    document.getElementById('form-code').value = item.code;
-    document.getElementById('form-desc-ms').value = item.desc_ms;
-    document.getElementById('form-desc-en').value = item.desc_en;
-    document.getElementById('form-modal').classList.remove('hidden');
-  }
-
-  function submitForm(e) {
-    e.preventDefault();
-    const code = document.getElementById('form-code').value;
-    const desc_ms = document.getElementById('form-desc-ms').value;
-    const desc_en = document.getElementById('form-desc-en').value;
-
-    if (editingId) {
-      const item = roomTypeData.find(x => x.id === editingId);
-      item.code = code;
-      item.desc_ms = desc_ms;
-      item.desc_en = desc_en;
-    } else {
-      roomTypeData.push({ id: Math.max(...roomTypeData.map(x => x.id), 0) + 1, code, desc_ms, desc_en, status: 'active' });
+    const statusToggle = document.getElementById('rut-form-status');
+    if (statusToggle) {
+      statusToggle.checked = item.status === 'active';
+      syncRUTFormStatusVisual();
     }
-    applyFilters();
-    closeForm();
+
+    setRoomUsageTypeFormMode('edit');
+    updateRoomUsageTypeDerivedFields();
+    const module = document.getElementById('lecture-room-module');
+    if (module) module.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
-  function viewRoom(id) {
-    const item = roomTypeData.find(x => x.id === id);
-    alert(`Room Type: ${item.code}\nDescription (Malay): ${item.desc_ms}\nDescription (English): ${item.desc_en}\nStatus: ${item.status}`);
+  function deleteRoomUsageTypeRecord(id) {
+    const item = roomUsageTypeData.find(record => record.id === id);
+    if (!item) return;
+
+    if (!confirm(`Delete room usage type "${item.code}"? This action cannot be undone.`)) return;
+
+    roomUsageTypeData = roomUsageTypeData.filter(record => record.id !== id);
+    if (rutEditingId === id) resetRoomUsageTypeForm();
+    applyRoomUsageTypeFilters();
   }
 
-  function deleteRoom(id) {
-    const item = roomTypeData.find(x => x.id === id);
-    document.getElementById('delete-name').textContent = `${item.code} (${item.desc_en})`;
-    document.getElementById('delete-confirm').onclick = () => {
-      roomTypeData = roomTypeData.filter(x => x.id !== id);
-      applyFilters();
-      closeDeleteModal();
-    };
-    document.getElementById('delete-modal').classList.remove('hidden');
+  function toggleRoomUsageTypeStatus(id, isActive) {
+    const item = roomUsageTypeData.find(record => record.id === id);
+    if (!item) return;
+    item.status = isActive ? 'active' : 'inactive';
+    applyRoomUsageTypeFilters();
   }
 
-  function closeDeleteModal() {
-    document.getElementById('delete-modal').classList.add('hidden');
-  }
+  function exportRoomUsageTypeData() {
+    if (rutFilteredData.length === 0) {
+      showNotification('No data to export.', 'error');
+      return;
+    }
 
-  function exportData() {
-    let csv = 'No.,Code,Description (Malay),Description (English),Status\n';
-    filteredData.forEach((item, i) => {
-      csv += `${i + 1},"${item.code}","${item.desc_ms}","${item.desc_en}","${item.status}"\n`;
+    let csv = 'No.,Room Usage Code,Activity (MS),Description (MS),Description (EN),Status\n';
+    rutFilteredData.forEach((item, index) => {
+      csv += `${index + 1},"${item.code}","${item.activities.join(', ')}","${item.desc_ms}","${item.desc_en}","${item.status}"\n`;
     });
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'room_types.csv';
+    a.download = 'room_usage_type.csv';
     a.click();
   }
 
