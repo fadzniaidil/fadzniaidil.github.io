@@ -189,26 +189,28 @@
           <div class="p-4 rounded-lg" style="background-color: #fef3c7; border-left: 4px solid #f59e0b;">
            <p class="text-sm" style="color: #92400e;">Fields marked with <span style="color: #dc2626;">*</span> are mandatory.</p>
           </div><!-- Section 1: Basic Information -->
-          <div class="rounded-xl p-5" style="background-color: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.06);">
-           <h3 class="text-sm font-bold mb-4" style="color: #1e293b;">Basic Information</h3>
-           <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div><label class="block text-xs font-medium mb-1.5" style="color: #64748b;">PTJ <span style="color: #dc2626;">*</span></label> <input type="text" value="Faculty of Medicine" disabled class="w-full px-3 py-2 text-sm border rounded-lg" style="border-color: #e2e8f0; background-color: #f8fafc; color: #1e293b;">
+           <div class="rounded-xl p-5" style="background-color: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.06);">
+            <h3 class="text-sm font-bold mb-4" style="color: #1e293b;">Basic Information</h3>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+             <div><label class="block text-xs font-medium mb-1.5" style="color: #64748b;">PTJ <span style="color: #dc2626;">*</span></label> <input id="fr-ptj" type="text" value="Faculty of Medicine" disabled class="w-full px-3 py-2 text-sm border rounded-lg" style="border-color: #e2e8f0; background-color: #f8fafc; color: #1e293b;">
+             </div>
+             <div><label class="block text-xs font-medium mb-1.5" style="color: #64748b;">Facility Category <span style="color: #dc2626;">*</span></label> <select id="fr-facility-category" class="w-full px-3 py-2 text-sm border rounded-lg" style="border-color: #e2e8f0; background-color: #ffffff; color: #1e293b;"> <option value="">Select Category</option> <option value="academic">Academic</option> <option value="research">Research</option> <option value="sports">Sports</option> <option value="administrative">Administrative</option> </select>
+             </div>
+             <div><label class="block text-xs font-medium mb-1.5" style="color: #64748b;">Facility Type <span style="color: #dc2626;">*</span></label> <select id="fr-facility-type" class="w-full px-3 py-2 text-sm border rounded-lg" style="border-color: #e2e8f0; background-color: #ffffff; color: #1e293b;"> <option value="">Select Type</option> <option value="lecture">Lecture Theatre</option> <option value="lab">Laboratory</option> <option value="seminar">Seminar Room</option> </select>
+             </div>
+             <div><label class="block text-xs font-medium mb-1.5" style="color: #64748b;">Capacity <span style="color: #dc2626;">*</span></label> <input id="fr-capacity" type="text" inputmode="numeric" placeholder="e.g. 120" required class="w-full px-3 py-2 text-sm border rounded-lg transition-colors" style="border-color: #e2e8f0; background-color: #ffffff; color: #1e293b;"> <p id="fr-capacity-error" class="hidden text-xs mt-1.5" style="color: #dc2626;"></p>
+             </div>
             </div>
-            <div><label class="block text-xs font-medium mb-1.5" style="color: #64748b;">Facility Category <span style="color: #dc2626;">*</span></label> <select class="w-full px-3 py-2 text-sm border rounded-lg" style="border-color: #e2e8f0; background-color: #ffffff; color: #1e293b;"> <option value="">Select Category</option> <option value="academic">Academic</option> <option value="research">Research</option> <option value="sports">Sports</option> <option value="administrative">Administrative</option> </select>
-            </div>
-            <div><label class="block text-xs font-medium mb-1.5" style="color: #64748b;">Facility Type <span style="color: #dc2626;">*</span></label> <select class="w-full px-3 py-2 text-sm border rounded-lg" style="border-color: #e2e8f0; background-color: #ffffff; color: #1e293b;"> <option value="">Select Type</option> <option value="lecture">Lecture Theatre</option> <option value="lab">Laboratory</option> <option value="seminar">Seminar Room</option> </select>
-            </div>
-           </div>
-          </div><!-- Section 3: Digital Location -->
+           </div><!-- Section 3: Digital Location -->
           <div class="rounded-xl p-5" style="background-color: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.06);">
            <h3 class="text-sm font-bold mb-4" style="color: #1e293b;">Digital Location</h3>
-           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div class="md:col-span-2"><label class="block text-xs font-medium mb-1.5" style="color: #64748b;">Google Map <span style="color: #dc2626;">*</span></label> <input type="url" placeholder="https://maps.google.com/..." class="w-full px-3 py-2 text-sm border rounded-lg" style="border-color: #e2e8f0; background-color: #ffffff; color: #1e293b;">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+             <div class="md:col-span-2"><label class="block text-xs font-medium mb-1.5" style="color: #64748b;">Google Map <span style="color: #dc2626;">*</span></label> <input id="fr-google-map" type="url" placeholder="https://maps.google.com/..." class="w-full px-3 py-2 text-sm border rounded-lg" style="border-color: #e2e8f0; background-color: #ffffff; color: #1e293b;">
+             </div>
+             <div class="md:col-span-2"><label class="block text-xs font-medium mb-1.5" style="color: #64748b;">Social Media (Optional)</label> <input id="fr-social-media" type="text" placeholder="Social media links or tags" class="w-full px-3 py-2 text-sm border rounded-lg" style="border-color: #e2e8f0; background-color: #ffffff; color: #1e293b;">
+             </div>
             </div>
-            <div class="md:col-span-2"><label class="block text-xs font-medium mb-1.5" style="color: #64748b;">Social Media (Optional)</label> <input type="text" placeholder="Social media links or tags" class="w-full px-3 py-2 text-sm border rounded-lg" style="border-color: #e2e8f0; background-color: #ffffff; color: #1e293b;">
-            </div>
-           </div>
-          </div><!-- Section 4: Image Upload -->
+           </div><!-- Section 4: Image Upload -->
           <div class="rounded-xl p-5" style="background-color: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.06);">
            <h3 class="text-sm font-bold mb-4" style="color: #1e293b;">Image Upload <span style="color: #94a3b8; font-size: 12px; font-weight: normal;">(Min: 2, Max: 12 images)</span></h3>
            <div class="border-2 border-dashed rounded-lg p-6 text-center" style="border-color: #cbd5e1; background-color: #f8fafc;"><i data-lucide="cloud-upload" style="width:32px;height:32px;margin:0 auto 12px;color:#94a3b8;"></i>
@@ -218,30 +220,30 @@
            </div>
           </div><!-- Section 5: User Category -->
           <div class="rounded-xl p-5" style="background-color: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.06);">
-           <div class="flex items-center justify-between mb-4">
-            <h3 class="text-sm font-bold" style="color: #1e293b;">User Category</h3><button type="button" class="text-xs font-medium px-2 py-1 rounded transition-colors" style="color: #3b82f6; background-color: #eff6ff;" onmouseover="this.style.backgroundColor='#dbeafe'" onmouseout="this.style.backgroundColor='#eff6ff'">Select All</button>
-           </div>
+            <div class="flex items-center justify-between mb-4">
+             <h3 class="text-sm font-bold" style="color: #1e293b;">User Category</h3><button data-fr-select-all="1" type="button" class="text-xs font-medium px-2 py-1 rounded transition-colors" style="color: #3b82f6; background-color: #eff6ff;" onmouseover="this.style.backgroundColor='#dbeafe'" onmouseout="this.style.backgroundColor='#eff6ff'">Select All</button>
+            </div>
            <div class="grid grid-cols-1 md:grid-cols-2 gap-3"><label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" style="width:16px;height:16px;accent-color:#3b82f6;"><span class="text-sm" style="color: #475569;">Public / Individual</span></label> <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" style="width:16px;height:16px;accent-color:#3b82f6;"><span class="text-sm" style="color: #475569;">UPM Retiree</span></label> <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" style="width:16px;height:16px;accent-color:#3b82f6;"><span class="text-sm" style="color: #475569;">UPM Staff</span></label> <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" style="width:16px;height:16px;accent-color:#3b82f6;"><span class="text-sm" style="color: #475569;">UPM Student</span></label> <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" style="width:16px;height:16px;accent-color:#3b82f6;"><span class="text-sm" style="color: #475569;">Government / Statutory Body</span></label> <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" style="width:16px;height:16px;accent-color:#3b82f6;"><span class="text-sm" style="color: #475569;">Private Sector</span></label> <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" style="width:16px;height:16px;accent-color:#3b82f6;"><span class="text-sm" style="color: #475569;">UPM Association</span></label> <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" style="width:16px;height:16px;accent-color:#3b82f6;"><span class="text-sm" style="color: #475569;">UPM Subsidiary</span></label>
            </div>
           </div><!-- Section 6: Purpose -->
           <div class="rounded-xl p-5" style="background-color: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.06);">
-           <div class="flex items-center justify-between mb-4">
-            <h3 class="text-sm font-bold" style="color: #1e293b;">Purpose</h3><button type="button" class="text-xs font-medium px-2 py-1 rounded transition-colors" style="color: #3b82f6; background-color: #eff6ff;" onmouseover="this.style.backgroundColor='#dbeafe'" onmouseout="this.style.backgroundColor='#eff6ff'">Select All</button>
-           </div>
+            <div class="flex items-center justify-between mb-4">
+             <h3 class="text-sm font-bold" style="color: #1e293b;">Purpose</h3><button data-fr-select-all="1" type="button" class="text-xs font-medium px-2 py-1 rounded transition-colors" style="color: #3b82f6; background-color: #eff6ff;" onmouseover="this.style.backgroundColor='#dbeafe'" onmouseout="this.style.backgroundColor='#eff6ff'">Select All</button>
+            </div>
            <div class="grid grid-cols-1 md:grid-cols-2 gap-3"><label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" style="width:16px;height:16px;accent-color:#3b82f6;"><span class="text-sm" style="color: #475569;">Workshop</span></label> <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" style="width:16px;height:16px;accent-color:#3b82f6;"><span class="text-sm" style="color: #475569;">Class</span></label> <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" style="width:16px;height:16px;accent-color:#3b82f6;"><span class="text-sm" style="color: #475569;">Activity</span></label> <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" style="width:16px;height:16px;accent-color:#3b82f6;"><span class="text-sm" style="color: #475569;">Training</span></label> <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" style="width:16px;height:16px;accent-color:#3b82f6;"><span class="text-sm" style="color: #475569;">Meeting</span></label> <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" style="width:16px;height:16px;accent-color:#3b82f6;"><span class="text-sm" style="color: #475569;">Lecture</span></label> <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" style="width:16px;height:16px;accent-color:#3b82f6;"><span class="text-sm" style="color: #475569;">Course</span></label> <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" style="width:16px;height:16px;accent-color:#3b82f6;"><span class="text-sm" style="color: #475569;">Seminar</span></label>
            </div>
           </div><!-- Section 7: Setup Details -->
           <div class="rounded-xl p-5" style="background-color: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.06);">
-           <div class="flex items-center justify-between mb-4">
-            <h3 class="text-sm font-bold" style="color: #1e293b;">Setup Details</h3><button type="button" class="text-xs font-medium px-2 py-1 rounded transition-colors" style="color: #3b82f6; background-color: #eff6ff;" onmouseover="this.style.backgroundColor='#dbeafe'" onmouseout="this.style.backgroundColor='#eff6ff'">Select All</button>
-           </div>
+            <div class="flex items-center justify-between mb-4">
+             <h3 class="text-sm font-bold" style="color: #1e293b;">Setup Details</h3><button data-fr-select-all="1" type="button" class="text-xs font-medium px-2 py-1 rounded transition-colors" style="color: #3b82f6; background-color: #eff6ff;" onmouseover="this.style.backgroundColor='#dbeafe'" onmouseout="this.style.backgroundColor='#eff6ff'">Select All</button>
+            </div>
            <div class="grid grid-cols-1 md:grid-cols-2 gap-3"><label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" style="width:16px;height:16px;accent-color:#3b82f6;"><span class="text-sm" style="color: #475569;">Table</span></label> <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" style="width:16px;height:16px;accent-color:#3b82f6;"><span class="text-sm" style="color: #475569;">Lighting</span></label> <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" style="width:16px;height:16px;accent-color:#3b82f6;"><span class="text-sm" style="color: #475569;">Speaker</span></label> <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" style="width:16px;height:16px;accent-color:#3b82f6;"><span class="text-sm" style="color: #475569;">Air Conditioner</span></label> <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" style="width:16px;height:16px;accent-color:#3b82f6;"><span class="text-sm" style="color: #475569;">White Screen</span></label> <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" style="width:16px;height:16px;accent-color:#3b82f6;"><span class="text-sm" style="color: #475569;">AV Equipment</span></label> <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" style="width:16px;height:16px;accent-color:#3b82f6;"><span class="text-sm" style="color: #475569;">PA System</span></label> <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" style="width:16px;height:16px;accent-color:#3b82f6;"><span class="text-sm" style="color: #475569;">Rest Area</span></label> <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" style="width:16px;height:16px;accent-color:#3b82f6;"><span class="text-sm" style="color: #475569;">Laser Pointer</span></label> <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" style="width:16px;height:16px;accent-color:#3b82f6;"><span class="text-sm" style="color: #475569;">Projector</span></label> <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" style="width:16px;height:16px;accent-color:#3b82f6;"><span class="text-sm" style="color: #475569;">Banquet Table</span></label> <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" style="width:16px;height:16px;accent-color:#3b82f6;"><span class="text-sm" style="color: #475569;">Computer</span></label> <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" style="width:16px;height:16px;accent-color:#3b82f6;"><span class="text-sm" style="color: #475569;">Chair</span></label> <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" style="width:16px;height:16px;accent-color:#3b82f6;"><span class="text-sm" style="color: #475569;">Rostrum</span></label> <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" style="width:16px;height:16px;accent-color:#3b82f6;"><span class="text-sm" style="color: #475569;">Banquet Chair</span></label>
            </div>
           </div><!-- Section 8: Other Facilities -->
           <div class="rounded-xl p-5" style="background-color: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.06);">
-           <div class="flex items-center justify-between mb-4">
-            <h3 class="text-sm font-bold" style="color: #1e293b;">Other Facilities</h3><button type="button" class="text-xs font-medium px-2 py-1 rounded transition-colors" style="color: #3b82f6; background-color: #eff6ff;" onmouseover="this.style.backgroundColor='#dbeafe'" onmouseout="this.style.backgroundColor='#eff6ff'">Select All</button>
-           </div>
+            <div class="flex items-center justify-between mb-4">
+             <h3 class="text-sm font-bold" style="color: #1e293b;">Other Facilities</h3><button data-fr-select-all="1" type="button" class="text-xs font-medium px-2 py-1 rounded transition-colors" style="color: #3b82f6; background-color: #eff6ff;" onmouseover="this.style.backgroundColor='#dbeafe'" onmouseout="this.style.backgroundColor='#eff6ff'">Select All</button>
+            </div>
            <div class="grid grid-cols-1 md:grid-cols-2 gap-3"><label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" style="width:16px;height:16px;accent-color:#3b82f6;"><span class="text-sm" style="color: #475569;">WiFi</span></label> <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" style="width:16px;height:16px;accent-color:#3b82f6;"><span class="text-sm" style="color: #475569;">Nursery</span></label> <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" style="width:16px;height:16px;accent-color:#3b82f6;"><span class="text-sm" style="color: #475569;">Male Prayer Room</span></label> <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" style="width:16px;height:16px;accent-color:#3b82f6;"><span class="text-sm" style="color: #475569;">Female Prayer Room</span></label> <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" style="width:16px;height:16px;accent-color:#3b82f6;"><span class="text-sm" style="color: #475569;">Male Toilet</span></label> <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" style="width:16px;height:16px;accent-color:#3b82f6;"><span class="text-sm" style="color: #475569;">Female Toilet</span></label> <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" style="width:16px;height:16px;accent-color:#3b82f6;"><span class="text-sm" style="color: #475569;">Parking Area</span></label> <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" style="width:16px;height:16px;accent-color:#3b82f6;"><span class="text-sm" style="color: #475569;">Waiting Area</span></label> <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" style="width:16px;height:16px;accent-color:#3b82f6;"><span class="text-sm" style="color: #475569;">Lounge / Rest Area</span></label> <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" style="width:16px;height:16px;accent-color:#3b82f6;"><span class="text-sm" style="color: #475569;">Dining Area</span></label>
            </div>
           </div>
@@ -262,9 +264,32 @@
           </div>
          </div>
         </div>
-       </div><!-- Action Buttons -->
-       <div class="flex gap-3 mt-6"><button class="px-4 py-2 text-sm font-medium rounded-lg transition-colors" style="background-color: #3b82f6; color: #fff;" onmouseover="this.style.backgroundColor='#2563eb'" onmouseout="this.style.backgroundColor='#3b82f6'"> <i data-lucide="save" style="width:14px;height:14px;display:inline;margin-right:6px;vertical-align:middle;"></i> Save </button> <button class="px-4 py-2 text-sm font-medium rounded-lg transition-colors" style="background-color: #f8fafc; border: 1px solid #e2e8f0; color: #64748b;" onmouseover="this.style.backgroundColor='#f1f5f9'" onmouseout="this.style.backgroundColor='#f8fafc'"> <i data-lucide="x" style="width:14px;height:14px;display:inline;margin-right:6px;vertical-align:middle;"></i> Cancel </button>
-       </div>
+        </div><!-- Action Buttons -->
+        <div class="flex gap-3 mt-6"><button id="fr-save-btn" type="button" class="px-4 py-2 text-sm font-medium rounded-lg transition-colors" style="background-color: #3b82f6; color: #fff;" onmouseover="this.style.backgroundColor='#2563eb'" onmouseout="this.style.backgroundColor='#3b82f6'"> <i data-lucide="save" style="width:14px;height:14px;display:inline;margin-right:6px;vertical-align:middle;"></i> <span id="fr-save-btn-text">Save</span> </button> <button id="fr-cancel-btn" type="button" class="px-4 py-2 text-sm font-medium rounded-lg transition-colors" style="background-color: #f8fafc; border: 1px solid #e2e8f0; color: #64748b;" onmouseover="this.style.backgroundColor='#f1f5f9'" onmouseout="this.style.backgroundColor='#f8fafc'"> <i data-lucide="x" style="width:14px;height:14px;display:inline;margin-right:6px;vertical-align:middle;"></i> Cancel </button>
+        </div><!-- Facility Records List -->
+        <div class="rounded-xl overflow-hidden mt-6" style="background-color: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.06);">
+         <div class="overflow-x-auto">
+          <table class="w-full">
+           <thead>
+            <tr style="background-color: #f8fafc;">
+             <th class="text-left text-[11px] font-semibold uppercase tracking-wider px-6 py-3" style="color: #64748b;">No.</th>
+             <th class="text-left text-[11px] font-semibold uppercase tracking-wider px-6 py-3" style="color: #64748b;">PTJ</th>
+             <th class="text-left text-[11px] font-semibold uppercase tracking-wider px-6 py-3" style="color: #64748b;">Facility Category</th>
+             <th class="text-left text-[11px] font-semibold uppercase tracking-wider px-6 py-3" style="color: #64748b;">Facility Type</th>
+             <th class="text-center text-[11px] font-semibold uppercase tracking-wider px-6 py-3" style="color: #64748b;">Capacity</th>
+             <th class="text-left text-[11px] font-semibold uppercase tracking-wider px-6 py-3" style="color: #64748b;">Google Map</th>
+             <th class="text-center text-[11px] font-semibold uppercase tracking-wider px-6 py-3" style="color: #64748b;">Actions</th>
+            </tr>
+           </thead>
+           <tbody id="fr-table-body"></tbody>
+          </table>
+         </div>
+         <div class="px-6 py-4 border-t" style="border-color: #e2e8f0; background-color: #f8fafc;">
+          <div class="text-xs" style="color: #94a3b8;">
+           Total: <span id="fr-total-records" class="font-semibold" style="color: #1e293b;">0</span> records
+          </div>
+         </div>
+        </div>
       </div><!-- Main Course Module -->
       <div id="main-course-module" class="hidden">
        <div class="mc-card p-5 mb-4">
@@ -4204,22 +4229,52 @@
   }
 
   // ── Facility Registration Module ──
+  let frFacilityData = [];
+  let frEditingId = null;
+  let frListenersBound = false;
   function initFacilityRegistrationModule() {
-    setupFacilityRegistrationEventListeners();
+    renderFacilityRegistrationTable();
+    if (!frListenersBound) {
+      setupFacilityRegistrationEventListeners();
+      frListenersBound = true;
+    }
     lucide.createIcons();
   }
 
   function setupFacilityRegistrationEventListeners() {
-    // Tab switching
-    document.getElementById('fr-tab-info').addEventListener('click', () => switchFRTab('info'));
-    document.getElementById('fr-tab-pic').addEventListener('click', () => switchFRTab('pic'));
-    
-    // Select All buttons
-    document.querySelectorAll('#facility-registration-module button:has-text("Select All")').forEach(btn => {
+    const infoBtn = document.getElementById('fr-tab-info');
+    const picBtn = document.getElementById('fr-tab-pic');
+    const saveBtn = document.getElementById('fr-save-btn');
+    const cancelBtn = document.getElementById('fr-cancel-btn');
+    const capacityInput = document.getElementById('fr-capacity');
+
+    if (infoBtn) infoBtn.addEventListener('click', () => switchFRTab('info'));
+    if (picBtn) picBtn.addEventListener('click', () => switchFRTab('pic'));
+
+    if (saveBtn) saveBtn.addEventListener('click', submitFacilityRegistrationForm);
+    if (cancelBtn) {
+      cancelBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        resetFacilityRegistrationForm();
+      });
+    }
+
+    if (capacityInput) {
+      capacityInput.addEventListener('input', () => {
+        const sanitized = sanitizeFRCapacity(capacityInput.value);
+        if (sanitized !== capacityInput.value) {
+          capacityInput.value = sanitized;
+        }
+        clearFRCapacityError();
+      });
+    }
+
+    document.querySelectorAll('#facility-registration-module [data-fr-select-all="1"]').forEach(btn => {
       btn.addEventListener('click', function() {
         const parent = this.closest('.rounded-xl');
-        const checkboxes = parent.querySelectorAll('input[type="checkbox"]');
-        checkboxes.forEach(cb => cb.checked = !cb.checked);
+        const checkboxes = parent ? parent.querySelectorAll('input[type="checkbox"]') : [];
+        const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+        checkboxes.forEach(cb => cb.checked = !allChecked);
       });
     });
   }
@@ -4229,6 +4284,7 @@
     const picTab = document.getElementById('fr-pic-tab');
     const infoBtn = document.getElementById('fr-tab-info');
     const picBtn = document.getElementById('fr-tab-pic');
+    if (!infoTab || !picTab || !infoBtn || !picBtn) return;
 
     if (tab === 'info') {
       infoTab.classList.remove('hidden');
@@ -4245,6 +4301,200 @@
       picBtn.style.borderColor = '#3b82f6';
       picBtn.style.color = '#3b82f6';
     }
+  }
+
+  function sanitizeFRCapacity(value) {
+    return String(value || '').replace(/[^\d]/g, '');
+  }
+
+  function showFRCapacityError(message) {
+    const el = document.getElementById('fr-capacity-error');
+    if (!el) return;
+    el.textContent = message;
+    el.classList.remove('hidden');
+  }
+
+  function clearFRCapacityError() {
+    const el = document.getElementById('fr-capacity-error');
+    if (!el) return;
+    el.textContent = '';
+    el.classList.add('hidden');
+  }
+
+  function setFRSaveButtonText(label) {
+    const el = document.getElementById('fr-save-btn-text');
+    if (el) el.textContent = label;
+  }
+
+  function resetFacilityRegistrationForm() {
+    frEditingId = null;
+    const category = document.getElementById('fr-facility-category');
+    const type = document.getElementById('fr-facility-type');
+    const capacity = document.getElementById('fr-capacity');
+    const googleMap = document.getElementById('fr-google-map');
+    const socialMedia = document.getElementById('fr-social-media');
+
+    if (category) category.value = '';
+    if (type) type.value = '';
+    if (capacity) capacity.value = '';
+    if (googleMap) googleMap.value = '';
+    if (socialMedia) socialMedia.value = '';
+
+    clearFRCapacityError();
+    setFRSaveButtonText('Save');
+    switchFRTab('info');
+  }
+
+  function submitFacilityRegistrationForm(e) {
+    if (e && typeof e.preventDefault === 'function') e.preventDefault();
+
+    const ptjInput = document.getElementById('fr-ptj');
+    const categorySelect = document.getElementById('fr-facility-category');
+    const typeSelect = document.getElementById('fr-facility-type');
+    const capacityInput = document.getElementById('fr-capacity');
+    const googleMapInput = document.getElementById('fr-google-map');
+    const socialMediaInput = document.getElementById('fr-social-media');
+
+    if (!ptjInput || !categorySelect || !typeSelect || !capacityInput || !googleMapInput || !socialMediaInput) return;
+
+    const capacityValue = sanitizeFRCapacity(capacityInput.value.trim());
+    capacityInput.value = capacityValue;
+
+    if (!capacityValue) {
+      showFRCapacityError('Capacity is required.');
+      showNotification('Capacity is required.', 'error');
+      capacityInput.focus();
+      return;
+    }
+
+    if (!/^[1-9]\d*$/.test(capacityValue)) {
+      showFRCapacityError('Capacity must be a valid number.');
+      showNotification('Capacity must be a valid number.', 'error');
+      capacityInput.focus();
+      return;
+    }
+
+    clearFRCapacityError();
+
+    const isEditMode = frEditingId !== null;
+    const record = {
+      id: isEditMode ? frEditingId : Math.max(...frFacilityData.map(item => item.id), 0) + 1,
+      ptj: ptjInput.value.trim(),
+      category_value: categorySelect.value,
+      category: categorySelect.options[categorySelect.selectedIndex]?.text || '',
+      type_value: typeSelect.value,
+      type: typeSelect.options[typeSelect.selectedIndex]?.text || '',
+      capacity: parseInt(capacityValue, 10),
+      google_map: googleMapInput.value.trim(),
+      social_media: socialMediaInput.value.trim()
+    };
+
+    if (isEditMode) {
+      const idx = frFacilityData.findIndex(item => item.id === frEditingId);
+      if (idx !== -1) frFacilityData[idx] = record;
+    } else {
+      frFacilityData.push(record);
+    }
+
+    renderFacilityRegistrationTable();
+    resetFacilityRegistrationForm();
+    showNotification(isEditMode ? 'Facility record has been successfully updated.' : 'Facility record has been successfully added.');
+  }
+
+  function editFacilityRecord(id) {
+    const item = frFacilityData.find(record => record.id === id);
+    if (!item) return;
+
+    frEditingId = id;
+    const category = document.getElementById('fr-facility-category');
+    const type = document.getElementById('fr-facility-type');
+    const capacity = document.getElementById('fr-capacity');
+    const googleMap = document.getElementById('fr-google-map');
+    const socialMedia = document.getElementById('fr-social-media');
+
+    if (category) category.value = item.category_value || '';
+    if (type) type.value = item.type_value || '';
+    if (capacity) capacity.value = String(item.capacity || '');
+    if (googleMap) googleMap.value = item.google_map || '';
+    if (socialMedia) socialMedia.value = item.social_media || '';
+
+    clearFRCapacityError();
+    setFRSaveButtonText('Update');
+    switchFRTab('info');
+    const infoTab = document.getElementById('fr-info-tab');
+    if (infoTab) infoTab.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (capacity) capacity.focus();
+  }
+
+  function deleteFacilityRecord(id) {
+    const item = frFacilityData.find(record => record.id === id);
+    if (!item) return;
+
+    if (confirm(`Delete facility "${item.type || 'record'}"? This action cannot be undone.`)) {
+      frFacilityData = frFacilityData.filter(record => record.id !== id);
+      if (frEditingId === id) {
+        resetFacilityRegistrationForm();
+      }
+      renderFacilityRegistrationTable();
+      showNotification('Facility record has been successfully deleted.');
+    }
+  }
+
+  function renderFacilityRegistrationTable() {
+    const tbody = document.getElementById('fr-table-body');
+    const totalEl = document.getElementById('fr-total-records');
+    if (!tbody || !totalEl) return;
+
+    tbody.innerHTML = '';
+
+    if (frFacilityData.length === 0) {
+      const row = document.createElement('tr');
+      row.innerHTML = '<td colspan="7" class="px-6 py-6 text-center text-sm" style="color: #94a3b8;">No facility records available.</td>';
+      tbody.appendChild(row);
+      totalEl.textContent = '0';
+      return;
+    }
+
+    const escapeHTML = (value) => String(value ?? '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+
+    frFacilityData.forEach((item, i) => {
+      const row = document.createElement('tr');
+      row.className = 'border-t hover:bg-blue-50 transition-colors';
+      row.style.borderColor = '#e2e8f0';
+      row.style.backgroundColor = i % 2 === 0 ? 'transparent' : '#f8fafc';
+
+      const mapCell = item.google_map
+        ? `<a href="${escapeHTML(item.google_map)}" target="_blank" rel="noopener noreferrer" class="text-xs font-medium hover:underline" style="color:#2563eb;">Open Link</a>`
+        : '<span class="text-xs" style="color:#94a3b8;">-</span>';
+
+      row.innerHTML = `
+        <td class="px-6 py-3 text-sm" style="color: #64748b;">${i + 1}</td>
+        <td class="px-6 py-3 text-sm" style="color: #475569;">${escapeHTML(item.ptj || '-')}</td>
+        <td class="px-6 py-3 text-sm" style="color: #475569;">${escapeHTML(item.category || '-')}</td>
+        <td class="px-6 py-3 text-sm" style="color: #475569;">${escapeHTML(item.type || '-')}</td>
+        <td class="text-center px-6 py-3 text-sm font-medium" style="color: #1e293b;">${escapeHTML(item.capacity)}</td>
+        <td class="px-6 py-3">${mapCell}</td>
+        <td class="text-center px-6 py-3">
+          <div class="flex gap-1.5 justify-center">
+            <button onclick="editFacilityRecord(${item.id})" class="w-7 h-7 rounded flex items-center justify-center hover:bg-amber-100 transition-colors" title="Edit">
+              <i data-lucide="pencil" style="width:13px;height:13px;color:#f59e0b;"></i>
+            </button>
+            <button onclick="deleteFacilityRecord(${item.id})" class="w-7 h-7 rounded flex items-center justify-center hover:bg-red-100 transition-colors" title="Delete">
+              <i data-lucide="trash-2" style="width:13px;height:13px;color:#ef4444;"></i>
+            </button>
+          </div>
+        </td>
+      `;
+      tbody.appendChild(row);
+    });
+
+    totalEl.textContent = String(frFacilityData.length);
+    lucide.createIcons();
   }
 
   // ── Lecture Schedule Combination Module ──
